@@ -1,0 +1,56 @@
+version: "0.1"
+
+population:
+  agents: 20
+  explicit_roles: false
+
+substrate:
+  default_initial_energy: 1.0
+  default_half_life_seconds: 604800
+  archive_energy_threshold: 0.05
+
+retrieval:
+  weights:
+    semantic: 0.40
+    energy: 0.15
+    quality: 0.15
+    context: 0.10
+    adoption: 0.05
+    exploration: 0.15
+    repetition_penalty: 0.10
+
+night_mode:
+  enabled: true
+  candidate_energy_min: 0.05
+  candidate_energy_max: 0.30
+
+market:
+  enabled: true
+  compute_scarcity: true
+  exploration_stipend_enabled: true
+
+challenge:
+  enabled: true
+
+oracle:
+  enabled: true
+  max_branch_depth: 3
+
+metrics:
+  specialization_window_actions: 100
+  phase_transition:
+    minimum_simultaneous_signals: 3
+
+experiments:
+  ablations:
+    - full
+    - no_decay
+    - no_market
+    - no_reputation
+    - no_night_mode
+    - no_crossover
+    - no_challenge_pressure
+    - no_gardener
+    - no_compute_scarcity
+    - no_exploration_bonus
+    - explicit_roles
