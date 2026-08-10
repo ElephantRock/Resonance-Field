@@ -11,6 +11,24 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
