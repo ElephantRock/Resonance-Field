@@ -21,20 +21,20 @@
     "materials"
   ],
   "action_costs": {
-    "observe": 1,
-    "query_substrate": 1,
-    "read_trace": 1,
-    "write_trace": 3,
-    "reinforce_trace": 2,
-    "challenge_trace": 3,
-    "crossover": 4,
-    "post_task": 2,
-    "bid_task": 2,
-    "delegate": 2,
-    "request_tool": 5,
-    "request_fork": 8,
-    "vote": 1,
-    "abstain": 0,
-    "sleep": 0
+    "OBSERVE": 1,
+    "QUERY_SUBSTRATE": 1,
+    "READ_TRACE": 1,
+    "WRITE_TRACE": 3,
+    "REINFORCE_TRACE": 2,
+    "CHALLENGE_TRACE": 3,
+    "CROSSOVER": 4,
+    "POST_TASK": 2,
+    "BID_TASK": 2,
+    "DELEGATE": 2,
+    "REQUEST_TOOL": 5,
+    "REQUEST_FORK": 8,
+    "VOTE": 1,
+    "ABSTAIN": 0,
+    "SLEEP": 0
   }
 }
