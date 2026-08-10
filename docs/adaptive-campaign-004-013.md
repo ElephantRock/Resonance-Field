@@ -54,6 +54,7 @@ A policy may vary:
 - domain, required-skill, or blended context;
 - domain/skill blend ratio;
 - minimum evidence-mass gate;
+- positive-evidence weight;
 - negative-evidence weight;
 - partial domain-memory reset when a regime changes.
 
@@ -109,11 +110,11 @@ Fixed question:
 
 Arms include no reputation, raw persistent reputation, and several domain-reputation freshness horizons.
 
-The winning policy and its dominant remaining failure mode determine Experiment 005.
+Experiment 004 consumes the **freshness** dimension: it is marked tested before Experiment 005 is selected. The winning policy and its dominant remaining failure mode determine Experiment 005.
 
 ### Experiments 005–011 — adaptive local search
 
-Each experiment tests exactly one previously untested policy dimension around the policy selected by the prior experiment.
+Each experiment tests exactly one previously untested policy dimension around the policy selected by the prior experiment. After freshness is consumed by Experiment 004, seven distinct local dimensions remain: influence weight, context mode, context blend, evidence-mass gate, positive-evidence weight, negative-evidence weight, and partial regime-shift reset.
 
 The dimension order is **not fixed in advance**. The previous result is classified by dominant remaining failure:
 
@@ -123,6 +124,8 @@ The dimension order is **not fixed in advance**. The previous result is classifi
 - **calibration:** basic quality/plasticity/structure criteria are satisfied, so evidence shaping is investigated.
 
 That classification determines which untested policy dimension is examined next. A null result is still informative: the incumbent policy remains selected and the campaign moves to the next most relevant dimension.
+
+Every experiment record stores both `motivating_failure` (the failure observed before the experiment and used to choose it) and `observed_failure` (the failure classification after its results). This prevents retrospective rewriting of why an experiment was run.
 
 ### Experiment 012 — adaptive stress test
 
@@ -158,7 +161,7 @@ The workflow produces:
 - `cells.csv` — per-seed/per-trace-memory evidence;
 - `run-metadata.json` — config hash and commit metadata.
 
-Each experiment posts its question, selected arm, measured metrics, decision, and next experiment focus to GitHub issue #13. The final comment records the selected policy and holdout verdict.
+Each experiment posts its question, motivating failure, observed failure, selected arm, measured metrics, decision, and next experiment focus to GitHub issue #13. The final comment records the selected policy and holdout verdict.
 
 ## Interpretation rule
 
