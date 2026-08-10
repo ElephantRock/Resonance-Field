@@ -25,9 +25,10 @@ The campaign separates:
 - **cultural persistence** — public traces left in the shared substrate;
 - **lineage persistence** — whether the same succession seat continues to dominate.
 
-A successor receives baseline credits, neutral reputation, no private practice, and a
-new agent identity. Public traces remain unless an experiment explicitly diversifies
-retrieval.
+A successor receives a new agent identity, neutral reputation, and no private practice.
+The predecessor's exact remaining compute-credit balance transfers to the successor,
+so succession does not inject or erase economic resources. Public traces remain unless
+an experiment explicitly diversifies retrieval.
 
 ## Public knowledge channel
 
@@ -126,6 +127,8 @@ The campaign does not implement:
 - autonomous reproduction;
 - production reputation scoring.
 
-Those mechanisms would confound the first causal test of competitive exit.
+Those mechanisms would confound the first causal test of competitive exit. Compute
+resource refresh is also out of scope: succession conserves the lineage's exact remaining
+credit balance rather than issuing a fresh endowment.
 
 Production remains reputation-neutral regardless of campaign outcome.
