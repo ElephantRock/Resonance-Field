@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from resonance.experiments import phase_boundary_campaign as campaign
 
 
@@ -89,6 +91,38 @@ def test_exact_boundary_prediction_is_neutral() -> None:
     assert campaign._predicted_sign(1.0, 1.0) == "neutral"
     assert campaign._predicted_sign(1.06, 1.0) == "positive"
     assert campaign._predicted_sign(0.94, 1.0) == "negative"
+
+
+def test_learning_timescale_compares_equal_width_windows(monkeypatch) -> None:
+    lengths: list[int] = []
+
+    def fixed_mi(rows):
+        lengths.append(len(rows))
+        return 1.0
+
+    monkeypatch.setattr(campaign, "_mutual_information", fixed_mi)
+    observations = [(f"d{index % 6}", index % 12) for index in range(96)]
+    tau = campaign._learning_timescale_from_observations(
+        observations,
+        target_fraction=0.5,
+    )
+
+    assert tau == 24.0
+    assert set(lengths) == {24}
+
+
+def test_dynamic_gate_is_recomputed_for_new_ratio() -> None:
+    policy = campaign.reference_policy()
+    stale = campaign._gated_policy(policy, ratio=0.75, theta=1.0)
+    refreshed = campaign._candidate_policy_for_ratio(
+        policy,
+        stale,
+        timescale_gate_selected=True,
+        ratio=1.0,
+        theta=1.0,
+    )
+    assert stale.weight == pytest.approx(policy.weight * 0.75)
+    assert refreshed.weight == pytest.approx(policy.weight)
 
 
 def test_control_selected_at_050_remains_control_candidate(monkeypatch, tmp_path: Path) -> None:
