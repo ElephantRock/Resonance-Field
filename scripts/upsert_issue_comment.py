@@ -34,6 +34,31 @@ def _request(url: str, *, token: str, method: str = "GET", payload: dict[str, ob
         raise RuntimeError(f"GitHub API {method} {url} failed: {exc.code} {body}") from exc
 
 
+def _find_existing(repo: str, issue: int, marker: str, *, token: str):
+    page = 1
+    while True:
+        url = (
+            f"https://api.github.com/repos/{repo}/issues/{issue}/comments"
+            f"?per_page=100&page={page}"
+        )
+        comments = _request(url, token=token)
+        if not isinstance(comments, list):
+            raise RuntimeError("GitHub comments response must be a list")
+        existing = next(
+            (
+                item
+                for item in comments
+                if isinstance(item, dict) and marker in str(item.get("body", ""))
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing
+        if len(comments) < 100:
+            return None
+        page += 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", required=True)
@@ -52,16 +77,7 @@ def main() -> int:
     if not first_line.startswith("<!--") or not first_line.endswith("-->"):
         raise SystemExit("body file must start with a stable HTML marker")
 
-    comments_url = f"https://api.github.com/repos/{args.repo}/issues/{args.issue}/comments?per_page=100"
-    comments = _request(comments_url, token=args.token)
-    existing = next(
-        (
-            item
-            for item in comments
-            if isinstance(item, dict) and first_line in str(item.get("body", ""))
-        ),
-        None,
-    )
+    existing = _find_existing(args.repo, args.issue, first_line, token=args.token)
     if existing is None:
         target = f"https://api.github.com/repos/{args.repo}/issues/{args.issue}/comments"
         result = _request(target, token=args.token, method="POST", payload={"body": body})
