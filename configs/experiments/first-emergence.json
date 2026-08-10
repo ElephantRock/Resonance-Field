@@ -1,0 +1,40 @@
+{
+  "name": "first-emergence-v0.1",
+  "agents": 20,
+  "cycles": 40,
+  "cycle_seconds": 60,
+  "initial_credits": 150,
+  "snapshot_every": 10,
+  "trace_half_life_seconds": 600.0,
+  "no_decay_half_life_seconds": 1000000000000.0,
+  "task_deadline_cycles": 3,
+  "task_budget_min": 6,
+  "task_budget_max": 12,
+  "topics": [
+    "urban_heat",
+    "water_systems",
+    "energy_storage",
+    "supply_networks",
+    "public_health",
+    "mobility",
+    "food_systems",
+    "materials"
+  ],
+  "action_costs": {
+    "OBSERVE": 1,
+    "QUERY_SUBSTRATE": 1,
+    "READ_TRACE": 1,
+    "WRITE_TRACE": 3,
+    "REINFORCE_TRACE": 2,
+    "CHALLENGE_TRACE": 3,
+    "CROSSOVER": 4,
+    "POST_TASK": 2,
+    "BID_TASK": 2,
+    "DELEGATE": 2,
+    "REQUEST_TOOL": 5,
+    "REQUEST_FORK": 8,
+    "VOTE": 1,
+    "ABSTAIN": 0,
+    "SLEEP": 0
+  }
+}

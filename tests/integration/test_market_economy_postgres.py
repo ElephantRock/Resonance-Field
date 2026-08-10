@@ -39,8 +39,10 @@ def _apply_migrations(connection: psycopg.Connection[dict[str, object]]) -> None
 def _reset_state(connection: psycopg.Connection[dict[str, object]]) -> None:
     connection.execute(
         """
-        TRUNCATE market_bids, market_tasks, compute_postings, compute_transactions,
-                 decision_events, trace_reinforcements, trace_relations, traces CASCADE
+        TRUNCATE experiment_snapshots, experiment_action_costs, experiment_agents,
+                 experiment_runs, market_bids, market_tasks, compute_postings,
+                 compute_transactions, decision_events, trace_reinforcements,
+                 trace_relations, traces CASCADE
         """
     )
     connection.execute(
