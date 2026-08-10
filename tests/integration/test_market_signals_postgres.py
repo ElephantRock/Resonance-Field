@@ -69,7 +69,7 @@ class FavoredBidderSignal:
 
     def signal(self, task, bid, *, at):
         del task, at
-        adjustment = 0.40 if bid.bidder_agent_id == self.favored else 0.0
+        adjustment = 0.45 if bid.bidder_agent_id == self.favored else 0.0
         return BidSignal(
             adjustment=adjustment,
             provider_label="test-system-signal",
@@ -136,7 +136,7 @@ def test_system_signal_changes_winner_and_is_append_only(
     assert all(row["provider_label"] == "test-system-signal" for row in scores)
     selected = next(row for row in scores if row["selected"])
     assert selected["bid_id"] == bid_a.bid_id
-    assert float(selected["signal_adjustment"]) == pytest.approx(0.40)
+    assert float(selected["signal_adjustment"]) == pytest.approx(0.45)
 
     with pytest.raises(psycopg.errors.RaiseException, match="append-only"):
         db.execute(
