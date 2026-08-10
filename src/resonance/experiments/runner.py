@@ -31,7 +31,9 @@ _ALLOWED_ABLATIONS = frozenset({"full", "no_market", "no_decay"})
 _BASE_TIME = datetime(2026, 1, 1, tzinfo=UTC)
 
 
-def apply_migrations(connection: Connection[Any], migrations_dir: str | Path = "migrations") -> None:
+def apply_migrations(
+    connection: Connection[Any], migrations_dir: str | Path = "migrations"
+) -> None:
     for path in sorted(Path(migrations_dir).glob("*.sql")):
         connection.execute(path.read_text())
 
@@ -64,7 +66,7 @@ def _open_task(
         WHERE status = 'open'
           AND requester_agent_id <> %s
           AND deadline > %s
-        ORDER BY created_at, task_id
+        ORDER BY created_at, requester_agent_id
         LIMIT 1
         """,
         (agent_id, at),
@@ -80,7 +82,7 @@ def _resolve_due_tasks(
         SELECT task_id
         FROM market_tasks
         WHERE status = 'open' AND deadline <= %s
-        ORDER BY deadline, task_id
+        ORDER BY deadline, requester_agent_id
         """,
         (at,),
     ).fetchall()
@@ -90,7 +92,9 @@ def _resolve_due_tasks(
             market.settle(row["task_id"], at=at)
 
 
-def _behavior_rows(connection: Connection[Any], run_id: UUID) -> list[tuple[UUID, str, int]]:
+def _behavior_rows(
+    connection: Connection[Any], run_id: UUID
+) -> list[tuple[UUID, str, int]]:
     rows = connection.execute(
         """
         SELECT d.agent_id, d.proposed_action, COALESCE(c.credits, 0) AS credits
@@ -123,7 +127,9 @@ def _balances(connection: Connection[Any], run_id: UUID) -> dict[UUID, int]:
 def collect_metrics(
     connection: Connection[Any], run_id: UUID, topics: Sequence[str]
 ) -> dict[str, object]:
-    metrics = summarize_behavior(_behavior_rows(connection, run_id), _balances(connection, run_id))
+    metrics = summarize_behavior(
+        _behavior_rows(connection, run_id), _balances(connection, run_id)
+    )
     market = connection.execute(
         """
         SELECT
@@ -158,9 +164,7 @@ def collect_metrics(
         (run_id,),
     ).fetchall()
     covered = {
-        topic
-        for topic in topics
-        if any(topic in str(row["content"]) for row in traces)
+        topic for topic in topics if any(topic in str(row["content"]) for row in traces)
     }
     metrics.update(
         {
@@ -189,11 +193,19 @@ def _write_csv(path: Path, rows: Sequence[Mapping[str, object]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         for row in rows:
-            writer.writerow({key: _json_default(value) if isinstance(value, (UUID, datetime)) else value for key, value in row.items()})
+            encoded = {
+                key: _json_default(value) if isinstance(value, (UUID, datetime)) else value
+                for key, value in row.items()
+            }
+            writer.writerow(encoded)
 
 
 def export_artifacts(
-    connection: Connection[Any], *, run_id: UUID, output_dir: str | Path, summary: Mapping[str, object]
+    connection: Connection[Any],
+    *,
+    run_id: UUID,
+    output_dir: str | Path,
+    summary: Mapping[str, object],
 ) -> None:
     destination = Path(output_dir)
     destination.mkdir(parents=True, exist_ok=True)
@@ -218,12 +230,14 @@ def export_artifacts(
     ).fetchall()
     with (destination / "events.jsonl").open("w") as handle:
         for row in event_rows:
-            handle.write(json.dumps(dict(row), default=_json_default, sort_keys=True) + "\n")
+            handle.write(
+                json.dumps(dict(row), default=_json_default, sort_keys=True) + "\n"
+            )
 
     agent_rows = connection.execute(
         """
-        SELECT ea.agent_slot, ea.agent_id, ea.initial_credits, ca.balance AS ending_balance,
-               COALESCE(SUM(c.credits), 0) AS compute_spent
+        SELECT ea.agent_slot, ea.agent_id, ea.initial_credits,
+               ca.balance AS ending_balance, COALESCE(SUM(c.credits), 0) AS compute_spent
         FROM experiment_agents ea
         JOIN compute_accounts ca ON ca.owner_agent_id = ea.agent_id
         LEFT JOIN experiment_action_costs c
@@ -244,7 +258,7 @@ def export_artifacts(
         WHERE requester_agent_id IN (
             SELECT agent_id FROM experiment_agents WHERE run_id = %s
         )
-        ORDER BY created_at, task_id
+        ORDER BY created_at, requester_agent_id
         """,
         (run_id,),
     ).fetchall()
@@ -258,7 +272,7 @@ def export_artifacts(
         WHERE author_agent_id IN (
             SELECT agent_id FROM experiment_agents WHERE run_id = %s
         )
-        ORDER BY created_at, trace_id
+        ORDER BY created_at, author_agent_id, trace_id
         """,
         (run_id,),
     ).fetchall()
@@ -300,7 +314,9 @@ def run_experiment(
     traces = PostgresTraceRepository(connection)
     events = PostgresDecisionEventStore(connection)
     market = PostgresMarketService(connection, economy)
-    sink = economy.create_system_account("experiment_compute_sink", at=start, reference_id=run_id)
+    sink = economy.create_system_account(
+        "experiment_compute_sink", at=start, reference_id=run_id
+    )
     meter = ExperimentComputeMeter(
         economy=economy,
         store=experiment_store,
@@ -310,7 +326,9 @@ def run_experiment(
     )
     policy = SeededExperimentPolicy(seed=seed, action_costs=config.action_costs)
     half_life = (
-        config.no_decay_half_life_seconds if ablation == "no_decay" else config.trace_half_life_seconds
+        config.no_decay_half_life_seconds
+        if ablation == "no_decay"
+        else config.trace_half_life_seconds
     )
     market_enabled = ablation != "no_market"
 
@@ -318,7 +336,9 @@ def run_experiment(
     try:
         for slot in range(config.agents):
             agent_id = uuid5(run_id, f"agent:{slot}")
-            economy.register_agent(agent_id, at=start, initial_credits=config.initial_credits)
+            economy.register_agent(
+                agent_id, at=start, initial_credits=config.initial_credits
+            )
             experiment_store.register_agent(
                 run_id=run_id,
                 agent_id=agent_id,
@@ -351,15 +371,18 @@ def run_experiment(
         )
 
         for cycle in range(config.cycles):
-            at = start + timedelta(seconds=cycle * config.cycle_seconds)
+            cycle_at = start + timedelta(seconds=cycle * config.cycle_seconds)
             if market_enabled:
-                _resolve_due_tasks(connection, market, at=at)
+                _resolve_due_tasks(connection, market, at=cycle_at)
 
             for slot, agent_id in enumerate(agent_ids):
+                agent_at = cycle_at + timedelta(microseconds=slot)
                 topic_index = _stable_index(seed, cycle, slot, len(config.topics))
                 topic = config.topics[topic_index]
                 budget = _post_budget(config, seed, cycle, slot)
-                deadline = at + timedelta(seconds=config.task_deadline_cycles * config.cycle_seconds)
+                deadline = agent_at + timedelta(
+                    seconds=config.task_deadline_cycles * config.cycle_seconds
+                )
                 metadata = {
                     "cycle": cycle,
                     "agent_slot": slot,
@@ -369,36 +392,48 @@ def run_experiment(
                     "half_life_seconds": half_life,
                     "post_budget": budget,
                     "post_deadline": deadline,
-                    "open_task": _open_task(connection, agent_id=agent_id, at=at)
-                    if market_enabled
-                    else None,
+                    "open_task": (
+                        _open_task(connection, agent_id=agent_id, at=agent_at)
+                        if market_enabled
+                        else None
+                    ),
                 }
                 observation = AgentObservation(
                     trigger=f"experiment:{ablation}:cycle:{cycle}:topic:{topic}",
-                    observed_at=at,
+                    observed_at=agent_at,
                     query_embedding=_embedding(topic_index),
                     retrieval_limit=6,
                     metadata=metadata,
                 )
                 with events.transaction():
                     result = runtime.step(agent_id, observation)
-                    meter.charge(agent_id, result.request, at=at)
+                    meter.charge(agent_id, result.request, at=agent_at)
 
             completed_cycle = cycle + 1
-            if completed_cycle % config.snapshot_every == 0 or completed_cycle == config.cycles:
+            if (
+                completed_cycle % config.snapshot_every == 0
+                or completed_cycle == config.cycles
+            ):
                 metrics = collect_metrics(connection, run_id, config.topics)
                 experiment_store.snapshot(
                     run_id=run_id,
                     cycle=completed_cycle,
-                    captured_at=at,
+                    captured_at=cycle_at,
                     metrics=metrics,
                 )
 
-        final_at = start + timedelta(seconds=config.cycles * config.cycle_seconds)
+        final_cycle_at = start + timedelta(seconds=config.cycles * config.cycle_seconds)
+        cleanup_at = final_cycle_at + timedelta(
+            seconds=config.task_deadline_cycles * config.cycle_seconds + 1
+        )
         if market_enabled:
-            _resolve_due_tasks(connection, market, at=final_at + timedelta(days=1))
+            _resolve_due_tasks(connection, market, at=cleanup_at)
         final_metrics = collect_metrics(connection, run_id, config.topics)
-        experiment_store.complete(run_id, cycles_completed=config.cycles, completed_at=final_at)
+        experiment_store.complete(
+            run_id,
+            cycles_completed=config.cycles,
+            completed_at=cleanup_at,
+        )
         summary = {
             "run_id": str(run_id),
             "name": config.name,
@@ -410,8 +445,17 @@ def run_experiment(
             "agents": config.agents,
             "metrics": final_metrics,
         }
-        export_artifacts(connection, run_id=run_id, output_dir=output_dir, summary=summary)
+        export_artifacts(
+            connection,
+            run_id=run_id,
+            output_dir=output_dir,
+            summary=summary,
+        )
         return summary
     except Exception as exc:
-        experiment_store.fail(run_id, failure=f"{type(exc).__name__}: {exc}", completed_at=datetime.now(UTC))
+        experiment_store.fail(
+            run_id,
+            failure=f"{type(exc).__name__}: {exc}",
+            completed_at=datetime.now(UTC),
+        )
         raise
