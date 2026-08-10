@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
-import hashlib
-import json
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,7 +29,14 @@ class ExperimentConfig:
     def __post_init__(self) -> None:
         if not self.name.strip():
             raise ValueError("experiment name must not be empty")
-        for name in ("agents", "cycles", "cycle_seconds", "initial_credits", "snapshot_every"):
+        positive_fields = (
+            "agents",
+            "cycles",
+            "cycle_seconds",
+            "initial_credits",
+            "snapshot_every",
+        )
+        for name in positive_fields:
             if getattr(self, name) <= 0:
                 raise ValueError(f"{name} must be positive")
         if self.trace_half_life_seconds <= 0 or self.no_decay_half_life_seconds <= 0:
@@ -47,6 +54,7 @@ class ExperimentConfig:
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, object]) -> ExperimentConfig:
+        raw_costs = dict(value["action_costs"])
         return cls(
             name=str(value["name"]),
             agents=int(value["agents"]),
@@ -60,7 +68,7 @@ class ExperimentConfig:
             task_budget_min=int(value["task_budget_min"]),
             task_budget_max=int(value["task_budget_max"]),
             topics=tuple(str(item) for item in value["topics"]),
-            action_costs={str(key): int(cost) for key, cost in dict(value["action_costs"]).items()},
+            action_costs={str(key): int(cost) for key, cost in raw_costs.items()},
         )
 
     def as_dict(self) -> dict[str, object]:
