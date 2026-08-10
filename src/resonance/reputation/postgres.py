@@ -20,7 +20,9 @@ def _aware(name: str, value: datetime) -> None:
 class PostgresReputationRepository:
     def __init__(self, connection: Connection[Any]) -> None:
         if not connection.autocommit:
-            raise ValueError("PostgresReputationRepository requires an autocommit connection")
+            raise ValueError(
+                "PostgresReputationRepository requires an autocommit connection"
+            )
         connection.row_factory = dict_row
         self._connection = connection
 
@@ -44,10 +46,21 @@ class PostgresReputationRepository:
             (agent_id, dimension, context_key),
         ).fetchone()
         if row is None:
-            return ReputationState(agent_id, dimension, context_key, 1.0, 1.0, at)
+            return ReputationState(
+                agent_id,
+                dimension,
+                context_key,
+                1.0,
+                1.0,
+                at,
+            )
         return ReputationState(
-            row["agent_id"], row["dimension"], row["context_key"],
-            float(row["alpha"]), float(row["beta"]), row["updated_at"]
+            row["agent_id"],
+            row["dimension"],
+            row["context_key"],
+            float(row["alpha"]),
+            float(row["beta"]),
+            row["updated_at"],
         )
 
     def record_evidence(
@@ -63,64 +76,121 @@ class PostgresReputationRepository:
         weight: float = 1.0,
     ) -> ReputationState:
         _aware("at", at)
-        if not dimension.strip() or not context_key.strip() or not source_type.strip():
+        if (
+            not dimension.strip()
+            or not context_key.strip()
+            or not source_type.strip()
+        ):
             raise ValueError("reputation evidence labels must not be empty")
         if weight <= 0:
             raise ValueError("weight must be positive")
+
         with self._connection.transaction():
             existing = self._connection.execute(
                 """
-                SELECT alpha_after, beta_after
+                SELECT alpha_after, beta_after, created_at
                 FROM reputation_evidence
-                WHERE agent_id = %s AND dimension = %s AND context_key = %s
-                  AND source_type = %s AND source_id = %s
+                WHERE agent_id = %s
+                  AND dimension = %s
+                  AND context_key = %s
+                  AND source_type = %s
+                  AND source_id = %s
                 """,
-                (agent_id, dimension, context_key, source_type, source_id),
+                (
+                    agent_id,
+                    dimension,
+                    context_key,
+                    source_type,
+                    source_id,
+                ),
             ).fetchone()
             if existing is not None:
                 return ReputationState(
-                    agent_id, dimension, context_key,
-                    float(existing["alpha_after"]), float(existing["beta_after"]), at
+                    agent_id,
+                    dimension,
+                    context_key,
+                    float(existing["alpha_after"]),
+                    float(existing["beta_after"]),
+                    existing["created_at"],
                 )
 
+            # Materialize the neutral prior before locking. If two workers race on
+            # the first evidence item, the unique state key makes one insert win;
+            # both then serialize on the same row below instead of independently
+            # updating from Beta(1,1).
+            self._connection.execute(
+                """
+                INSERT INTO reputation_states (
+                    agent_id, dimension, context_key, alpha, beta, updated_at
+                ) VALUES (%s, %s, %s, 1.0, 1.0, %s)
+                ON CONFLICT (agent_id, dimension, context_key) DO NOTHING
+                """,
+                (agent_id, dimension, context_key, at),
+            )
             row = self._connection.execute(
                 """
-                SELECT alpha, beta, updated_at
+                SELECT alpha, beta
                 FROM reputation_states
                 WHERE agent_id = %s AND dimension = %s AND context_key = %s
                 FOR UPDATE
                 """,
                 (agent_id, dimension, context_key),
             ).fetchone()
-            alpha_before = 1.0 if row is None else float(row["alpha"])
-            beta_before = 1.0 if row is None else float(row["beta"])
+            assert row is not None
+
+            alpha_before = float(row["alpha"])
+            beta_before = float(row["beta"])
             alpha_after = alpha_before + (weight if positive else 0.0)
             beta_after = beta_before + (0.0 if positive else weight)
 
             self._connection.execute(
                 """
-                INSERT INTO reputation_states (
-                    agent_id, dimension, context_key, alpha, beta, updated_at
-                ) VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT (agent_id, dimension, context_key) DO UPDATE
-                SET alpha = EXCLUDED.alpha, beta = EXCLUDED.beta, updated_at = EXCLUDED.updated_at
+                UPDATE reputation_states
+                SET alpha = %s, beta = %s, updated_at = %s
+                WHERE agent_id = %s AND dimension = %s AND context_key = %s
                 """,
-                (agent_id, dimension, context_key, alpha_after, beta_after, at),
+                (
+                    alpha_after,
+                    beta_after,
+                    at,
+                    agent_id,
+                    dimension,
+                    context_key,
+                ),
             )
             self._connection.execute(
                 """
                 INSERT INTO reputation_evidence (
-                    evidence_id, agent_id, dimension, context_key, positive, weight,
-                    alpha_before, beta_before, alpha_after, beta_after,
+                    evidence_id, agent_id, dimension, context_key, positive,
+                    weight, alpha_before, beta_before, alpha_after, beta_after,
                     source_type, source_id, created_at
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ) VALUES (
+                    %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s
+                )
                 """,
                 (
-                    uuid4(), agent_id, dimension, context_key, positive, weight,
-                    alpha_before, beta_before, alpha_after, beta_after,
-                    source_type, source_id, at,
+                    uuid4(),
+                    agent_id,
+                    dimension,
+                    context_key,
+                    positive,
+                    weight,
+                    alpha_before,
+                    beta_before,
+                    alpha_after,
+                    beta_after,
+                    source_type,
+                    source_id,
+                    at,
                 ),
             )
+
         return ReputationState(
-            agent_id, dimension, context_key, alpha_after, beta_after, at
+            agent_id,
+            dimension,
+            context_key,
+            alpha_after,
+            beta_after,
+            at,
         )
