@@ -11,6 +11,7 @@ from uuid import UUID, uuid4
 from pgvector import Vector
 from pgvector.psycopg import register_vector
 from psycopg import Connection
+from psycopg.rows import dict_row
 
 from .decay import reinforce_energy
 from .models import RetrievedTrace, Trace
@@ -73,6 +74,7 @@ class PostgresTraceRepository:
     def __init__(self, connection: Connection[Any]) -> None:
         if not connection.autocommit:
             raise ValueError("PostgresTraceRepository requires an autocommit connection")
+        connection.row_factory = dict_row
         self._connection = connection
         register_pgvector(connection)
 
@@ -201,6 +203,10 @@ class PostgresTraceRepository:
                 raise KeyError(trace_id)
 
             trace = _trace_from_row(row)
+            assert trace.energy_updated_at is not None
+            if at < trace.energy_updated_at:
+                raise ValueError("reinforcement timestamp cannot precede the decay anchor")
+
             energy_before = trace.energy_at(at)
             energy_after = reinforce_energy(
                 energy_before,
