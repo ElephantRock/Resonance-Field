@@ -9,6 +9,7 @@ from types import MappingProxyType
 from typing import Protocol
 from uuid import UUID
 
+from resonance.market.service import MarketService
 from resonance.substrate.models import RetrievedTrace, Trace
 from resonance.substrate.repository import TraceRepository
 
@@ -80,6 +81,37 @@ def _number(payload: Mapping[str, object], name: str, default: float) -> float:
     return float(value)
 
 
+def _integer(payload: Mapping[str, object], name: str) -> int:
+    value = payload.get(name)
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{name} must be an integer")
+    return value
+
+
+def _datetime(value: object, name: str) -> datetime:
+    if isinstance(value, datetime):
+        result = value
+    elif isinstance(value, str):
+        try:
+            result = datetime.fromisoformat(value)
+        except ValueError as exc:
+            raise ValueError(f"{name} must be an ISO-8601 datetime") from exc
+    else:
+        raise ValueError(f"{name} must be a datetime")
+    if result.tzinfo is None or result.utcoffset() is None:
+        raise ValueError(f"{name} must be timezone-aware")
+    return result
+
+
+def _string_sequence(value: object, name: str) -> tuple[str, ...]:
+    if not isinstance(value, Sequence) or isinstance(value, str):
+        raise ValueError(f"{name} must be a sequence of strings")
+    result = tuple(value)
+    if any(not isinstance(item, str) or not item.strip() for item in result):
+        raise ValueError(f"{name} must contain non-empty strings")
+    return result
+
+
 def _safe_payload(payload: Mapping[str, object]) -> dict[str, object]:
     """Return audit-safe action metadata rather than blindly persisting inputs."""
     safe: dict[str, object] = {}
@@ -91,6 +123,8 @@ def _safe_payload(payload: Mapping[str, object]) -> dict[str, object]:
             safe["embedding_dimensions"] = len(value)
         elif isinstance(value, UUID):
             safe[key] = str(value)
+        elif isinstance(value, datetime):
+            safe[key] = value.isoformat()
         elif isinstance(value, (str, int, float, bool)) or value is None:
             safe[key] = value
         else:
@@ -108,11 +142,13 @@ class AgentRuntime:
         events: DecisionEventStore,
         gateway: PolicyGateway,
         policy: AgentPolicy,
+        market: MarketService | None = None,
     ) -> None:
         self._traces = traces
         self._events = events
         self._gateway = gateway
         self._policy = policy
+        self._market = market
 
     def step(self, agent_id: UUID, observation: AgentObservation) -> StepResult:
         retrieved = tuple(
@@ -158,6 +194,11 @@ class AgentRuntime:
         )
         self._events.append(event)
         return StepResult(context, request, evaluation, outcome, event)
+
+    def _require_market(self) -> MarketService:
+        if self._market is None:
+            raise RuntimeError("market executor is not configured")
+        return self._market
 
     def _execute(
         self,
@@ -235,6 +276,58 @@ class AgentRuntime:
                 status=OutcomeStatus.SUCCEEDED,
                 output_trace_ids=(trace.trace_id,),
                 data={"trace_id": str(trace.trace_id), "reinforced": True},
+            )
+
+        if action == ActionType.POST_TASK:
+            market = self._require_market()
+            description = payload.get("description")
+            if not isinstance(description, str) or not description.strip():
+                raise ValueError("description must be a non-empty string")
+            required = _string_sequence(payload.get("required_capabilities", ()), "required_capabilities")
+            success_condition = payload.get("success_condition", {})
+            if not isinstance(success_condition, Mapping):
+                raise ValueError("success_condition must be a mapping")
+            task = market.post_task(
+                agent_id,
+                description=description,
+                budget=_integer(payload, "budget"),
+                deadline=_datetime(payload.get("deadline"), "deadline"),
+                at=now,
+                required_capabilities=required,
+                success_condition=success_condition,
+            )
+            return ActionOutcome(
+                status=OutcomeStatus.SUCCEEDED,
+                data={
+                    "task_id": str(task.task_id),
+                    "budget": task.budget,
+                    "deadline": task.deadline.isoformat(),
+                    "status": task.status,
+                },
+            )
+
+        if action == ActionType.BID_TASK:
+            market = self._require_market()
+            strategy = payload.get("strategy_summary")
+            if not isinstance(strategy, str) or not strategy.strip():
+                raise ValueError("strategy_summary must be a non-empty string")
+            bid = market.submit_bid(
+                agent_id,
+                task_id=_uuid(payload.get("task_id"), "task_id"),
+                price=_integer(payload, "price"),
+                confidence=request.confidence,
+                estimated_completion_seconds=_integer(payload, "estimated_completion_seconds"),
+                strategy_summary=strategy,
+                at=now,
+            )
+            return ActionOutcome(
+                status=OutcomeStatus.SUCCEEDED,
+                data={
+                    "bid_id": str(bid.bid_id),
+                    "task_id": str(bid.task_id),
+                    "price": bid.price,
+                    "status": bid.status,
+                },
             )
 
         if action in {ActionType.ABSTAIN, ActionType.SLEEP}:

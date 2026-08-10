@@ -35,7 +35,7 @@ All agents share the same action vocabulary:
 - `ABSTAIN`
 - `SLEEP`
 
-The existence of a primitive does not mean its executor is enabled. v0.1 enables only internal observation/substrate actions plus `ABSTAIN` and `SLEEP`. Market, tool, Oracle, delegation, challenge, and crossover executors arrive in later slices.
+The existence of a primitive does not mean its executor is enabled. v0.1 currently enables internal observation/substrate actions, task posting and bidding through a configured market service, plus `ABSTAIN` and `SLEEP`. Tool, Oracle, delegation, challenge, crossover, and voting executors remain disabled until their dedicated policy and execution layers exist.
 
 ## Provenance boundary
 
@@ -69,9 +69,13 @@ QUERY_SUBSTRATE
 READ_TRACE
 WRITE_TRACE
 REINFORCE_TRACE
+POST_TASK
+BID_TASK
 ABSTAIN
 SLEEP
 ```
+
+`POST_TASK` and `BID_TASK` still require a configured `MarketService`; otherwise the allowed proposal fails execution and the failure remains visible in provenance. This keeps authorization separate from infrastructure availability.
 
 All other primitives are rejected until an executor and corresponding safety policy exist. Selected actions may alternatively be configured as `REQUIRE_HUMAN_APPROVAL`.
 

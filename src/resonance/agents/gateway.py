@@ -29,7 +29,7 @@ class PolicyGateway(Protocol):
 
 
 class DefaultPolicyGateway:
-    """Conservative v0.1 gateway enabling only implemented internal actions."""
+    """Conservative v0.1 gateway enabling implemented internal and market actions."""
 
     DEFAULT_ALLOWED = frozenset(
         {
@@ -38,6 +38,8 @@ class DefaultPolicyGateway:
             ActionType.READ_TRACE,
             ActionType.WRITE_TRACE,
             ActionType.REINFORCE_TRACE,
+            ActionType.POST_TASK,
+            ActionType.BID_TASK,
             ActionType.ABSTAIN,
             ActionType.SLEEP,
         }
