@@ -112,6 +112,7 @@ def render_synthesis(checkpoint: Mapping[str, object]) -> str:
             f"- Reputation interaction: `{checkpoint['reputation_interaction']}`",
             "- Cultural diversification selected: "
             f"**{bool(checkpoint['cultural_diversification_selected'])}**",
+            f"- Rapid-shift stress validated: **{bool(checkpoint['stress_validated'])}**",
             f"- Synthesis mechanism validated: **{bool(checkpoint['mechanism_validated'])}**",
             f"- Independent replication: **{bool(checkpoint['replication_validated'])}**",
             f"- Holdout validated: **{bool(checkpoint['validated'])}**",
