@@ -120,6 +120,7 @@ def _initial_checkpoint(
         "model": None,
         "model_test": None,
         "model_test_validated": False,
+        "mechanism_validated": False,
         "candidate_policy": None,
         "candidate_label": None,
         "replication_validated": False,
@@ -435,19 +436,14 @@ def _run_mechanism_test(
         code_sha=code_sha,
     )
     control = next(arm for arm in arms if arm["label"] == "no_reputation")
-    candidates = [
-        arm
-        for arm in arms
-        if arm["label"] != "no_reputation" and bool(arm["feasible"])
-    ]
-    best = max(candidates, key=lambda arm: float(arm["utility"]), default=control)
-    selected = best if float(best["utility"]) >= float(control["utility"]) else control
-    if selected["label"] == "two_timescale_gated":
-        chosen_policy = gated
-    elif selected["label"] == "full_reputation":
-        chosen_policy = reference
-    else:
-        chosen_policy = ReputationPolicy()
+    gated_arm = next(arm for arm in arms if arm["label"] == "two_timescale_gated")
+    mechanism_validated = (
+        bool(gated_arm["feasible"])
+        and float(gated_arm["utility"]) >= float(control["utility"])
+    )
+    selected = gated_arm if mechanism_validated else control
+    chosen_policy = gated if mechanism_validated else ReputationPolicy()
+    state["mechanism_validated"] = mechanism_validated
     state["candidate_policy"] = chosen_policy.as_dict()
     state["candidate_label"] = selected["label"]
     return _record_two(
@@ -457,7 +453,7 @@ def _run_mechanism_test(
         arms=arms,
         selected=selected,
         motivating_failure="model_prediction",
-        observed_failure=None if bool(selected["feasible"]) else "mechanism",
+        observed_failure=None if mechanism_validated else "mechanism",
         next_focus="independent_replication",
         extras={
             "practice_gain": float(test["practice_gain"]),
@@ -468,6 +464,7 @@ def _run_mechanism_test(
             "test_shift_period": shift,
             "gate_scale": scale,
         },
+        validated=mechanism_validated,
     )
 
 
@@ -503,7 +500,8 @@ def _run_replication(
     invariants = candidate["invariants"]
     assert isinstance(invariants, Mapping)
     validated = (
-        bool(candidate["feasible"])
+        bool(state["mechanism_validated"])
+        and bool(candidate["feasible"])
         and effect >= -config.integration.success_tolerance
         and all(bool(value) for value in invariants.values())
     )
@@ -594,6 +592,7 @@ def _run_holdout(
     assert isinstance(invariants, Mapping)
     validated = (
         bool(state["model_test_validated"])
+        and bool(state["mechanism_validated"])
         and bool(state["replication_validated"])
         and observed == predicted
         and bool(candidate["feasible"])
