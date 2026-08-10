@@ -115,6 +115,7 @@ jobs:
           name: phase-boundary-experiment-${{ inputs.experiment_number }}
           path: ${{ env.OUTPUT_DIR }}
           if-no-files-found: error
+          overwrite: true
           retention-days: 90
       - name: Upload next checkpoint
         uses: actions/upload-artifact@v4
@@ -122,6 +123,7 @@ jobs:
           name: phase-boundary-checkpoint-${{ inputs.experiment_number }}
           path: ${{ env.OUTPUT_DIR }}/checkpoint.json
           if-no-files-found: error
+          overwrite: true
           retention-days: 90
       - name: Publish completed experiment
         continue-on-error: true
