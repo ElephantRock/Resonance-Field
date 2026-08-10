@@ -1,0 +1,132 @@
+name: Adaptive Experiments 004-013
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/adaptive-campaign.yml"
+      - "configs/experiments/adaptive-campaign.json"
+      - "src/resonance/experiments/adaptive_campaign*.py"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  run-adaptive-campaign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OUTPUT_DIR: artifacts/adaptive-campaign
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Run Experiments 004-013
+        run: >-
+          python -m resonance.experiments.adaptive_campaign_cli
+          --config configs/experiments/adaptive-campaign.json
+          --code-sha "$GITHUB_SHA"
+          --output-dir "$OUTPUT_DIR"
+      - name: Upload campaign evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: adaptive-experiments-004-013
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          retention-days: 90
+      - name: Build lab notebook comments
+        run: |
+          mkdir -p "$OUTPUT_DIR/comments"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          output = Path(os.environ["OUTPUT_DIR"])
+          data = json.loads((output / "campaign.json").read_text())
+          comments = output / "comments"
+
+          for experiment in data["experiments"]:
+              number = experiment["number"]
+              selected = next(
+                  arm
+                  for arm in experiment["arms"]
+                  if arm["label"] == experiment["selected_label"]
+              )
+              metrics = selected["metrics"]
+              lines = [
+                  f"## Experiment {number:03d}",
+                  "",
+                  f"**Question:** {experiment['question']}",
+                  "",
+                  f"- Focus: `{experiment['focus']}`",
+                  f"- Motivating failure: `{experiment['motivating_failure']}`",
+                  f"- Observed failure: `{experiment['observed_failure']}`",
+                  f"- Selected policy: `{experiment['selected_label']}`",
+                  f"- Success: **{metrics['success_rate']:.6f}**",
+                  f"- Agent/domain MI: **{metrics['agent_domain_mutual_information']:.6f}**",
+                  f"- Specialization: **{metrics['mean_specialization']:.6f}**",
+                  f"- Winner HHI: **{metrics['mean_winner_hhi']:.6f}**",
+                  f"- Early incumbent share: **{metrics['early_incumbent_share']:.6f}**",
+                  f"- Winner replacement: **{metrics['winner_replacement_rate']:.6f}**",
+                  f"- Feasible: **{selected['feasible']}**",
+                  f"- Utility: **{selected['utility']:.6f}**",
+                  f"- Decision: {experiment['decision']}",
+                  f"- Next experiment focus: `{experiment['next_experiment_focus']}`",
+                  "",
+                  "Top arms by constrained utility:",
+              ]
+              for arm in sorted(
+                  experiment["arms"],
+                  key=lambda item: item["utility"],
+                  reverse=True,
+              )[:3]:
+                  arm_metrics = arm["metrics"]
+                  lines.append(
+                      f"- `{arm['label']}` — utility {arm['utility']:.6f}; "
+                      f"success {arm_metrics['success_rate']:.6f}; "
+                      f"incumbent {arm_metrics['early_incumbent_share']:.6f}; "
+                      f"MI {arm_metrics['agent_domain_mutual_information']:.6f}; "
+                      f"feasible {arm['feasible']}"
+                  )
+              if number == 13:
+                  lines.extend(
+                      [
+                          "",
+                          f"- Holdout best: `{experiment['holdout_best_label']}`",
+                          f"- Final validation: **{experiment['validated']}**",
+                      ]
+                  )
+              (comments / f"experiment-{number:03d}.md").write_text(
+                  "\n".join(lines) + "\n"
+              )
+
+          summary_lines = [
+              "## Adaptive Campaign 004–013 — Final Synthesis",
+              "",
+              f"- Commit: `{data['code_sha']}`",
+              f"- Final policy: `{data['final_label']}`",
+              f"- Holdout validated: **{data['validated']}**",
+              f"- Experiments completed: **{len(data['experiments'])}**",
+              "",
+              "The exact next-step sequence was selected from the preceding experiment's measured failure mode and selected policy. Raw evidence is retained in the workflow artifact `adaptive-experiments-004-013`.",
+          ]
+          (comments / "campaign-summary.md").write_text(
+              "\n".join(summary_lines) + "\n"
+          )
+          PY
+      - name: Publish campaign notebook to issue 13
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for file in "$OUTPUT_DIR"/comments/experiment-*.md; do
+            gh issue comment 13 --repo "$GITHUB_REPOSITORY" --body-file "$file"
+          done
+          gh issue comment 13 --repo "$GITHUB_REPOSITORY" --body-file "$OUTPUT_DIR/comments/campaign-summary.md"
