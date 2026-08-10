@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS agents (
     agent_id UUID PRIMARY KEY,
     generation INTEGER NOT NULL DEFAULT 0 CHECK (generation >= 0),
-    status TEXT NOT NULL DEFAULT 'active',
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'frozen', 'retired')),
     model_profile TEXT NOT NULL DEFAULT 'STANDARD',
     created_at TIMESTAMPTZ NOT NULL,
     last_active_at TIMESTAMPTZ NOT NULL
@@ -95,12 +95,14 @@ CREATE TABLE IF NOT EXISTS market_tasks (
     deadline TIMESTAMPTZ NOT NULL,
     required_capabilities JSONB NOT NULL DEFAULT '[]'::jsonb,
     success_condition JSONB NOT NULL DEFAULT '{}'::jsonb,
-    status TEXT NOT NULL DEFAULT 'open',
+    status TEXT NOT NULL DEFAULT 'open'
+        CHECK (status IN ('open', 'awarded', 'completed', 'cancelled')),
     awarded_agent_id UUID REFERENCES agents(agent_id) ON DELETE RESTRICT,
     winning_bid_id UUID,
     created_at TIMESTAMPTZ NOT NULL,
     awarded_at TIMESTAMPTZ,
-    completed_at TIMESTAMPTZ
+    completed_at TIMESTAMPTZ,
+    CHECK (deadline > created_at)
 );
 
 CREATE INDEX IF NOT EXISTS market_tasks_status_deadline_idx
@@ -114,7 +116,8 @@ CREATE TABLE IF NOT EXISTS market_bids (
     confidence DOUBLE PRECISION NOT NULL CHECK (confidence BETWEEN 0 AND 1),
     estimated_completion_seconds INTEGER NOT NULL CHECK (estimated_completion_seconds > 0),
     strategy_summary TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'sealed',
+    status TEXT NOT NULL DEFAULT 'sealed'
+        CHECK (status IN ('sealed', 'selected', 'rejected')),
     submitted_at TIMESTAMPTZ NOT NULL,
     UNIQUE (task_id, bidder_agent_id)
 );
@@ -128,17 +131,28 @@ ALTER TABLE market_tasks
 CREATE INDEX IF NOT EXISTS market_bids_task_idx
     ON market_bids (task_id, submitted_at, bid_id);
 
-CREATE OR REPLACE FUNCTION reject_market_bid_mutation()
+CREATE OR REPLACE FUNCTION enforce_market_bid_immutability()
 RETURNS trigger AS $$
 BEGIN
-    IF OLD.status = 'sealed' AND NEW.status <> OLD.status THEN
+    IF TG_OP = 'UPDATE'
+       AND OLD.status = 'sealed'
+       AND NEW.status IN ('selected', 'rejected')
+       AND NEW.bid_id IS NOT DISTINCT FROM OLD.bid_id
+       AND NEW.task_id IS NOT DISTINCT FROM OLD.task_id
+       AND NEW.bidder_agent_id IS NOT DISTINCT FROM OLD.bidder_agent_id
+       AND NEW.price IS NOT DISTINCT FROM OLD.price
+       AND NEW.confidence IS NOT DISTINCT FROM OLD.confidence
+       AND NEW.estimated_completion_seconds IS NOT DISTINCT FROM OLD.estimated_completion_seconds
+       AND NEW.strategy_summary IS NOT DISTINCT FROM OLD.strategy_summary
+       AND NEW.submitted_at IS NOT DISTINCT FROM OLD.submitted_at
+    THEN
         RETURN NEW;
     END IF;
-    RAISE EXCEPTION 'sealed market bids are immutable';
+    RAISE EXCEPTION 'sealed market bids are immutable except for resolution status';
 END;
 $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS market_bids_immutable ON market_bids;
 CREATE TRIGGER market_bids_immutable
 BEFORE UPDATE OR DELETE ON market_bids
-FOR EACH ROW EXECUTE FUNCTION reject_market_bid_mutation();
+FOR EACH ROW EXECUTE FUNCTION enforce_market_bid_immutability();
