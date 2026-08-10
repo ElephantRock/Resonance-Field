@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
+from contextlib import AbstractContextManager, contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
 from types import MappingProxyType
@@ -48,6 +49,8 @@ class DecisionEvent:
 class DecisionEventStore(Protocol):
     """Append-only persistence boundary for agent decision provenance."""
 
+    def transaction(self) -> AbstractContextManager[None]: ...
+
     def append(self, event: DecisionEvent) -> None: ...
 
     def get(self, event_id: UUID) -> DecisionEvent | None: ...
@@ -60,6 +63,10 @@ class InMemoryDecisionEventStore:
 
     def __init__(self) -> None:
         self._events: list[DecisionEvent] = []
+
+    @contextmanager
+    def transaction(self) -> Iterator[None]:
+        yield
 
     def append(self, event: DecisionEvent) -> None:
         self._events.append(event)
