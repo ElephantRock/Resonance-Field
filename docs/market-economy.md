@@ -55,6 +55,10 @@ Consequences:
 - winner settlement and requester refunds are ordinary auditable ledger transfers;
 - failure during task creation rolls back both the task and escrow movement.
 
+When the PostgreSQL agent runtime executes a market action, the market mutation and its `DecisionEvent` share one outer transaction. Market service transactions become nested savepoints. If decision-provenance persistence fails, the market task, escrow account, and credit transfer roll back together rather than leaving an orphaned side effect.
+
+This atomic guarantee requires the PostgreSQL event store, market service, economy repository, and substrate repository participating in a runtime step to share the same connection.
+
 ## Sealed bids
 
 `BID_TASK` records:
@@ -69,6 +73,8 @@ Consequences:
 A bidder may submit at most one bid per task. Requesters cannot bid on their own tasks. Bids above the escrowed budget are rejected.
 
 Submitted bids are sealed from the agent-facing service contract: there is no public bid-listing method. At the database layer, price, confidence, timing, bidder identity, and strategy are immutable after submission. Resolution may change only `status` from `sealed` to `selected` or `rejected`.
+
+The bidding interval is half-open: a bid is valid only while `submitted_at < deadline`. At the exact deadline, bidding is closed and `award()` is permitted. This removes order-dependent behavior at the boundary.
 
 ## Auction scoring
 
@@ -95,10 +101,10 @@ A future reputation slice may add evidence-backed capability terms. Until then, 
 
 ## Award and settlement
 
-After the bidding deadline:
+At or after the bidding deadline:
 
 1. the market controller ranks sealed eligible bids;
-2. the winning bid becomes `selected`;
+2. the winning bid becomes `selected` in storage and in the returned `AuctionResult`;
 3. remaining bids become `rejected`;
 4. the task becomes `awarded`;
 5. after an external completion/evaluation signal, `settle()` pays the winner from escrow;
@@ -125,6 +131,8 @@ OBSERVE -> QUERY -> CHOOSE -> POLICY GATE -> ACT -> TRACE
 ```
 
 The runtime can execute these actions only when a `MarketService` is configured. Missing market infrastructure produces a traced execution failure rather than an ungoverned fallback.
+
+For PostgreSQL-backed runs, `ACT -> TRACE` is a transactional unit of work: the runtime opens the event-store transaction, executes the side effect, appends the decision event, and commits only after both succeed.
 
 ## Research consequence
 
