@@ -49,8 +49,12 @@ class Trace:
             raise ValueError("kind must not be empty")
         if not self.content.strip():
             raise ValueError("content must not be empty")
+
         _aware("created_at", self.created_at)
         _aware("updated_at", self.updated_at)
+        if self.updated_at < self.created_at:
+            raise ValueError("updated_at must not precede created_at")
+
         if self.initial_energy < 0:
             raise ValueError("initial_energy must be non-negative")
         if self.half_life_seconds <= 0:
@@ -78,6 +82,8 @@ class Trace:
             object.__setattr__(self, "energy_updated_at", self.created_at)
         else:
             _aware("energy_updated_at", self.energy_updated_at)
+            if self.energy_updated_at < self.created_at:
+                raise ValueError("energy_updated_at must not precede created_at")
 
     def energy_at(self, at: datetime) -> float:
         """Return trace energy at a point in time from the current decay anchor."""
