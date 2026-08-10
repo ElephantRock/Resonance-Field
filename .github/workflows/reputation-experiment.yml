@@ -1,0 +1,117 @@
+name: Reputation Plasticity Experiment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/reputation-experiment.yml"
+      - "configs/experiments/reputation-plasticity.json"
+      - "src/resonance/reputation/**"
+      - "src/resonance/experiments/reputation_*.py"
+      - "migrations/006_reputation.sql"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  run-reputation-experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        arm: [slow_reputation, slow_no_reputation, fast_reputation, fast_no_reputation]
+        seed: [101, 202, 303, 404, 505]
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/${{ matrix.arm }}-seed-${{ matrix.seed }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Ensure PostgreSQL client
+        run: |
+          if ! command -v pg_dump >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+          fi
+      - name: Run reputation plasticity experiment
+        run: >-
+          python -m resonance.experiments.reputation_cli
+          --config configs/experiments/reputation-plasticity.json
+          --arm ${{ matrix.arm }}
+          --seed ${{ matrix.seed }}
+          --code-sha "$GITHUB_SHA"
+          --output-dir "$OUTPUT_DIR"
+      - name: Export database
+        run: >-
+          pg_dump "$RESONANCE_TEST_DSN"
+          --no-owner --no-privileges
+          > "$OUTPUT_DIR/postgres.sql"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: reputation-${{ matrix.arm }}-seed-${{ matrix.seed }}
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish Experiment 003 notebook summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARM: ${{ matrix.arm }}
+          SEED: ${{ matrix.seed }}
+        run: |
+          python - <<'PY' > "$OUTPUT_DIR/lab-comment.md"
+          import json
+          import os
+          from pathlib import Path
+
+          output = Path(os.environ["OUTPUT_DIR"])
+          data = json.loads((output / "experiment.json").read_text())
+          metrics = data["metrics"]
+          print(f"### Cell `{os.environ['ARM']}` / seed `{os.environ['SEED']}`")
+          print()
+          print(f"- Run ID: `{data['run_id']}`")
+          print(f"- Commit: `{data['code_sha']}`")
+          print(f"- Half-life: **{data['half_life_seconds']:.1f}s**")
+          print(f"- Reputation enabled: **{data['reputation_enabled']}**")
+          print(f"- Tasks: **{metrics['task_count']}**")
+          print(f"- Success overall/pre/early-post/late-post: **{metrics['overall_success_rate']:.6f} / {metrics['pre_shift_success_rate']:.6f} / {metrics['early_post_shift_success_rate']:.6f} / {metrics['late_post_shift_success_rate']:.6f}**")
+          print(f"- Agent/domain MI: **{metrics['agent_domain_mutual_information']:.6f}**")
+          print(f"- Mean specialization: **{metrics['mean_agent_domain_specialization']:.6f}**")
+          print(f"- Winner HHI: **{metrics['mean_domain_winner_hhi']:.6f}**")
+          print(f"- Unique winners: **{metrics['unique_winners']}**")
+          print(f"- Reputation Brier: **{metrics['reputation_brier_score']:.6f}**")
+          print(f"- Pre-shift incumbent share early/late post: **{metrics['pre_shift_incumbent_share_early_post']:.6f} / {metrics['pre_shift_incumbent_share_late_post']:.6f}**")
+          print(f"- Incumbent share drop: **{metrics['incumbent_share_drop']:.6f}**")
+          print(f"- Winner replacement rate: **{metrics['post_shift_winner_replacement_rate']:.6f}**")
+          print(f"- Adaptation latency: **{metrics['adaptation_latency_cycles']} cycles**")
+          print(f"- Reputation evidence: **{metrics['reputation_evidence_count']}**")
+          print(f"- Verified evidence traces: **{metrics['verified_evidence_trace_count']}**")
+          print(f"- Artifact: `reputation-{os.environ['ARM']}-seed-{os.environ['SEED']}`")
+          PY
+          gh issue comment 11 --repo "$GITHUB_REPOSITORY" --body-file "$OUTPUT_DIR/lab-comment.md"

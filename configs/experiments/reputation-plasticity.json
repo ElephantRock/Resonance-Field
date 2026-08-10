@@ -1,0 +1,29 @@
+{
+  "name": "reputation-plasticity-v0.1",
+  "agents": 20,
+  "cycles": 180,
+  "cycle_seconds": 30,
+  "shift_cycle": 90,
+  "snapshot_every": 15,
+  "initial_credits": 1000,
+  "domains": [
+    "urban_heat",
+    "water_systems",
+    "energy_storage",
+    "supply_networks",
+    "public_health",
+    "mobility"
+  ],
+  "candidate_count": 8,
+  "task_budget": 12,
+  "bid_deadline_seconds": 20,
+  "fast_half_life_seconds": 120.0,
+  "slow_half_life_seconds": 900.0,
+  "evidence_initial_energy": 0.9,
+  "reputation_weight": 0.45,
+  "base_success_probability": 0.38,
+  "practice_gain": 0.10,
+  "maximum_success_probability": 0.90,
+  "early_post_shift_cycles": 24,
+  "late_post_shift_cycles": 24
+}
