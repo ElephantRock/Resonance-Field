@@ -11,6 +11,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 from psycopg import Connection
 
@@ -120,7 +121,7 @@ def _learning_timescale_for_run(
         WHERE run_id = %s
         ORDER BY cycle
         """,
-        (run_id,),
+        (UUID(str(run_id)),),
     ).fetchall()
     observations = [(str(row["task_domain"]), int(row["winner_slot"])) for row in rows]
     if len(observations) < 8:
@@ -248,7 +249,7 @@ def _boundary_estimate(
 
 
 def _test_environment(base: IntegrationEnvironment, *, shift_period: int, practice_gain: float) -> IntegrationEnvironment:
-    cycles = max(base.cycles, min(180, max(72, shift_period * 3)))
+    cycles = max(base.cycles, min(180, max(24, shift_period * 3)))
     return replace(base, cycles=cycles, shift_period=min(shift_period, cycles - 1), practice_gain=practice_gain)
 
 
@@ -333,6 +334,15 @@ def _adjust_theta(theta: float, sign: str) -> float:
 def _gated_policy(policy: ReputationPolicy, ratio: float, theta: float) -> ReputationPolicy:
     scale = max(0.0, min(1.0, ratio / max(theta, 1e-9)))
     return replace(policy, weight=policy.weight * scale)
+
+
+def _predicted_sign(ratio: float, theta: float) -> str:
+    relative = ratio / max(theta, 1e-9)
+    if relative >= 1.05:
+        return "positive"
+    if relative <= 0.95:
+        return "negative"
+    return "neutral"
 
 
 def run_phase_boundary_campaign(
@@ -550,7 +560,13 @@ def run_phase_boundary_campaign(
         key=lambda arm: (bool(arm["feasible"]), float(arm["utility"])),
     )
     selected = best_reputation if bool(best_reputation["feasible"]) else control
-    chosen_policy = gated if selected["label"] == "timescale_gated" else policy
+    timescale_gate_selected = selected["label"] == "timescale_gated"
+    if timescale_gate_selected:
+        chosen_policy = gated
+    elif selected["label"] == "full_reputation":
+        chosen_policy = policy
+    else:
+        chosen_policy = ReputationPolicy()
     experiments.append(
         _record_phase(
             number=50,
@@ -612,7 +628,8 @@ def run_phase_boundary_campaign(
     )
 
     holdout_gain = base.practice_gain
-    holdout_shift = _clamp_shift(config, theta * tau_learning)
+    holdout_multiplier = 0.75 if candidate_sign == "positive" else 1.25
+    holdout_shift = _clamp_shift(config, holdout_multiplier * theta * tau_learning)
     holdout_env = replace(
         _test_environment(base, shift_period=holdout_shift, practice_gain=holdout_gain),
         cycles=config.integration.holdout_cycles,
@@ -620,7 +637,7 @@ def run_phase_boundary_campaign(
         candidate_count=config.integration.holdout_candidate_count,
     )
     holdout_ratio = holdout_env.shift_period / max(tau_learning, 1.0)
-    holdout_policy = _gated_policy(policy, holdout_ratio, theta) if selected["label"] == "timescale_gated" else chosen_policy
+    holdout_policy = _gated_policy(policy, holdout_ratio, theta) if timescale_gate_selected else chosen_policy
     arms, _, control = _run_experiment(
         connection,
         config=config.integration,
@@ -637,7 +654,7 @@ def run_phase_boundary_campaign(
     reference = next(arm for arm in arms if arm["label"] == "reference_reputation")
     candidate = next(arm for arm in arms if arm["label"] == "candidate_policy")
     reference_effect = _effect(reference, control)
-    predicted_reference_sign = "positive" if holdout_ratio > theta else "negative"
+    predicted_reference_sign = _predicted_sign(holdout_ratio, theta)
     observed_reference_sign = _sign(
         reference_effect,
         feasible=bool(reference["feasible"]),
