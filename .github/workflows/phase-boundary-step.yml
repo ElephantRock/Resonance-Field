@@ -55,6 +55,7 @@ jobs:
           name: ${{ inputs.previous_artifact }}
           path: checkpoint-in
       - name: Publish running status
+        continue-on-error: true
         run: |
           mkdir -p "$OUTPUT_DIR"
           marker="<!-- phase-boundary-041-052:experiment-$(printf '%03d' "$EXPERIMENT_NUMBER") -->"
@@ -87,6 +88,7 @@ jobs:
           python -m resonance.experiments.phase_boundary_step_cli "${args[@]}"
       - name: Publish failed status
         if: ${{ steps.run_experiment.outcome == 'failure' }}
+        continue-on-error: true
         run: |
           marker="<!-- phase-boundary-041-052:experiment-$(printf '%03d' "$EXPERIMENT_NUMBER") -->"
           cat > "$OUTPUT_DIR/notebook.md" <<EOF
@@ -122,6 +124,7 @@ jobs:
           if-no-files-found: error
           retention-days: 90
       - name: Publish completed experiment
+        continue-on-error: true
         run: >-
           python scripts/upsert_issue_comment.py
           --repo "$GITHUB_REPOSITORY"
@@ -129,6 +132,7 @@ jobs:
           --body-file "$OUTPUT_DIR/notebook.md"
       - name: Publish final synthesis
         if: ${{ inputs.experiment_number == 52 }}
+        continue-on-error: true
         run: >-
           python scripts/upsert_issue_comment.py
           --repo "$GITHUB_REPOSITORY"
@@ -136,4 +140,5 @@ jobs:
           --body-file "$OUTPUT_DIR/campaign-summary.md"
       - name: Close completed campaign issue
         if: ${{ inputs.experiment_number == 52 }}
+        continue-on-error: true
         run: gh issue close 17 --repo "$GITHUB_REPOSITORY" --reason completed
