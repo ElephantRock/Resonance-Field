@@ -16,6 +16,10 @@ on:
       - "src/resonance/market/**"
       - "src/resonance/reputation/**"
 
+concurrency:
+  group: phase-boundary-041-052
+  cancel-in-progress: false
+
 permissions:
   contents: read
   issues: write
