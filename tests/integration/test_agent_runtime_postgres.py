@@ -31,10 +31,7 @@ def _embedding() -> tuple[float, ...]:
 
 def _apply_migrations(connection: psycopg.Connection[dict[str, object]]) -> None:
     for path in sorted(Path("migrations").glob("*.sql")):
-        migration = path.read_text()
-        for statement in migration.split(";"):
-            if statement.strip():
-                connection.execute(statement)
+        connection.execute(path.read_text())
 
 
 class WriteAfterRetrievalPolicy:
