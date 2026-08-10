@@ -67,6 +67,8 @@ jobs:
                   f"**Question:** {experiment['question']}",
                   "",
                   f"- Focus: `{experiment['focus']}`",
+                  f"- Motivating failure: `{experiment['motivating_failure']}`",
+                  f"- Observed failure: `{experiment['observed_failure']}`",
                   f"- Selected policy: `{experiment['selected_label']}`",
                   f"- Success: **{metrics['success_rate']:.6f}**",
                   f"- Agent/domain MI: **{metrics['agent_domain_mutual_information']:.6f}**",
@@ -106,7 +108,6 @@ jobs:
                   "\n".join(lines) + "\n"
               )
 
-          final = data["experiments"][-1]
           summary_lines = [
               "## Adaptive Campaign 004–013 — Final Synthesis",
               "",
