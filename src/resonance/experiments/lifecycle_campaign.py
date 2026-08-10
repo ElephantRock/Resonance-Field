@@ -367,10 +367,27 @@ def run_succession_arm(
 
             generation[slot] += 1
             new_id = uuid5(run_id, f"agent:{slot}:gen:{generation[slot]}")
+            old_account = economy.account_for_agent(old_id)
             economy.register_agent(
                 new_id,
                 at=task_at,
-                initial_credits=env.initial_credits,
+                generation=generation[slot],
+                initial_credits=0,
+            )
+            new_account = economy.account_for_agent(new_id)
+            if old_account.balance:
+                economy.transfer(
+                    old_account.account_id,
+                    new_account.account_id,
+                    old_account.balance,
+                    at=task_at,
+                    reason="succession balance transfer",
+                    reference_type="agent",
+                    reference_id=new_id,
+                )
+            connection.execute(
+                "UPDATE agents SET status = %s, last_active_at = %s WHERE agent_id = %s",
+                ("dead" if lifecycle.disposition == "death" else "retired", task_at, old_id),
             )
             current_ids[slot] = new_id
             all_agent_ids.append(new_id)
