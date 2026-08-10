@@ -261,12 +261,16 @@ class PostgresMarketService:
             )
             score, winner = ranked[0]
             self._connection.execute(
-                "UPDATE market_bids SET status = 'rejected' WHERE task_id = %s AND status = 'sealed'",
-                (task_id,),
+                "UPDATE market_bids SET status = 'selected' WHERE bid_id = %s AND status = 'sealed'",
+                (winner.bid_id,),
             )
             self._connection.execute(
-                "UPDATE market_bids SET status = 'selected' WHERE bid_id = %s",
-                (winner.bid_id,),
+                """
+                UPDATE market_bids
+                SET status = 'rejected'
+                WHERE task_id = %s AND status = 'sealed'
+                """,
+                (task_id,),
             )
             self._connection.execute(
                 """
