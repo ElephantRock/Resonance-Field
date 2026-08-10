@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from types import MappingProxyType
-from typing import Mapping, Protocol, Sequence
+from typing import Protocol
 from uuid import UUID
 
 from resonance.substrate.models import RetrievedTrace, Trace
@@ -86,7 +87,7 @@ def _safe_payload(payload: Mapping[str, object]) -> dict[str, object]:
         lowered = key.lower()
         if any(fragment in lowered for fragment in _REDACTED_KEYS):
             safe[key] = "[REDACTED]"
-        elif key == "embedding" and isinstance(value, Sequence):
+        elif key == "embedding" and isinstance(value, Sequence) and not isinstance(value, str):
             safe["embedding_dimensions"] = len(value)
         elif isinstance(value, UUID):
             safe[key] = str(value)
@@ -195,7 +196,7 @@ class AgentRuntime:
                 raise ValueError("kind must be a non-empty string")
 
             embedding_value = payload.get("embedding", context.observation.query_embedding)
-            if not isinstance(embedding_value, Sequence):
+            if not isinstance(embedding_value, Sequence) or isinstance(embedding_value, str):
                 raise ValueError("embedding must be a sequence")
             embedding = tuple(float(value) for value in embedding_value)
 
