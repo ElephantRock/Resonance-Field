@@ -190,7 +190,10 @@ def _candidate_thresholds(values: Sequence[float]) -> list[float]:
     unique = sorted(set(float(value) for value in values))
     candidates = [1e-6]
     candidates.extend(unique)
-    candidates.extend((left + right) / 2 for left, right in zip(unique, unique[1:]))
+    candidates.extend(
+        (left + right) / 2
+        for left, right in zip(unique, unique[1:], strict=False)
+    )
     candidates.append(max(unique, default=1.0) + 1e-6)
     return sorted(set(candidates))
 
@@ -206,11 +209,11 @@ def fit_two_timescale_rule(points: Sequence[Mapping[str, object]]) -> dict[str, 
         for theta_d in _candidate_thresholds(ratios_d):
             predictions = [
                 ratio_f >= theta_f and ratio_d >= theta_d
-                for ratio_f, ratio_d in zip(ratios_f, ratios_d)
+                for ratio_f, ratio_d in zip(ratios_f, ratios_d, strict=True)
             ]
             correct = sum(
                 prediction == label
-                for prediction, label in zip(predictions, labels)
+                for prediction, label in zip(predictions, labels, strict=True)
             )
             candidate = (correct, theta_f + theta_d, theta_f, theta_d)
             if best is None or candidate > best:
@@ -253,7 +256,7 @@ def interpolate_timescales(
         return float(ordered[0]["tau_f"]), float(ordered[0]["tau_d"])
     if gain >= float(ordered[-1]["practice_gain"]):
         return float(ordered[-1]["tau_f"]), float(ordered[-1]["tau_d"])
-    for left, right in zip(ordered, ordered[1:]):
+    for left, right in zip(ordered, ordered[1:], strict=False):
         left_gain = float(left["practice_gain"])
         right_gain = float(right["practice_gain"])
         if left_gain <= gain <= right_gain:
