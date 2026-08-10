@@ -1,0 +1,116 @@
+name: Decay Stress Experiment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/decay-experiment.yml"
+      - "configs/experiments/decay-stress.json"
+      - "src/resonance/experiments/decay_*.py"
+      - "migrations/005_decay_experiment.sql"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  run-decay-experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        arm: [fast_decay, slow_decay, no_decay]
+        seed: [101, 202, 303, 404, 505]
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/${{ matrix.arm }}-seed-${{ matrix.seed }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Ensure PostgreSQL client
+        run: |
+          if ! command -v pg_dump >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+          fi
+      - name: Run decay stress experiment
+        run: >-
+          python -m resonance.experiments.decay_cli
+          --config configs/experiments/decay-stress.json
+          --arm ${{ matrix.arm }}
+          --seed ${{ matrix.seed }}
+          --code-sha "$GITHUB_SHA"
+          --output-dir "$OUTPUT_DIR"
+      - name: Export database
+        run: >-
+          pg_dump "$RESONANCE_TEST_DSN"
+          --no-owner --no-privileges
+          > "$OUTPUT_DIR/postgres.sql"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: decay-${{ matrix.arm }}-seed-${{ matrix.seed }}
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish Experiment 002 notebook summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARM: ${{ matrix.arm }}
+          SEED: ${{ matrix.seed }}
+        run: |
+          python - <<'PY' > "$OUTPUT_DIR/lab-comment.md"
+          import json
+          import os
+          from pathlib import Path
+
+          output = Path(os.environ["OUTPUT_DIR"])
+          data = json.loads((output / "experiment.json").read_text())
+          metrics = data["metrics"]
+          print(f"### Cell `{os.environ['ARM']}` / seed `{os.environ['SEED']}`")
+          print()
+          print(f"- Run ID: `{data['run_id']}`")
+          print(f"- Commit: `{data['code_sha']}`")
+          print(f"- Half-life: **{data['half_life_seconds']:.1f}s**")
+          print(f"- Events: **{metrics['event_count']}**")
+          print(f"- Top turnover: **{metrics['top_turnover_rate']:.6f}**")
+          print(f"- Top-k Jaccard turnover: **{metrics['top_k_jaccard_turnover']:.6f}**")
+          print(f"- Mean rank displacement: **{metrics['mean_rank_displacement']:.6f}**")
+          print(f"- Same-cycle top change: **{metrics['same_cycle_top_change_rate']:.6f}**")
+          print(f"- Mean top-trace age: **{metrics['mean_top_trace_age_seconds']:.2f}s**")
+          print(f"- Mean retrieved age: **{metrics['mean_retrieved_trace_age_seconds']:.2f}s**")
+          print(f"- Old-trace retrieval share: **{metrics['old_trace_retrieval_share']:.6f}**")
+          print(f"- Unique top traces: **{metrics['unique_top_traces']}**")
+          print(f"- Top-trace entropy: **{metrics['top_trace_entropy']:.6f}**")
+          print(f"- Reinforcement actions: **{metrics['reinforcement_actions']}**")
+          print(f"- Resurrection attempts/confirmed: **{metrics['resurrection_attempts']} / {metrics['confirmed_resurrections']}**")
+          print(f"- Resurrection confirmation rate: **{metrics['resurrection_confirmation_rate']:.6f}**")
+          print(f"- Compute spent: **{metrics['total_compute_spent']}**")
+          print(f"- Artifact: `decay-{os.environ['ARM']}-seed-{os.environ['SEED']}`")
+          PY
+          gh issue comment 9 --repo "$GITHUB_REPOSITORY" --body-file "$OUTPUT_DIR/lab-comment.md"
