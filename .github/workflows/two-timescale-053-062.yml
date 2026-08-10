@@ -1,0 +1,103 @@
+name: Two-Timescale Experiments 053-062
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/two-timescale-053-062.yml"
+      - ".github/workflows/two-timescale-step.yml"
+      - "configs/experiments/two-timescale-053-062.json"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/two_timescale_*.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+
+concurrency:
+  group: two-timescale-053-062
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp053:
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 53
+    secrets: inherit
+
+  exp054:
+    needs: exp053
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 54
+      previous_artifact: two-timescale-checkpoint-53
+    secrets: inherit
+
+  exp055:
+    needs: exp054
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 55
+      previous_artifact: two-timescale-checkpoint-54
+    secrets: inherit
+
+  exp056:
+    needs: exp055
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 56
+      previous_artifact: two-timescale-checkpoint-55
+    secrets: inherit
+
+  exp057:
+    needs: exp056
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 57
+      previous_artifact: two-timescale-checkpoint-56
+    secrets: inherit
+
+  exp058:
+    needs: exp057
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 58
+      previous_artifact: two-timescale-checkpoint-57
+    secrets: inherit
+
+  exp059:
+    needs: exp058
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 59
+      previous_artifact: two-timescale-checkpoint-58
+    secrets: inherit
+
+  exp060:
+    needs: exp059
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 60
+      previous_artifact: two-timescale-checkpoint-59
+    secrets: inherit
+
+  exp061:
+    needs: exp060
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 61
+      previous_artifact: two-timescale-checkpoint-60
+    secrets: inherit
+
+  exp062:
+    needs: exp061
+    uses: ./.github/workflows/two-timescale-step.yml
+    with:
+      experiment_number: 62
+      previous_artifact: two-timescale-checkpoint-61
+    secrets: inherit
