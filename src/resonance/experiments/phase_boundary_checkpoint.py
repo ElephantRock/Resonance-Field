@@ -479,7 +479,7 @@ def run_phase_boundary_step(
         near_env = _test_environment(base, shift_period=near_shift, practice_gain=base.practice_gain)
         near_ratio = near_env.shift_period / max(tau_learning, 1.0)
         gated = _gated_policy(policy, near_ratio, theta)
-        arms, _, control = _run_experiment(
+        arms, _, _ = _run_experiment(
             connection,
             config=config.integration,
             config_hash=config_hash,
@@ -492,13 +492,14 @@ def run_phase_boundary_step(
             seeds=config.integration.seeds,
             code_sha=code_sha,
         )
+        evaluated_control = next(arm for arm in arms if arm["label"] == "no_reputation")
         gated_arm = next(arm for arm in arms if arm["label"] == "timescale_gated")
         full_arm = next(arm for arm in arms if arm["label"] == "full_reputation")
         best_reputation = max(
             (gated_arm, full_arm),
             key=lambda arm: (bool(arm["feasible"]), float(arm["utility"])),
         )
-        selected = best_reputation if bool(best_reputation["feasible"]) else control
+        selected = best_reputation if bool(best_reputation["feasible"]) else evaluated_control
         timescale_gate_selected = selected["label"] == "timescale_gated"
         if timescale_gate_selected:
             chosen_policy = gated
