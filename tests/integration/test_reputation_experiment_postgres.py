@@ -58,7 +58,7 @@ def _config() -> ReputationExperimentConfig:
         initial_credits=200,
         domains=("alpha", "beta", "gamma"),
         candidate_count=3,
-        task_budget=8,
+        task_budget=12,
         bid_deadline_seconds=5,
         fast_half_life_seconds=30.0,
         slow_half_life_seconds=120.0,
