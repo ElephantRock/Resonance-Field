@@ -320,7 +320,11 @@ class PostgresReputationBidSignalProvider:
             age_cycles = max(0.0, (at - latest).total_seconds() / self._cycle_seconds)
             freshness = 2 ** (-age_cycles / self._policy.freshness_half_life_cycles)
 
-        mass_factor = 1.0 if self._policy.mass_gate <= 0 else min(1.0, mass / self._policy.mass_gate)
+        mass_factor = (
+            1.0
+            if self._policy.mass_gate <= 0
+            else mass / (mass + self._policy.mass_gate)
+        )
         uncertainty = (
             1.0
             if self._policy.uncertainty_prior <= 0
@@ -1273,7 +1277,12 @@ def _dimension_values(
     if dimension == "practice_gain":
         return max(0.02, env.practice_gain - 0.03), min(0.20, env.practice_gain + 0.04)
     if dimension == "shift_period":
-        return max(12, env.shift_period - 6), min(max(13, env.cycles // 2), env.shift_period + 12)
+        step_down = max(1, env.shift_period // 3)
+        step_up = max(1, env.shift_period // 2)
+        return (
+            max(1, env.shift_period - step_down),
+            min(env.cycles - 1, env.shift_period + step_up),
+        )
     if dimension == "price_pressure":
         return max(0.25, env.price_floor - 0.10), min(0.70, env.price_floor + 0.10)
     if dimension == "speed_pressure":
