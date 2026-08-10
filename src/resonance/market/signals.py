@@ -7,6 +7,7 @@ neutral.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -25,13 +26,14 @@ class BidSignal:
     components: Mapping[str, float] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        if not math.isfinite(self.adjustment):
+            raise ValueError("adjustment must be finite")
         if not self.provider_label.strip():
             raise ValueError("provider_label must not be empty")
-        object.__setattr__(
-            self,
-            "components",
-            MappingProxyType({key: float(value) for key, value in self.components.items()}),
-        )
+        components = {key: float(value) for key, value in self.components.items()}
+        if any(not math.isfinite(value) for value in components.values()):
+            raise ValueError("signal components must be finite")
+        object.__setattr__(self, "components", MappingProxyType(components))
 
 
 class BidSignalProvider(Protocol):
