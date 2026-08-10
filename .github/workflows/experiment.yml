@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   run-experiment:
@@ -77,3 +78,34 @@ jobs:
           path: ${{ env.OUTPUT_DIR }}
           if-no-files-found: error
           retention-days: 30
+      - name: Publish lab notebook summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ABLATION: ${{ matrix.ablation }}
+          SEED: ${{ matrix.seed }}
+        run: |
+          python - <<'PY' > "$OUTPUT_DIR/lab-comment.md"
+          import json
+          import os
+          from pathlib import Path
+
+          output = Path(os.environ["OUTPUT_DIR"])
+          data = json.loads((output / "experiment.json").read_text())
+          metrics = data["metrics"]
+          print(f"### Cell `{os.environ['ABLATION']}` / seed `{os.environ['SEED']}`")
+          print()
+          print(f"- Run ID: `{data['run_id']}`")
+          print(f"- Commit: `{data['code_sha']}`")
+          print(f"- Events: **{metrics['event_count']}**")
+          print(f"- Mean specialization: **{metrics['mean_specialization']:.6f}**")
+          print(f"- Agent/action MI: **{metrics['agent_action_mutual_information']:.6f}**")
+          print(f"- Compute Gini: **{metrics['compute_gini']:.6f}**")
+          print(f"- Balance Gini: **{metrics['balance_gini']:.6f}**")
+          print(f"- Compute spent: **{metrics['total_compute_spent']}**")
+          print(f"- Tasks posted/completed/cancelled: **{metrics['tasks_posted']} / {metrics['tasks_completed']} / {metrics['tasks_cancelled']}**")
+          print(f"- Bids submitted: **{metrics['bids_submitted']}**")
+          print(f"- Generated traces: **{metrics['trace_count']}**")
+          print(f"- Synthetic topic coverage: **{metrics['topic_coverage']:.6f}**")
+          print(f"- Artifact: `emergence-{os.environ['ABLATION']}-seed-{os.environ['SEED']}`")
+          PY
+          gh issue comment 7 --repo "$GITHUB_REPOSITORY" --body-file "$OUTPUT_DIR/lab-comment.md"
