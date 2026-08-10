@@ -110,9 +110,16 @@ def test_campaign_runs_exactly_ten_sequential_experiments(tmp_path) -> None:
     assert experiments[-1]["next_experiment_focus"] is None
     assert isinstance(experiments[-1]["validated"], bool)
 
+    local_focuses = [item["focus"] for item in experiments[1:8]]
+    assert len(local_focuses) == 7
+    assert len(set(local_focuses)) == 7
+    assert "freshness" not in local_focuses
+
     for item in experiments:
         labels = {arm["label"] for arm in item["arms"]}
         assert item["selected_label"] in labels
+        assert "motivating_failure" in item
+        assert "observed_failure" in item
 
     assert (tmp_path / "campaign.json").exists()
     assert (tmp_path / "experiment-004.json").exists()
