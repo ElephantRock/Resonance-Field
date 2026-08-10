@@ -135,11 +135,14 @@ def write_step_artifacts(
 ) -> None:
     destination = Path(output_dir)
     destination.mkdir(parents=True, exist_ok=True)
+    export_record = dict(record)
+    export_record.setdefault("motivating_failure", "lifecycle")
+    export_record.setdefault("observed_failure", "lifecycle")
     summary = {
         "campaign": config.integration.name,
         "code_sha": code_sha,
         "config_hash": config_hash,
-        "experiments": [dict(record)],
+        "experiments": [export_record],
         "checkpoint": dict(checkpoint),
     }
     export_integration_campaign_artifacts(
