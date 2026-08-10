@@ -36,7 +36,7 @@ class TwoTimescaleConfig:
     replication_seeds: tuple[int, ...]
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "TwoTimescaleConfig":
+    def from_mapping(cls, value: Mapping[str, object]) -> TwoTimescaleConfig:
         integration = IntegrationCampaignConfig.from_mapping(value)
         raw = value["two_timescale"]
         assert isinstance(raw, Mapping)
