@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
-from typing import Sequence
 from uuid import UUID, uuid4
 
 from resonance.agents import (
