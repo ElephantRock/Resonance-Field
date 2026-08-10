@@ -6,14 +6,13 @@ from uuid import UUID
 import pytest
 
 from resonance.experiments.adaptive_campaign import (
-    baseline_bid_score,
     CampaignConfig,
     CampaignPolicy,
+    baseline_bid_score,
     is_feasible,
     run_campaign,
 )
 from resonance.market.models import MarketBid, MarketTask, bid_score
-
 
 TASK_ID = UUID("00000000-0000-0000-0000-000000000001")
 AGENT_ID = UUID("00000000-0000-0000-0000-000000000002")
