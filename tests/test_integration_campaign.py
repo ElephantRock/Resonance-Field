@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
+from datetime import UTC, datetime
 from pathlib import Path
+
+import pytest
 
 from resonance.experiments import integration_campaign as campaign
 
@@ -130,3 +134,39 @@ def test_validated_policy_is_nonspendable_configuration_only() -> None:
     assert policy.mass_gate == 2.0
     assert policy.positive_weight == 2.0
     assert policy.shift_reset == 0.8
+
+
+class _FixedStatsProvider(campaign.PostgresReputationBidSignalProvider):
+    def __init__(self, policy: campaign.ReputationPolicy) -> None:
+        self._policy = policy
+        self._cycle_seconds = 1
+
+    def _stats(self, *args, **kwargs):
+        del args, kwargs
+        return 1.0, 0.0, datetime(2026, 8, 10, tzinfo=UTC)
+
+
+def test_integration_mass_gate_matches_experiment_013_transfer_function() -> None:
+    policy = campaign.validated_policy()
+    provider = _FixedStatsProvider(policy)
+    now = datetime(2026, 8, 10, tzinfo=UTC)
+    score, mass = provider._active_score(
+        campaign.UUID(int=1),
+        dimension="task_domain_success",
+        context_key="a",
+        regime_start=now,
+        at=now,
+    )
+    assert mass == pytest.approx(2.0)
+    assert score == pytest.approx(0.625)
+
+
+def test_shift_period_variants_stay_inside_short_horizon() -> None:
+    env = replace(_config().environment, cycles=8, shift_period=4)
+    low, high = campaign._dimension_values(
+        campaign.validated_policy(),
+        env,
+        "shift_period",
+    )
+    assert 0 < low < env.cycles
+    assert 0 < high < env.cycles
