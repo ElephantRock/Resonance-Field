@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
@@ -168,7 +169,7 @@ class PostgresMarketService:
             task = _task_from_row(row)
             if task.status != "open":
                 raise ValueError("task is not open for bids")
-            if at > task.deadline:
+            if at >= task.deadline:
                 raise ValueError("task bidding deadline has passed")
             if bidder_agent_id == task.requester_agent_id:
                 raise ValueError("requester cannot bid on its own task")
@@ -280,6 +281,7 @@ class PostgresMarketService:
                 """,
                 (winner.bidder_agent_id, winner.bid_id, at, task_id),
             )
+            winner = replace(winner, status="selected")
 
         awarded = self.get_task(task_id)
         assert awarded is not None

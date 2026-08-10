@@ -162,37 +162,39 @@ class AgentRuntime:
         request = self._policy.choose(agent_id, context)
         evaluation = self._gateway.evaluate(agent_id, request)
 
-        if evaluation.result == PolicyResult.REJECT:
-            outcome = ActionOutcome(status=OutcomeStatus.REJECTED)
-        elif evaluation.result == PolicyResult.REQUIRE_HUMAN_APPROVAL:
-            outcome = ActionOutcome(status=OutcomeStatus.APPROVAL_REQUIRED)
-        else:
-            try:
-                outcome = self._execute(agent_id, context, request)
-            except Exception as exc:
-                outcome = ActionOutcome(
-                    status=OutcomeStatus.FAILED,
-                    error=f"{type(exc).__name__}: {exc}",
-                )
+        with self._events.transaction():
+            if evaluation.result == PolicyResult.REJECT:
+                outcome = ActionOutcome(status=OutcomeStatus.REJECTED)
+            elif evaluation.result == PolicyResult.REQUIRE_HUMAN_APPROVAL:
+                outcome = ActionOutcome(status=OutcomeStatus.APPROVAL_REQUIRED)
+            else:
+                try:
+                    outcome = self._execute(agent_id, context, request)
+                except Exception as exc:
+                    outcome = ActionOutcome(
+                        status=OutcomeStatus.FAILED,
+                        error=f"{type(exc).__name__}: {exc}",
+                    )
 
-        event = DecisionEvent(
-            agent_id=agent_id,
-            occurred_at=observation.observed_at,
-            trigger=observation.trigger,
-            proposed_action=request.action,
-            policy_result=evaluation.result,
-            policy_reason=evaluation.reason,
-            outcome_status=outcome.status,
-            confidence=request.confidence,
-            request_id=request.request_id,
-            correlation_id=request.correlation_id,
-            retrieved_trace_ids=tuple(item.trace.trace_id for item in retrieved),
-            output_trace_ids=outcome.output_trace_ids,
-            action_payload=_safe_payload(request.payload),
-            outcome_data=outcome.data,
-            error=outcome.error,
-        )
-        self._events.append(event)
+            event = DecisionEvent(
+                agent_id=agent_id,
+                occurred_at=observation.observed_at,
+                trigger=observation.trigger,
+                proposed_action=request.action,
+                policy_result=evaluation.result,
+                policy_reason=evaluation.reason,
+                outcome_status=outcome.status,
+                confidence=request.confidence,
+                request_id=request.request_id,
+                correlation_id=request.correlation_id,
+                retrieved_trace_ids=tuple(item.trace.trace_id for item in retrieved),
+                output_trace_ids=outcome.output_trace_ids,
+                action_payload=_safe_payload(request.payload),
+                outcome_data=outcome.data,
+                error=outcome.error,
+            )
+            self._events.append(event)
+
         return StepResult(context, request, evaluation, outcome, event)
 
     def _require_market(self) -> MarketService:

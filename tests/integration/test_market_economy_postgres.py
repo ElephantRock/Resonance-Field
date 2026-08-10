@@ -14,6 +14,7 @@ from resonance.agents import (
     ActionType,
     AgentObservation,
     AgentRuntime,
+    DecisionEvent,
     DefaultPolicyGateway,
     OutcomeStatus,
 )
@@ -127,6 +128,7 @@ def test_double_entry_escrow_auction_and_settlement(
     award = market.award(task.task_id, at=start + timedelta(hours=1, minutes=1))
     assert award is not None
     assert award.winning_bid.bid_id == bid_b.bid_id
+    assert award.winning_bid.status == "selected"
     assert award.task.awarded_agent_id == bidder_b
 
     statuses = db.execute(
@@ -175,6 +177,44 @@ def test_double_entry_escrow_auction_and_settlement(
         )
 
 
+def test_deadline_is_exclusive_for_bids_and_inclusive_for_award(
+    db: psycopg.Connection[dict[str, object]],
+) -> None:
+    economy = PostgresEconomyRepository(db)
+    market = PostgresMarketService(db, economy)
+    start = datetime(2026, 1, 2, tzinfo=UTC)
+    deadline = start + timedelta(hours=1)
+    requester = uuid4()
+    bidder = uuid4()
+
+    economy.register_agent(requester, at=start, initial_credits=50)
+    economy.register_agent(bidder, at=start, initial_credits=5)
+    task = market.post_task(
+        requester,
+        description="Boundary test",
+        budget=20,
+        deadline=deadline,
+        at=start,
+    )
+
+    with pytest.raises(ValueError, match="deadline has passed"):
+        market.submit_bid(
+            bidder,
+            task_id=task.task_id,
+            price=10,
+            confidence=0.8,
+            estimated_completion_seconds=300,
+            strategy_summary="Attempt at exact deadline",
+            at=deadline,
+        )
+
+    assert market.award(task.task_id, at=deadline) is None
+    cancelled = market.get_task(task.task_id)
+    assert cancelled is not None
+    assert cancelled.status == "cancelled"
+    assert economy.balance(requester) == 50
+
+
 class FixedPolicy:
     def __init__(self, request: ActionRequest) -> None:
         self.request = request
@@ -182,6 +222,57 @@ class FixedPolicy:
     def choose(self, agent_id: UUID, context: DecisionContext) -> ActionRequest:
         del agent_id, context
         return self.request
+
+
+class FailingPostgresDecisionEventStore(PostgresDecisionEventStore):
+    def append(self, event: DecisionEvent) -> None:
+        del event
+        raise RuntimeError("simulated provenance failure")
+
+
+def test_runtime_rolls_back_market_side_effects_when_provenance_fails(
+    db: psycopg.Connection[dict[str, object]],
+) -> None:
+    economy = PostgresEconomyRepository(db)
+    market = PostgresMarketService(db, economy)
+    traces = PostgresTraceRepository(db)
+    events = FailingPostgresDecisionEventStore(db)
+    start = datetime(2026, 1, 3, tzinfo=UTC)
+    requester = uuid4()
+    economy.register_agent(requester, at=start, initial_credits=80)
+
+    post = ActionRequest(
+        ActionType.POST_TASK,
+        {
+            "description": "This task must roll back with provenance",
+            "budget": 50,
+            "deadline": (start + timedelta(hours=1)).isoformat(),
+        },
+        confidence=0.84,
+    )
+    runtime = AgentRuntime(
+        traces=traces,
+        events=events,
+        gateway=DefaultPolicyGateway(),
+        policy=FixedPolicy(post),
+        market=market,
+    )
+
+    with pytest.raises(RuntimeError, match="simulated provenance failure"):
+        runtime.step(
+            requester,
+            AgentObservation("publish rollback test", start, _embedding()),
+        )
+
+    assert economy.balance(requester) == 80
+    task_count = db.execute("SELECT COUNT(*) AS count FROM market_tasks").fetchone()
+    escrow_count = db.execute(
+        "SELECT COUNT(*) AS count FROM compute_accounts WHERE account_kind = 'task_escrow'"
+    ).fetchone()
+    event_count = db.execute("SELECT COUNT(*) AS count FROM decision_events").fetchone()
+    assert task_count is not None and task_count["count"] == 0
+    assert escrow_count is not None and escrow_count["count"] == 0
+    assert event_count is not None and event_count["count"] == 0
 
 
 def test_runtime_posts_and_bids_against_persistent_market(

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from contextlib import AbstractContextManager
 from typing import Any
 from uuid import UUID
 
@@ -50,6 +51,10 @@ class PostgresDecisionEventStore:
             raise ValueError("PostgresDecisionEventStore requires an autocommit connection")
         connection.row_factory = dict_row
         self._connection = connection
+
+    def transaction(self) -> AbstractContextManager[None]:
+        """Open the outer unit of work for side effects plus provenance."""
+        return self._connection.transaction()
 
     def append(self, event: DecisionEvent) -> None:
         self._connection.execute(
