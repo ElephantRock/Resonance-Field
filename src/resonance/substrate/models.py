@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -29,7 +29,7 @@ class Trace:
     updated_at: datetime
     initial_energy: float
     half_life_seconds: float
-    trace_id: UUID = uuid4()
+    trace_id: UUID = field(default_factory=uuid4)
     author_agent_id: UUID | None = None
     embedding: tuple[float, ...] | None = None
     energy_anchor: float | None = None
