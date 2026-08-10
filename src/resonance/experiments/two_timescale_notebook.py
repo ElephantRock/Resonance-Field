@@ -106,6 +106,7 @@ def render_synthesis(checkpoint: Mapping[str, object]) -> str:
             f"- Measurements: `{checkpoint['measurements']}`",
             f"- Model: `{checkpoint['model']}`",
             f"- Model test validated: **{bool(checkpoint['model_test_validated'])}**",
+            f"- Derived mechanism validated: **{bool(checkpoint['mechanism_validated'])}**",
             f"- Candidate policy: `{checkpoint['candidate_policy']}`",
             f"- Replication validated: **{bool(checkpoint['replication_validated'])}**",
             f"- Holdout validated: **{bool(checkpoint['validated'])}**",
