@@ -35,7 +35,7 @@ def _as_vector(value: Sequence[float] | None) -> Vector | None:
         return None
     if len(value) != 1536:
         raise ValueError("embedding must contain exactly 1536 dimensions")
-    return Vector(value)
+    return Vector(list(value))
 
 
 def _trace_from_row(row: Mapping[str, Any]) -> Trace:
