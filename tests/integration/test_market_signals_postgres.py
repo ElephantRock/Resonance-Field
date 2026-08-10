@@ -14,7 +14,6 @@ from resonance.experiments.integration_campaign import (
     ArmSpec,
     IntegrationCampaignConfig,
     IntegrationEnvironment,
-    ReputationPolicy,
     run_integration_arm,
     validated_policy,
 )
