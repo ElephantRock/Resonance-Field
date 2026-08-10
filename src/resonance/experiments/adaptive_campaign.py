@@ -1,9 +1,8 @@
 """Adaptive reputation campaign for Experiments 004 through 013.
 
-This laboratory is intentionally a deterministic simulation layer. Experiment 003
-already validated the PostgreSQL reputation evidence boundary; this campaign isolates
-allocation-policy dynamics so ten sequential experiments can run quickly while
-preserving the production market scoring semantics.
+Experiment 003 validated the persistent PostgreSQL reputation ledger. This module
+isolates allocation-policy dynamics so sequential policy experiments can run quickly
+and reproducibly before any scorer is considered for production integration.
 """
 
 from __future__ import annotations
@@ -28,6 +27,7 @@ class CampaignPolicy:
     mass_gate: float = 0.0
     context_mode: str = "domain"
     blend_skill: float = 0.5
+    positive_weight: float = 1.0
     negative_weight: float = 1.0
     shift_reset: float = 0.0
 
@@ -44,8 +44,8 @@ class CampaignPolicy:
             raise ValueError("unsupported context_mode")
         if not 0.0 <= self.blend_skill <= 1.0:
             raise ValueError("blend_skill must be in [0, 1]")
-        if self.negative_weight <= 0:
-            raise ValueError("negative_weight must be positive")
+        if self.positive_weight <= 0 or self.negative_weight <= 0:
+            raise ValueError("evidence weights must be positive")
         if not 0.0 <= self.shift_reset <= 1.0:
             raise ValueError("shift_reset must be in [0, 1]")
 
@@ -60,8 +60,9 @@ class CampaignPolicy:
         )
         return (
             f"{self.context_mode}-w{self.weight:.2f}-{freshness}"
-            f"-g{self.mass_gate:g}-n{self.negative_weight:g}"
-            f"-r{self.shift_reset:g}-b{self.blend_skill:g}"
+            f"-g{self.mass_gate:g}-p{self.positive_weight:g}"
+            f"-n{self.negative_weight:g}-r{self.shift_reset:g}"
+            f"-b{self.blend_skill:g}"
         )
 
     def as_dict(self) -> dict[str, object]:
@@ -198,7 +199,7 @@ def baseline_bid_score(
     completion_seconds: int,
     available_seconds: int,
 ) -> float:
-    """Mirror the production market score for deterministic campaign simulation."""
+    """Mirror the production market score for campaign simulations."""
     price_efficiency = 1.0 - (price / budget)
     speed = 1.0 - min(1.0, completion_seconds / max(1.0, available_seconds))
     return 0.45 * confidence + 0.35 * price_efficiency + 0.20 * speed
@@ -236,14 +237,13 @@ def _mutual_information(pairs: Sequence[tuple[int, int]]) -> float:
     agents = Counter(agent for agent, _ in pairs)
     domains = Counter(domain for _, domain in pairs)
     total = len(pairs)
-    return sum(
-        (count / total)
-        * math.log(
-            (count / total)
-            / ((agents[agent] / total) * (domains[domain] / total))
+    result = 0.0
+    for (agent, domain), count in joint.items():
+        p_joint = count / total
+        result += p_joint * math.log(
+            p_joint / ((agents[agent] / total) * (domains[domain] / total))
         )
-        for (agent, domain), count in joint.items()
-    )
+    return result
 
 
 def _incumbents(
@@ -259,8 +259,10 @@ def _incumbents(
         )
         if not counts:
             continue
-        high = max(counts.values())
-        result[domain] = min(agent for agent, count in counts.items() if count == high)
+        highest = max(counts.values())
+        result[domain] = min(
+            agent for agent, count in counts.items() if count == highest
+        )
     return result
 
 
@@ -272,10 +274,11 @@ def _summarize_rows(
 ) -> dict[str, float]:
     success = sum(bool(row["success"]) for row in rows) / len(rows)
     pairs = [(int(row["winner"]), int(row["domain"])) for row in rows]
+
     by_agent: dict[int, Counter[int]] = defaultdict(Counter)
     for agent, domain in pairs:
         by_agent[agent][domain] += 1
-    specialization: list[float] = []
+    specializations: list[float] = []
     for counts in by_agent.values():
         total = sum(counts.values())
         entropy = -sum(
@@ -283,9 +286,9 @@ def _summarize_rows(
             for count in counts.values()
             if count
         )
-        specialization.append(1.0 - entropy / math.log(domain_count))
+        specializations.append(1.0 - entropy / math.log(domain_count))
 
-    domain_hhi: list[float] = []
+    hhis: list[float] = []
     for domain in range(domain_count):
         counts = Counter(
             int(row["winner"])
@@ -294,7 +297,7 @@ def _summarize_rows(
         )
         total = sum(counts.values())
         if total:
-            domain_hhi.append(sum((count / total) ** 2 for count in counts.values()))
+            hhis.append(sum((count / total) ** 2 for count in counts.values()))
 
     incumbent_shares: list[float] = []
     replacements: list[float] = []
@@ -325,11 +328,44 @@ def _summarize_rows(
     return {
         "success_rate": success,
         "agent_domain_mutual_information": _mutual_information(pairs),
-        "mean_specialization": statistics.mean(specialization),
-        "mean_winner_hhi": statistics.mean(domain_hhi),
+        "mean_specialization": statistics.mean(specializations),
+        "mean_winner_hhi": statistics.mean(hhis),
         "early_incumbent_share": statistics.mean(incumbent_shares),
         "winner_replacement_rate": statistics.mean(replacements),
     }
+
+
+def _active_reputation(
+    *,
+    policy: CampaignPolicy,
+    domain_state: tuple[float, float],
+    domain_last: int | None,
+    skill_state: tuple[float, float],
+    skill_last: int | None,
+    cycle: int,
+) -> float:
+    if policy.mode == "none":
+        return 0.5
+    domain_score = _reputation_signal(
+        domain_state,
+        domain_last,
+        cycle,
+        policy,
+    )
+    skill_score = _reputation_signal(
+        skill_state,
+        skill_last,
+        cycle,
+        policy,
+    )
+    if policy.context_mode == "domain":
+        return domain_score
+    if policy.context_mode == "skill":
+        return skill_score
+    return (
+        (1.0 - policy.blend_skill) * domain_score
+        + policy.blend_skill * skill_score
+    )
 
 
 def run_cell(
@@ -356,15 +392,11 @@ def run_cell(
         for agent in range(agents)
         for skill in range(domains)
     }
-    domain_last = {
-        (agent, domain): None
-        for agent in range(agents)
-        for domain in range(domains)
+    domain_last: dict[tuple[int, int], int | None] = {
+        key: None for key in domain_state
     }
-    skill_last = {
-        (agent, skill): None
-        for agent in range(agents)
-        for skill in range(domains)
+    skill_last: dict[tuple[int, int], int | None] = {
+        key: None for key in skill_state
     }
     rows: list[dict[str, object]] = []
     previous_regime = 0
@@ -382,13 +414,14 @@ def run_cell(
         required_skill = (domain + regime) % domains
         requester = cycle % agents
         bids: list[tuple[float, int, int]] = []
-        for slot in _candidate_slots(
+        candidates = _candidate_slots(
             seed,
             cycle,
             agents=agents,
             requester_slot=requester,
             count=environment.candidate_count,
-        ):
+        )
+        for slot in candidates:
             last = last_success[slot][required_skill]
             evidence_signal = (
                 0.0
@@ -414,43 +447,28 @@ def run_cell(
                 completion_seconds=completion,
                 available_seconds=config.bid_deadline_seconds,
             )
-            if policy.mode == "none":
-                reputation = 0.5
-            else:
-                domain_score = _reputation_signal(
-                    tuple(domain_state[(slot, domain)]),
-                    domain_last[(slot, domain)],
-                    cycle,
-                    policy,
-                )
-                skill_score = _reputation_signal(
-                    tuple(skill_state[(slot, required_skill)]),
-                    skill_last[(slot, required_skill)],
-                    cycle,
-                    policy,
-                )
-                if policy.context_mode == "domain":
-                    reputation = domain_score
-                elif policy.context_mode == "skill":
-                    reputation = skill_score
-                else:
-                    reputation = (
-                        (1.0 - policy.blend_skill) * domain_score
-                        + policy.blend_skill * skill_score
-                    )
+            reputation = _active_reputation(
+                policy=policy,
+                domain_state=tuple(domain_state[(slot, domain)]),
+                domain_last=domain_last[(slot, domain)],
+                skill_state=tuple(skill_state[(slot, required_skill)]),
+                skill_last=skill_last[(slot, required_skill)],
+                cycle=cycle,
+            )
             total = baseline + policy.weight * (reputation - 0.5)
             bids.append((total, -slot, slot))
 
         _, _, winner = max(bids)
+        practice_count = practice[winner][required_skill]
         probability = config.base_success_probability + (
             config.maximum_success_probability - config.base_success_probability
-        ) * (1.0 - math.exp(-practice[winner][required_skill] / config.practice_scale))
+        ) * (1.0 - math.exp(-practice_count / config.practice_scale))
         succeeded = _draw(seed, cycle, winner, "outcome") < probability
         practice[winner][required_skill] += 1
         if succeeded:
             last_success[winner][required_skill] = cycle
-            domain_state[(winner, domain)][0] += 1.0
-            skill_state[(winner, required_skill)][0] += 1.0
+            domain_state[(winner, domain)][0] += policy.positive_weight
+            skill_state[(winner, required_skill)][0] += policy.positive_weight
         else:
             domain_state[(winner, domain)][1] += policy.negative_weight
             skill_state[(winner, required_skill)][1] += policy.negative_weight
@@ -569,8 +587,12 @@ def _experiment_004_candidates() -> list[CampaignPolicy]:
     ]
 
 
+def _active_weight(policy: CampaignPolicy) -> float:
+    return max(0.10, policy.weight or 0.35)
+
+
 def _variants(policy: CampaignPolicy, dimension: str) -> list[CampaignPolicy]:
-    weight = max(0.10, policy.weight or 0.35)
+    weight = _active_weight(policy)
     if dimension == "weight":
         values = {
             0.0,
@@ -622,6 +644,11 @@ def _variants(policy: CampaignPolicy, dimension: str) -> list[CampaignPolicy]:
         return [
             replace(policy, mode="reputation", weight=weight, mass_gate=value)
             for value in (0.0, 1.0, 2.0, 4.0, 8.0)
+        ]
+    if dimension == "positive_weight":
+        return [
+            replace(policy, mode="reputation", weight=weight, positive_weight=value)
+            for value in (0.50, 0.75, 1.0, 1.50, 2.0)
         ]
     if dimension == "negative_weight":
         return [
@@ -690,10 +717,13 @@ def _dominant_failure(
     control: Mapping[str, float],
 ) -> str:
     quality_deficit = control["success_rate"] - selected["success_rate"]
-    incumbent_excess = selected["early_incumbent_share"] - control["early_incumbent_share"]
-    structure_gain = structure_score(selected, config.domain_count) - structure_score(
-        control, config.domain_count
+    incumbent_excess = (
+        selected["early_incumbent_share"] - control["early_incumbent_share"]
     )
+    structure_gain = structure_score(
+        selected,
+        config.domain_count,
+    ) - structure_score(control, config.domain_count)
     if incumbent_excess > 0.025:
         return "plasticity"
     if quality_deficit > 0.005:
@@ -703,10 +733,7 @@ def _dominant_failure(
     return "calibration"
 
 
-def _next_dimension(
-    failure: str,
-    tested: set[str],
-) -> str:
+def _next_dimension(failure: str, tested: set[str]) -> str:
     orders = {
         "plasticity": (
             "freshness",
@@ -715,6 +742,7 @@ def _next_dimension(
             "weight",
             "mass_gate",
             "negative_weight",
+            "positive_weight",
             "blend",
         ),
         "quality": (
@@ -722,6 +750,7 @@ def _next_dimension(
             "context",
             "freshness",
             "negative_weight",
+            "positive_weight",
             "mass_gate",
             "shift_reset",
             "blend",
@@ -731,6 +760,7 @@ def _next_dimension(
             "context",
             "freshness",
             "blend",
+            "positive_weight",
             "mass_gate",
             "negative_weight",
             "shift_reset",
@@ -738,6 +768,7 @@ def _next_dimension(
         "calibration": (
             "mass_gate",
             "negative_weight",
+            "positive_weight",
             "shift_reset",
             "context",
             "weight",
@@ -758,7 +789,8 @@ def _question_for_dimension(dimension: str, failure: str) -> str:
         "context": "domain-versus-skill reputation context",
         "blend": "domain/skill context blending",
         "mass_gate": "minimum evidence mass",
-        "negative_weight": "negative-evidence asymmetry",
+        "positive_weight": "positive-evidence strength",
+        "negative_weight": "negative-evidence strength",
         "shift_reset": "partial domain-memory reset at regime changes",
     }
     return (
@@ -812,7 +844,10 @@ def _stress_environment(
     )
 
 
-def _stress_candidates(policy: CampaignPolicy, failure: str) -> list[CampaignPolicy]:
+def _stress_candidates(
+    policy: CampaignPolicy,
+    failure: str,
+) -> list[CampaignPolicy]:
     candidates = [CampaignPolicy(), _raw_policy(), policy]
     if failure == "plasticity":
         candidates.extend(_variants(policy, "shift_reset"))
@@ -853,13 +888,19 @@ def _holdout_environment(
     )
 
 
+def _selected_arm(
+    arms: Sequence[Mapping[str, object]],
+    label: str,
+) -> Mapping[str, object]:
+    return next(arm for arm in arms if arm["label"] == label)
+
+
 def _decision_text(
     selected: CampaignPolicy,
     arms: Sequence[Mapping[str, object]],
     failure: str,
 ) -> str:
-    selected_arm = next(arm for arm in arms if arm["label"] == selected.label)
-    metrics = selected_arm["metrics"]
+    metrics = _selected_arm(arms, selected.label)["metrics"]
     return (
         f"Selected {selected.label}: success={metrics['success_rate']:.4f}, "
         f"incumbent={metrics['early_incumbent_share']:.4f}, "
@@ -883,17 +924,16 @@ def run_campaign(
         candidate_count=config.candidate_count,
     )
     experiments: list[dict[str, object]] = []
+
     selected, arms, control = _select_policy(
         config,
         candidates=_experiment_004_candidates(),
         seeds=config.seeds,
         environment=training_environment,
     )
-    selected_metrics = next(
-        arm["metrics"] for arm in arms if arm["label"] == selected.label
-    )
+    selected_metrics = _selected_arm(arms, selected.label)["metrics"]
     failure = _dominant_failure(config, selected_metrics, control)
-    tested: set[str] = set()
+    tested: set[str] = {"freshness"}
     next_dimension = _next_dimension(failure, tested)
     experiments.append(
         {
@@ -903,6 +943,8 @@ def run_campaign(
                 "while reducing stale-incumbent retention under repeated context shifts?"
             ),
             "focus": "freshness_screen",
+            "motivating_failure": "plasticity",
+            "observed_failure": failure,
             "environment": training_environment.as_dict(),
             "arms": arms,
             "selected_policy": selected.as_dict(),
@@ -913,6 +955,7 @@ def run_campaign(
     )
 
     for number in range(5, 12):
+        motivating_failure = failure
         dimension = next_dimension
         tested.add(dimension)
         candidates = [CampaignPolicy(), selected, *_variants(selected, dimension)]
@@ -922,9 +965,7 @@ def run_campaign(
             seeds=config.seeds,
             environment=training_environment,
         )
-        selected_metrics = next(
-            arm["metrics"] for arm in arms if arm["label"] == selected.label
-        )
+        selected_metrics = _selected_arm(arms, selected.label)["metrics"]
         failure = _dominant_failure(config, selected_metrics, control)
         if number < 11:
             next_dimension = _next_dimension(failure, tested)
@@ -934,8 +975,10 @@ def run_campaign(
         experiments.append(
             {
                 "number": number,
-                "question": _question_for_dimension(dimension, failure),
+                "question": _question_for_dimension(dimension, motivating_failure),
                 "focus": dimension,
+                "motivating_failure": motivating_failure,
+                "observed_failure": failure,
                 "environment": training_environment.as_dict(),
                 "arms": arms,
                 "selected_policy": selected.as_dict(),
@@ -945,18 +988,17 @@ def run_campaign(
             }
         )
 
-    stress_name, stress_environment = _stress_environment(config, failure)
+    stress_motivation = failure
+    stress_name, stress_environment = _stress_environment(config, stress_motivation)
     selected, arms, control = _select_policy(
         config,
-        candidates=_stress_candidates(selected, failure),
+        candidates=_stress_candidates(selected, stress_motivation),
         seeds=config.seeds,
         environment=stress_environment,
     )
-    selected_metrics = next(
-        arm["metrics"] for arm in arms if arm["label"] == selected.label
-    )
-    stress_failure = _dominant_failure(config, selected_metrics, control)
-    holdout_name, holdout_environment = _holdout_environment(config, stress_failure)
+    selected_metrics = _selected_arm(arms, selected.label)["metrics"]
+    failure = _dominant_failure(config, selected_metrics, control)
+    holdout_name, holdout_environment = _holdout_environment(config, failure)
     experiments.append(
         {
             "number": 12,
@@ -965,27 +1007,27 @@ def run_campaign(
                 "without losing quality or plasticity?"
             ),
             "focus": stress_name,
+            "motivating_failure": stress_motivation,
+            "observed_failure": failure,
             "environment": stress_environment.as_dict(),
             "arms": arms,
             "selected_policy": selected.as_dict(),
             "selected_label": selected.label,
-            "decision": _decision_text(selected, arms, stress_failure),
+            "decision": _decision_text(selected, arms, failure),
             "next_experiment_focus": holdout_name,
         }
     )
 
     final_policy = selected
     holdout_candidates = [CampaignPolicy(), _raw_policy(), final_policy]
-    holdout_selected, arms, holdout_control = _select_policy(
+    holdout_best, arms, holdout_control = _select_policy(
         config,
         candidates=holdout_candidates,
         seeds=config.holdout_seeds,
         environment=holdout_environment,
     )
-    final_arm = next(arm for arm in arms if arm["label"] == final_policy.label)
-    control_arm = next(
-        arm for arm in arms if arm["label"] == CampaignPolicy().label
-    )
+    final_arm = _selected_arm(arms, final_policy.label)
+    control_arm = _selected_arm(arms, CampaignPolicy().label)
     validated = (
         is_feasible(final_arm["metrics"], holdout_control, config)
         and float(final_arm["utility"]) >= float(control_arm["utility"]) - 0.005
@@ -998,11 +1040,13 @@ def run_campaign(
                 "seeds and an independently selected shock schedule?"
             ),
             "focus": holdout_name,
+            "motivating_failure": failure,
+            "observed_failure": None,
             "environment": holdout_environment.as_dict(),
             "arms": arms,
             "selected_policy": final_policy.as_dict(),
             "selected_label": final_policy.label,
-            "holdout_best_label": holdout_selected.label,
+            "holdout_best_label": holdout_best.label,
             "validated": validated,
             "decision": (
                 f"Final policy {'validated' if validated else 'did not validate'} on holdout. "
