@@ -108,6 +108,42 @@ def _mutual_information(rows: Sequence[tuple[str, int]]) -> float:
     return value
 
 
+def _learning_timescale_from_observations(
+    observations: Sequence[tuple[str, int]],
+    *,
+    target_fraction: float,
+) -> float:
+    """Estimate specialization onset from equal-width MI windows.
+
+    Every MI estimate uses the same number of observations so finite-sample
+    plug-in bias is comparable across time. The stable reference level is the
+    median of the final quarter of equal-width window estimates (capped at 12),
+    and the crossing must persist for three consecutive endpoints.
+    """
+
+    if len(observations) < 12:
+        return float(len(observations))
+    window = min(24, max(12, len(observations) // 4))
+    estimates = [
+        (end, _mutual_information(observations[end - window : end]))
+        for end in range(window, len(observations) + 1)
+    ]
+    tail_count = min(12, max(3, len(estimates) // 4))
+    stable_level = statistics.median(value for _, value in estimates[-tail_count:])
+    if stable_level <= 1e-12:
+        return float(len(observations))
+    threshold = target_fraction * stable_level
+    consecutive = 0
+    for end, value in estimates:
+        if value >= threshold:
+            consecutive += 1
+            if consecutive >= 3:
+                return float(end - 2)
+        else:
+            consecutive = 0
+    return float(len(observations))
+
+
 def _learning_timescale_for_run(
     connection: Connection[Any],
     run_id: str,
@@ -124,21 +160,10 @@ def _learning_timescale_for_run(
         (UUID(str(run_id)),),
     ).fetchall()
     observations = [(str(row["task_domain"]), int(row["winner_slot"])) for row in rows]
-    if len(observations) < 8:
-        return float(len(observations))
-    final_mi = _mutual_information(observations)
-    if final_mi <= 1e-12:
-        return float(len(observations))
-    threshold = target_fraction * final_mi
-    crossings: list[float] = []
-    for end in range(8, len(observations) + 1):
-        if _mutual_information(observations[:end]) >= threshold:
-            crossings.append(float(end))
-            if len(crossings) >= 3 and crossings[-1] - crossings[-3] == 2:
-                return crossings[-3]
-        else:
-            crossings.clear()
-    return float(len(observations))
+    return _learning_timescale_from_observations(
+        observations,
+        target_fraction=target_fraction,
+    )
 
 
 def _learning_timescale(
@@ -334,6 +359,19 @@ def _adjust_theta(theta: float, sign: str) -> float:
 def _gated_policy(policy: ReputationPolicy, ratio: float, theta: float) -> ReputationPolicy:
     scale = max(0.0, min(1.0, ratio / max(theta, 1e-9)))
     return replace(policy, weight=policy.weight * scale)
+
+
+def _candidate_policy_for_ratio(
+    reference: ReputationPolicy,
+    chosen: ReputationPolicy,
+    *,
+    timescale_gate_selected: bool,
+    ratio: float,
+    theta: float,
+) -> ReputationPolicy:
+    if timescale_gate_selected:
+        return _gated_policy(reference, ratio, theta)
+    return chosen
 
 
 def _predicted_sign(ratio: float, theta: float) -> str:
@@ -593,6 +631,14 @@ def run_phase_boundary_campaign(
         shift_period=replication_shift,
         practice_gain=replication_gain,
     )
+    replication_ratio = replication_env.shift_period / max(replication_tau, 1.0)
+    replication_policy = _candidate_policy_for_ratio(
+        policy,
+        chosen_policy,
+        timescale_gate_selected=timescale_gate_selected,
+        ratio=replication_ratio,
+        theta=theta,
+    )
     arms, reference, control, effect, sign = _paired_experiment(
         connection,
         config=config,
@@ -601,7 +647,7 @@ def run_phase_boundary_campaign(
         number=51,
         env=replication_env,
         seeds=config.replication_seeds,
-        policy=chosen_policy,
+        policy=replication_policy,
         reference_label="candidate_policy",
     )
     candidate = reference
@@ -622,7 +668,9 @@ def run_phase_boundary_campaign(
                 "practice_gain": replication_gain,
                 "learning_timescale_cycles": replication_tau,
                 "shift_period": replication_shift,
+                "timescale_ratio": replication_ratio,
                 "candidate_effect": candidate_effect,
+                "candidate_weight": replication_policy.weight,
             },
         )
     )
@@ -637,7 +685,13 @@ def run_phase_boundary_campaign(
         candidate_count=config.integration.holdout_candidate_count,
     )
     holdout_ratio = holdout_env.shift_period / max(tau_learning, 1.0)
-    holdout_policy = _gated_policy(policy, holdout_ratio, theta) if timescale_gate_selected else chosen_policy
+    holdout_policy = _candidate_policy_for_ratio(
+        policy,
+        chosen_policy,
+        timescale_gate_selected=timescale_gate_selected,
+        ratio=holdout_ratio,
+        theta=theta,
+    )
     arms, _, control = _run_experiment(
         connection,
         config=config.integration,
@@ -685,6 +739,7 @@ def run_phase_boundary_campaign(
                 "boundary_bracketed": bracketed,
                 "holdout_shift_period": holdout_env.shift_period,
                 "holdout_ratio": holdout_ratio,
+                "candidate_weight": holdout_policy.weight,
                 "predicted_reference_sign": predicted_reference_sign,
                 "observed_reference_sign": observed_reference_sign,
                 "reference_effect": reference_effect,
