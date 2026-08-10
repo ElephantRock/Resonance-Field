@@ -17,12 +17,33 @@ from .decay import reinforce_energy
 from .models import RetrievedTrace, Trace
 from .retrieval import RetrievalWeights
 
-_TRACE_COLUMNS = """
-trace_id, author_agent_id, kind, content, embedding, created_at, updated_at,
-initial_energy, energy_anchor, energy_updated_at, half_life_seconds, confidence,
-quality_score, adoption_score, context_score, exploration_bonus,
-repetition_penalty, status, safety_class, visibility
-"""
+_TRACE_COLUMN_NAMES = (
+    "trace_id",
+    "author_agent_id",
+    "kind",
+    "content",
+    "embedding",
+    "created_at",
+    "updated_at",
+    "initial_energy",
+    "energy_anchor",
+    "energy_updated_at",
+    "half_life_seconds",
+    "confidence",
+    "quality_score",
+    "adoption_score",
+    "context_score",
+    "exploration_bonus",
+    "repetition_penalty",
+    "status",
+    "safety_class",
+    "visibility",
+)
+_TRACE_COLUMNS = ", ".join(_TRACE_COLUMN_NAMES)
+
+
+def _trace_columns(alias: str) -> str:
+    return ", ".join(f"{alias}.{column}" for column in _TRACE_COLUMN_NAMES)
 
 
 def register_pgvector(connection: Connection[Any]) -> None:
@@ -42,7 +63,8 @@ def _trace_from_row(row: Mapping[str, Any]) -> Trace:
     raw_embedding = row.get("embedding")
     embedding = None
     if raw_embedding is not None:
-        embedding = tuple(float(value) for value in raw_embedding)
+        values = raw_embedding.to_list() if isinstance(raw_embedding, Vector) else raw_embedding
+        embedding = tuple(float(value) for value in values)
 
     return Trace(
         trace_id=row["trace_id"],
@@ -155,7 +177,7 @@ class PostgresTraceRepository:
     def parents(self, child_trace_id: UUID) -> Sequence[Trace]:
         rows = self._connection.execute(
             f"""
-            SELECT {_TRACE_COLUMNS}
+            SELECT {_trace_columns("t")}
             FROM traces t
             JOIN trace_relations r ON r.parent_trace_id = t.trace_id
             WHERE r.child_trace_id = %s
@@ -168,7 +190,7 @@ class PostgresTraceRepository:
     def children(self, parent_trace_id: UUID) -> Sequence[Trace]:
         rows = self._connection.execute(
             f"""
-            SELECT {_TRACE_COLUMNS}
+            SELECT {_trace_columns("t")}
             FROM traces t
             JOIN trace_relations r ON r.child_trace_id = t.trace_id
             WHERE r.parent_trace_id = %s
