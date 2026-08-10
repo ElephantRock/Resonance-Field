@@ -33,6 +33,7 @@ class DefaultPolicyGateway:
 
     DEFAULT_ALLOWED = frozenset(
         {
+            ActionType.OBSERVE,
             ActionType.QUERY_SUBSTRATE,
             ActionType.READ_TRACE,
             ActionType.WRITE_TRACE,
