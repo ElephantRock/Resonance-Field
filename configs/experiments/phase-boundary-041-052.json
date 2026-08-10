@@ -1,5 +1,5 @@
 {
-  "name": "phase-boundary-041-052-v0.1",
+  "name": "phase-boundary-041-052-v0.2",
   "environment": {
     "agents": 12,
     "domains": [
@@ -10,9 +10,9 @@
       "public_health",
       "mobility"
     ],
-    "cycles": 96,
+    "cycles": 72,
     "cycle_seconds": 30,
-    "shift_period": 24,
+    "shift_period": 18,
     "candidate_count": 7,
     "task_budget": 12,
     "bid_deadline_seconds": 20,
@@ -32,22 +32,22 @@
     "requester_skew": 0.0,
     "confidence_inflation": 0.0
   },
-  "seeds": [101, 202, 303],
+  "seeds": [101, 202],
   "holdout_seeds": [707, 808, 909],
-  "holdout_cycles": 108,
-  "holdout_shift_period": 24,
+  "holdout_cycles": 84,
+  "holdout_shift_period": 18,
   "holdout_candidate_count": 7,
   "success_tolerance": 0.015,
   "incumbent_tolerance": 0.05,
   "economic_tolerance": 0.08,
   "phase_boundary": {
-    "stable_cycles": 96,
+    "stable_cycles": 72,
     "min_shift_period": 6,
-    "max_shift_period": 54,
+    "max_shift_period": 42,
     "learning_target_fraction": 0.5,
     "effect_epsilon": 0.005,
     "slow_practice_gain": 0.07,
     "fast_practice_gain": 0.14,
-    "replication_seeds": [404, 505, 606]
+    "replication_seeds": [404, 505]
   }
 }
