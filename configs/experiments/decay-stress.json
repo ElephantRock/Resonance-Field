@@ -1,0 +1,31 @@
+{
+  "name": "decay-stress-v0.1",
+  "agents": 20,
+  "cycles": 120,
+  "cycle_seconds": 30,
+  "snapshot_every": 10,
+  "initial_credits": 500,
+  "neighborhoods": [
+    "urban_heat",
+    "water_systems",
+    "energy_storage",
+    "supply_networks",
+    "public_health",
+    "mobility"
+  ],
+  "traces_per_neighborhood": 5,
+  "retrieval_limit": 5,
+  "fast_half_life_seconds": 120.0,
+  "slow_half_life_seconds": 900.0,
+  "no_decay_half_life_seconds": 1000000000000.0,
+  "reinforcement_amount": 0.45,
+  "resurrection_energy_threshold": 0.18,
+  "novel_trace_every_cycles": 6,
+  "probe_every_cycles": 1,
+  "action_costs": {
+    "QUERY_SUBSTRATE": 1,
+    "WRITE_TRACE": 3,
+    "REINFORCE_TRACE": 2,
+    "ABSTAIN": 0
+  }
+}
