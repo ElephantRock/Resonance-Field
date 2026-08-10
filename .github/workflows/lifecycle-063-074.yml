@@ -1,0 +1,119 @@
+name: Lifecycle Experiments 063-074
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/lifecycle-063-074.yml"
+      - ".github/workflows/lifecycle-step.yml"
+      - "configs/experiments/lifecycle-063-074.json"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/lifecycle_*.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+
+concurrency:
+  group: lifecycle-063-074
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp063:
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 63
+    secrets: inherit
+
+  exp064:
+    needs: exp063
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 64
+      previous_artifact: lifecycle-checkpoint-63
+    secrets: inherit
+
+  exp065:
+    needs: exp064
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 65
+      previous_artifact: lifecycle-checkpoint-64
+    secrets: inherit
+
+  exp066:
+    needs: exp065
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 66
+      previous_artifact: lifecycle-checkpoint-65
+    secrets: inherit
+
+  exp067:
+    needs: exp066
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 67
+      previous_artifact: lifecycle-checkpoint-66
+    secrets: inherit
+
+  exp068:
+    needs: exp067
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 68
+      previous_artifact: lifecycle-checkpoint-67
+    secrets: inherit
+
+  exp069:
+    needs: exp068
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 69
+      previous_artifact: lifecycle-checkpoint-68
+    secrets: inherit
+
+  exp070:
+    needs: exp069
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 70
+      previous_artifact: lifecycle-checkpoint-69
+    secrets: inherit
+
+  exp071:
+    needs: exp070
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 71
+      previous_artifact: lifecycle-checkpoint-70
+    secrets: inherit
+
+  exp072:
+    needs: exp071
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 72
+      previous_artifact: lifecycle-checkpoint-71
+    secrets: inherit
+
+  exp073:
+    needs: exp072
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 73
+      previous_artifact: lifecycle-checkpoint-72
+    secrets: inherit
+
+  exp074:
+    needs: exp073
+    uses: ./.github/workflows/lifecycle-step.yml
+    with:
+      experiment_number: 74
+      previous_artifact: lifecycle-checkpoint-73
+    secrets: inherit
