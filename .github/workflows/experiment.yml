@@ -6,6 +6,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/experiment.yml"
+      - "configs/experiments/**"
+      - "src/resonance/experiments/**"
+      - "migrations/004_experiments.sql"
 
 permissions:
   contents: read
@@ -46,8 +49,14 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-      - name: Install
+      - name: Install Python package
         run: pip install -e '.[dev]'
+      - name: Ensure PostgreSQL client
+        run: |
+          if ! command -v pg_dump >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+          fi
       - name: Run experiment
         run: >-
           python -m resonance.experiments.cli
