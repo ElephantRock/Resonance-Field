@@ -1,0 +1,22 @@
+{
+  "name": "adaptive-reputation-campaign-v0.1",
+  "agents": 20,
+  "domain_count": 6,
+  "cycles": 240,
+  "shift_period": 60,
+  "trace_half_lives": [4.0, 30.0],
+  "candidate_count": 8,
+  "task_budget": 12,
+  "bid_deadline_seconds": 20,
+  "base_success_probability": 0.38,
+  "maximum_success_probability": 0.90,
+  "practice_scale": 8.0,
+  "seeds": [101, 202, 303, 404, 505],
+  "holdout_seeds": [606, 707, 808, 909, 1001],
+  "holdout_cycles": 288,
+  "holdout_shift_period": 48,
+  "holdout_trace_half_lives": [3.0, 18.0, 36.0],
+  "holdout_candidate_count": 7,
+  "success_tolerance": 0.01,
+  "incumbent_tolerance": 0.05
+}
