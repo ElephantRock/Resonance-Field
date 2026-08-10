@@ -6,9 +6,9 @@ from uuid import UUID
 import pytest
 
 from resonance.experiments.adaptive_campaign import (
+    baseline_bid_score,
     CampaignConfig,
     CampaignPolicy,
-    baseline_bid_score,
     is_feasible,
     run_campaign,
 )
