@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from types import MappingProxyType
-from typing import Mapping, Protocol, Sequence
+from typing import Protocol
 from uuid import UUID, uuid4
 
 from .actions import ActionType, OutcomeStatus
