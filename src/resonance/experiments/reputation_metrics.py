@@ -40,7 +40,11 @@ def _incumbents(
             continue
         highest = max(counts[domain].values())
         incumbents[domain] = min(
-            (agent_id for agent_id, count in counts[domain].items() if count == highest),
+            (
+                agent_id
+                for agent_id, count in counts[domain].items()
+                if count == highest
+            ),
             key=str,
         )
     return incumbents
@@ -52,7 +56,8 @@ def _incumbent_share(
     if not rows:
         return 0.0
     retained = sum(
-        incumbents.get(str(row["task_domain"])) == row["winner_agent_id"] for row in rows
+        incumbents.get(str(row["task_domain"])) == row["winner_agent_id"]
+        for row in rows
     )
     return retained / len(rows)
 
@@ -63,7 +68,9 @@ def _mean_winner_hhi(
     values: list[float] = []
     for domain in domains:
         agents = Counter(
-            row["winner_agent_id"] for row in rows if str(row["task_domain"]) == domain
+            row["winner_agent_id"]
+            for row in rows
+            if str(row["task_domain"]) == domain
         )
         total = sum(agents.values())
         if total:
@@ -83,7 +90,9 @@ def _mean_agent_domain_specialization(
     for counts in by_agent.values():
         total = sum(counts.values())
         entropy = -sum(
-            (count / total) * math.log(count / total) for count in counts.values() if count
+            (count / total) * math.log(count / total)
+            for count in counts.values()
+            if count
         )
         values.append(1.0 - entropy / math.log(domain_count))
     return sum(values) / len(values) if values else 0.0
@@ -105,7 +114,11 @@ def summarize_reputation_experiment(
         for row in post
         if int(row["cycle"]) < shift_cycle + early_post_shift_cycles
     ]
-    late_start = max(shift_cycle, (int(ordered[-1]["cycle"]) + 1) - late_post_shift_cycles) if ordered else shift_cycle
+    if ordered:
+        final_cycle = int(ordered[-1]["cycle"]) + 1
+        late_start = max(shift_cycle, final_cycle - late_post_shift_cycles)
+    else:
+        late_start = shift_cycle
     late = [row for row in post if int(row["cycle"]) >= late_start]
     incumbents = _incumbents(pre, domains)
 
@@ -124,16 +137,27 @@ def summarize_reputation_experiment(
 
     pre_winners = _incumbents(pre, domains)
     post_winners = _incumbents(post, domains)
-    comparable = [domain for domain in domains if domain in pre_winners and domain in post_winners]
-    replacements = sum(pre_winners[domain] != post_winners[domain] for domain in comparable)
+    comparable = [
+        domain
+        for domain in domains
+        if domain in pre_winners and domain in post_winners
+    ]
+    replacements = sum(
+        pre_winners[domain] != post_winners[domain] for domain in comparable
+    )
 
     brier = (
-        sum((float(row["reputation_score"]) - float(bool(row["success"]))) ** 2 for row in ordered)
+        sum(
+            (float(row["reputation_score"]) - float(bool(row["success"]))) ** 2
+            for row in ordered
+        )
         / len(ordered)
         if ordered
         else 0.0
     )
-    pairs = [(row["winner_agent_id"], str(row["task_domain"])) for row in ordered]
+    pairs = [
+        (row["winner_agent_id"], str(row["task_domain"])) for row in ordered
+    ]
     return {
         "task_count": len(ordered),
         "overall_success_rate": _rate(ordered),
@@ -147,14 +171,19 @@ def summarize_reputation_experiment(
         "mean_domain_winner_hhi": _mean_winner_hhi(ordered, domains),
         "unique_winners": len({row["winner_agent_id"] for row in ordered}),
         "reputation_brier_score": brier,
-        "pre_shift_incumbent_share_early_post": _incumbent_share(early, incumbents),
+        "pre_shift_incumbent_share_early_post": _incumbent_share(
+            early, incumbents
+        ),
         "pre_shift_incumbent_share_late_post": _incumbent_share(late, incumbents),
         "incumbent_share_drop": (
-            _incumbent_share(early, incumbents) - _incumbent_share(late, incumbents)
+            _incumbent_share(early, incumbents)
+            - _incumbent_share(late, incumbents)
         ),
         "post_shift_winner_replacement_rate": (
             replacements / len(comparable) if comparable else 0.0
         ),
         "adaptation_latency_cycles": latency,
-        "pre_shift_incumbents": {domain: str(agent_id) for domain, agent_id in incumbents.items()},
+        "pre_shift_incumbents": {
+            domain: str(agent_id) for domain, agent_id in incumbents.items()
+        },
     }
