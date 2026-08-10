@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import math
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-import math
 from uuid import UUID
 
 from resonance.agents.actions import ActionType
@@ -94,6 +94,7 @@ def summarize_behavior(
         )
 
     specializations = [float(item["specialization"]) for item in agent_metrics]
+    compute_values = [compute_by_agent[agent_id] for agent_id in balances]
     return {
         "agent_count": len(balances),
         "event_count": len(rows),
@@ -103,8 +104,8 @@ def summarize_behavior(
         "min_specialization": min(specializations, default=0.0),
         "max_specialization": max(specializations, default=0.0),
         "agent_action_mutual_information": agent_action_mutual_information(action_pairs),
-        "compute_gini": gini(list(compute_by_agent.values())),
+        "compute_gini": gini(compute_values),
         "balance_gini": gini(list(balances.values())),
-        "total_compute_spent": sum(compute_by_agent.values()),
+        "total_compute_spent": sum(compute_values),
         "agent_metrics": agent_metrics,
     }
