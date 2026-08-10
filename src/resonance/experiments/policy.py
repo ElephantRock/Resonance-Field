@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import hashlib
-from uuid import UUID
+from collections.abc import Mapping
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 from resonance.agents.actions import ActionRequest, ActionType
 from resonance.agents.runtime import AgentPolicy, DecisionContext
@@ -28,6 +28,24 @@ class SeededExperimentPolicy(AgentPolicy):
     def _cost(self, action: ActionType) -> int:
         return int(self._costs.get(action.value, 0))
 
+    def _request(
+        self,
+        action: ActionType,
+        payload: Mapping[str, object],
+        *,
+        confidence: float,
+        cycle: int,
+        slot: int,
+    ) -> ActionRequest:
+        namespace = f"resonance-experiment:{self._seed}:{cycle}:{slot}"
+        return ActionRequest(
+            action,
+            payload,
+            confidence=confidence,
+            request_id=uuid5(NAMESPACE_URL, f"{namespace}:{action.value}:request"),
+            correlation_id=uuid5(NAMESPACE_URL, f"{namespace}:correlation"),
+        )
+
     def choose(self, agent_id: UUID, context: DecisionContext) -> ActionRequest:
         del agent_id
         metadata = context.observation.metadata
@@ -47,7 +65,7 @@ class SeededExperimentPolicy(AgentPolicy):
             task_budget = int(open_task["budget"])
             price = max(1, int(task_budget * (0.45 + 0.35 * roll2)))
             if balance >= self._cost(ActionType.BID_TASK):
-                return ActionRequest(
+                return self._request(
                     ActionType.BID_TASK,
                     {
                         "task_id": open_task["task_id"],
@@ -56,12 +74,14 @@ class SeededExperimentPolicy(AgentPolicy):
                         "strategy_summary": f"Seeded independent evaluation for {topic}",
                     },
                     confidence=confidence,
+                    cycle=cycle,
+                    slot=slot,
                 )
 
         if market_enabled and roll < 0.38:
             total_required = post_budget + self._cost(ActionType.POST_TASK)
             if balance >= total_required:
-                return ActionRequest(
+                return self._request(
                     ActionType.POST_TASK,
                     {
                         "description": f"Evaluate a competing hypothesis about {topic}",
@@ -71,11 +91,13 @@ class SeededExperimentPolicy(AgentPolicy):
                         "success_condition": {"synthetic": "controller_settlement"},
                     },
                     confidence=confidence,
+                    cycle=cycle,
+                    slot=slot,
                 )
 
         if context.retrieved and roll < 0.66 and balance >= self._cost(ActionType.REINFORCE_TRACE):
             target = context.retrieved[0].trace
-            return ActionRequest(
+            return self._request(
                 ActionType.REINFORCE_TRACE,
                 {
                     "trace_id": target.trace_id,
@@ -83,10 +105,12 @@ class SeededExperimentPolicy(AgentPolicy):
                     "adoption": 0.10 if target.author_agent_id is not None else 0.0,
                 },
                 confidence=confidence,
+                cycle=cycle,
+                slot=slot,
             )
 
         if balance >= self._cost(ActionType.WRITE_TRACE):
-            return ActionRequest(
+            return self._request(
                 ActionType.WRITE_TRACE,
                 {
                     "kind": "HYPOTHESIS",
@@ -96,6 +120,14 @@ class SeededExperimentPolicy(AgentPolicy):
                     "quality_score": 0.35 + 0.55 * roll3,
                 },
                 confidence=confidence,
+                cycle=cycle,
+                slot=slot,
             )
 
-        return ActionRequest(ActionType.ABSTAIN, {}, confidence=confidence)
+        return self._request(
+            ActionType.ABSTAIN,
+            {},
+            confidence=confidence,
+            cycle=cycle,
+            slot=slot,
+        )
