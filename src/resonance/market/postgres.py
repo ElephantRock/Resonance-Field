@@ -15,6 +15,7 @@ from psycopg.types.json import Jsonb
 from resonance.economy.repository import EconomyRepository
 
 from .models import AuctionResult, MarketBid, MarketTask, bid_score
+from .signals import BidSignal, BidSignalProvider
 
 _TASK_COLUMNS = """
 task_id, requester_agent_id, escrow_account_id, description, budget, deadline,
@@ -69,12 +70,19 @@ def _bid_from_row(row: Mapping[str, Any]) -> MarketBid:
 class PostgresMarketService:
     """Sealed-bid task market with per-task escrow accounts."""
 
-    def __init__(self, connection: Connection[Any], economy: EconomyRepository) -> None:
+    def __init__(
+        self,
+        connection: Connection[Any],
+        economy: EconomyRepository,
+        *,
+        bid_signal_provider: BidSignalProvider | None = None,
+    ) -> None:
         if not connection.autocommit:
             raise ValueError("PostgresMarketService requires an autocommit connection")
         connection.row_factory = dict_row
         self._connection = connection
         self._economy = economy
+        self._bid_signal_provider = bid_signal_provider
 
     def post_task(
         self,
@@ -213,6 +221,11 @@ class PostgresMarketService:
         ).fetchone()
         return None if row is None else _task_from_row(row)
 
+    def _signal(self, task: MarketTask, bid: MarketBid, *, at: datetime) -> BidSignal:
+        if self._bid_signal_provider is None:
+            return BidSignal()
+        return self._bid_signal_provider.signal(task, bid, at=at)
+
     def award(self, task_id: UUID, *, at: datetime) -> AuctionResult | None:
         _aware("at", at)
         with self._connection.transaction():
@@ -256,11 +269,43 @@ class PostgresMarketService:
                 )
                 return None
 
+            scored: list[tuple[float, MarketBid, float, BidSignal]] = []
+            for bid in bids:
+                baseline = bid_score(task, bid)
+                signal = self._signal(task, bid, at=at)
+                total = baseline + signal.adjustment
+                scored.append((total, bid, baseline, signal))
+
             ranked = sorted(
-                ((bid_score(task, bid), bid) for bid in bids),
+                scored,
                 key=lambda item: (-item[0], item[1].submitted_at, str(item[1].bid_id)),
             )
-            score, winner = ranked[0]
+            score, winner, _, _ = ranked[0]
+
+            for total, bid, baseline, signal in ranked:
+                self._connection.execute(
+                    """
+                    INSERT INTO market_auction_scores (
+                        auction_score_id, task_id, bid_id, bidder_agent_id,
+                        baseline_score, signal_adjustment, total_score,
+                        provider_label, components, selected, captured_at
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (
+                        uuid4(),
+                        task.task_id,
+                        bid.bid_id,
+                        bid.bidder_agent_id,
+                        baseline,
+                        signal.adjustment,
+                        total,
+                        signal.provider_label,
+                        Jsonb(dict(signal.components)),
+                        bid.bid_id == winner.bid_id,
+                        at,
+                    ),
+                )
+
             self._connection.execute(
                 "UPDATE market_bids SET status = 'selected' WHERE bid_id = %s AND status = 'sealed'",
                 (winner.bid_id,),
