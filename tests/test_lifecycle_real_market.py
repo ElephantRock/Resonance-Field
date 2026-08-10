@@ -92,3 +92,21 @@ def test_lifecycle_succession_runs_through_real_market() -> None:
         assert all(finite["invariants"].values())
         event_count = connection.execute("SELECT COUNT(*) AS n FROM succession_events").fetchone()
         assert event_count is not None and int(event_count["n"]) > 0
+        retired = connection.execute(
+            """
+            SELECT DISTINCT a.status, c.balance
+            FROM succession_events s
+            JOIN agents a ON a.agent_id = s.old_agent_id
+            JOIN compute_accounts c ON c.owner_agent_id = s.old_agent_id
+            """
+        ).fetchall()
+        assert retired
+        assert all(row["status"] == "retired" and int(row["balance"]) == 0 for row in retired)
+        successors = connection.execute(
+            """
+            SELECT DISTINCT a.generation
+            FROM succession_events s
+            JOIN agents a ON a.agent_id = s.new_agent_id
+            """
+        ).fetchall()
+        assert successors and all(int(row["generation"]) >= 1 for row in successors)
