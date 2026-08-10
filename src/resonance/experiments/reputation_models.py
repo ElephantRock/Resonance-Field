@@ -114,10 +114,14 @@ class ReputationExperimentConfig:
         }
 
     def half_life_for(self, arm: str) -> float:
-        return self.fast_half_life_seconds if arm.startswith("fast_") else self.slow_half_life_seconds
+        return (
+            self.fast_half_life_seconds
+            if arm.startswith("fast_")
+            else self.slow_half_life_seconds
+        )
 
     def reputation_enabled(self, arm: str) -> bool:
-        return arm.endswith("_reputation")
+        return arm in {"slow_reputation", "fast_reputation"}
 
 
 def load_reputation_experiment_config(
@@ -127,4 +131,7 @@ def load_reputation_experiment_config(
     value = json.loads(raw)
     if not isinstance(value, dict):
         raise ValueError("experiment config must contain a JSON object")
-    return ReputationExperimentConfig.from_mapping(value), hashlib.sha256(raw).hexdigest()
+    return (
+        ReputationExperimentConfig.from_mapping(value),
+        hashlib.sha256(raw).hexdigest(),
+    )
