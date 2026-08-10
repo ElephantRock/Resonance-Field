@@ -1,0 +1,70 @@
+name: Emergence Experiment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/experiment.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  run-experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        ablation: [full, no_market, no_decay]
+        seed: [101, 202, 303]
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/${{ matrix.ablation }}-seed-${{ matrix.seed }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install
+        run: pip install -e '.[dev]'
+      - name: Run experiment
+        run: >-
+          python -m resonance.experiments.cli
+          --config configs/experiments/first-emergence.json
+          --ablation ${{ matrix.ablation }}
+          --seed ${{ matrix.seed }}
+          --code-sha "$GITHUB_SHA"
+          --output-dir "$OUTPUT_DIR"
+      - name: Export database
+        run: >-
+          pg_dump "$RESONANCE_TEST_DSN"
+          --no-owner --no-privileges
+          > "$OUTPUT_DIR/postgres.sql"
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: emergence-${{ matrix.ablation }}-seed-${{ matrix.seed }}
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          retention-days: 30
