@@ -31,6 +31,14 @@ def render_record(record: Mapping[str, object]) -> str:
     selected_invariants = selected["invariants"]
     assert isinstance(selected_metrics, Mapping)
     assert isinstance(selected_invariants, Mapping)
+    late_knowledge = selected_metrics.get(
+        "late_public_knowledge_coverage",
+        selected_metrics["public_knowledge_coverage"],
+    )
+    late_culture = selected_metrics.get(
+        "late_cultural_lineage_hhi",
+        selected_metrics["cultural_lineage_hhi"],
+    )
     lines = [
         f"<!-- lifecycle-063-074:experiment-{number:03d} -->",
         f"## Experiment {number:03d} — completed",
@@ -40,10 +48,11 @@ def render_record(record: Mapping[str, object]) -> str:
         f"- Focus: `{record['focus']}`",
         f"- Selected arm: `{record['selected_label']}`",
         f"- Success: **{float(selected_metrics['success_rate']):.6f}**",
-        f"- Identity incumbent share: **{float(selected_metrics['identity_early_incumbent_share']):.6f}**",
+        f"- Logical-slot incumbent share: **{float(selected_metrics['early_incumbent_share']):.6f}**",
+        f"- UUID incumbent share: **{float(selected_metrics['identity_early_incumbent_share']):.6f}**",
         f"- Winner HHI: **{float(selected_metrics['mean_winner_hhi']):.6f}**",
-        f"- Public knowledge coverage: **{float(selected_metrics['public_knowledge_coverage']):.6f}**",
-        f"- Cultural lineage HHI: **{float(selected_metrics['cultural_lineage_hhi']):.6f}**",
+        f"- Late public knowledge coverage: **{float(late_knowledge):.6f}**",
+        f"- Late cultural lineage HHI: **{float(late_culture):.6f}**",
         f"- Exit count: **{float(selected_metrics['exit_count']):.2f}**",
         f"- Hard invariants: **{all(bool(v) for v in selected_invariants.values())}**",
         f"- Next focus: `{record.get('next_experiment_focus')}`",
@@ -52,9 +61,11 @@ def render_record(record: Mapping[str, object]) -> str:
         lines.append(f"- Validated: **{bool(record['validated'])}**")
     extras = [
         "success_effect",
+        "logical_incumbent_reduction",
         "identity_incumbent_reduction",
         "hhi_reduction",
         "knowledge_effect",
+        "cultural_hhi_reduction",
         "exit_causal",
         "reputation_independent",
         "rapid_shift_validated",
@@ -62,6 +73,7 @@ def render_record(record: Mapping[str, object]) -> str:
         "replication_validated",
         "diversification_selected",
         "death_minus_retirement_success",
+        "retirement_consultation_weight",
     ]
     for name in extras:
         if name in record:
@@ -79,12 +91,17 @@ def render_record(record: Mapping[str, object]) -> str:
     )
     for arm in ranked:
         assert isinstance(arm, Mapping)
+        metrics = arm["metrics"]
+        assert isinstance(metrics, Mapping)
+        arm_late_knowledge = float(
+            metrics.get("late_public_knowledge_coverage", metrics["public_knowledge_coverage"])
+        )
         lines.append(
             f"- `{arm['label']}` — success {_metric(arm, 'success_rate'):.6f}; "
-            f"identity incumbent {_metric(arm, 'identity_early_incumbent_share'):.6f}; "
+            f"logical incumbent {_metric(arm, 'early_incumbent_share'):.6f}; "
+            f"UUID incumbent {_metric(arm, 'identity_early_incumbent_share'):.6f}; "
             f"HHI {_metric(arm, 'mean_winner_hhi'):.6f}; "
-            f"knowledge {_metric(arm, 'public_knowledge_coverage'):.6f}; "
-            f"culture HHI {_metric(arm, 'cultural_lineage_hhi'):.6f}; "
+            f"late knowledge {arm_late_knowledge:.6f}; "
             f"feasible {arm.get('feasible', 'n/a')}; utility {arm.get('utility', 'n/a')}"
         )
     return "\n".join(lines) + "\n"
