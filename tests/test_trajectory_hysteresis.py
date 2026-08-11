@@ -57,13 +57,20 @@ def test_tolerance_matching_is_deterministic_and_without_replacement() -> None:
         right_history="counter_history",
         protocol=protocol,
     )
+    repeat = match_histories(
+        records,
+        left_history="aligned_history",
+        right_history="counter_history",
+        protocol=protocol,
+    )
+    assert result == repeat
     assert result["matched_count"] == 2
     assert result["support"] == 1.0
     pairs = result["pairs"]
-    assert pairs[0]["left_seed"] == 1
-    assert pairs[0]["right_seed"] == 10
-    assert pairs[1]["left_seed"] == 2
-    assert pairs[1]["right_seed"] == 11
+    matched = {(pair["left_seed"], pair["right_seed"]) for pair in pairs}
+    assert matched == {(1, 10), (2, 11)}
+    assert len({pair["left_seed"] for pair in pairs}) == 2
+    assert len({pair["right_seed"] for pair in pairs}) == 2
 
 
 def test_trajectory_observables_are_bounded_and_reproducible() -> None:
