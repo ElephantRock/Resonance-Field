@@ -1,0 +1,72 @@
+name: Chaos / Predictability-Decay Experiments 123-128
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/chaos-predictability-123-128.yml"
+      - ".github/workflows/chaos-predictability-step.yml"
+      - "configs/experiments/chaos-predictability-123-128.json"
+      - "configs/experiments/endogenous-demand-105-110.json"
+      - "migrations/020_chaos_predictability_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/chaos_predictability_*.py"
+      - "src/resonance/experiments/endogenous_demand_campaign.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: chaos-predictability-123-128
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp123:
+    uses: ./.github/workflows/chaos-predictability-step.yml
+    with:
+      experiment_number: 123
+    secrets: inherit
+  exp124:
+    needs: exp123
+    uses: ./.github/workflows/chaos-predictability-step.yml
+    with:
+      experiment_number: 124
+      previous_artifact: chaos-predictability-checkpoint-123
+    secrets: inherit
+  exp125:
+    needs: exp124
+    uses: ./.github/workflows/chaos-predictability-step.yml
+    with:
+      experiment_number: 125
+      previous_artifact: chaos-predictability-checkpoint-124
+    secrets: inherit
+  exp126:
+    needs: exp125
+    uses: ./.github/workflows/chaos-predictability-step.yml
+    with:
+      experiment_number: 126
+      previous_artifact: chaos-predictability-checkpoint-125
+    secrets: inherit
+  exp127:
+    needs: exp126
+    uses: ./.github/workflows/chaos-predictability-step.yml
+    with:
+      experiment_number: 127
+      previous_artifact: chaos-predictability-checkpoint-126
+    secrets: inherit
+  exp128:
+    needs: exp127
+    uses: ./.github/workflows/chaos-predictability-step.yml
+    with:
+      experiment_number: 128
+      previous_artifact: chaos-predictability-checkpoint-127
+    secrets: inherit

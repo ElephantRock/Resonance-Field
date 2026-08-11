@@ -1,0 +1,52 @@
+{
+  "name": "chaos-predictability-123-128-v0.1",
+  "canonical_endogenous_config": "configs/experiments/endogenous-demand-105-110.json",
+  "feedback_strength": 0.5,
+  "perturb_cycle": 5,
+  "trace_min_cycle": 5,
+  "feedback_delay_cycles": 1,
+  "epsilons": [0.000001, 0.0001, 0.01, 0.1, 1.0],
+  "distance_thresholds": {
+    "micro": 0.10,
+    "meso": 0.10,
+    "macro": 0.05,
+    "persistent_hits": 3,
+    "persistent_window": 5
+  },
+  "scaling_gates": {
+    "maximum_spearman": -0.70,
+    "minimum_distinct_finite_horizons": 3,
+    "minimum_local_micro_meso_crossing": 0.50,
+    "minimum_local_macro_crossing": 0.25,
+    "minimum_bounded_crossing_share": 0.75,
+    "maximum_saturation_cv": 0.50,
+    "minimum_org_chaos_macro_crossing": 0.40,
+    "minimum_org_chaos_basin_disagreement": 0.30
+  },
+  "boundedness": {
+    "minimum_final_success": 0.10,
+    "minimum_final_winners": 2,
+    "minimum_final_domains": 2,
+    "saturation_growth_limit": 0.05
+  },
+  "basins": {
+    "lock_in_incumbency": 0.08,
+    "plastic_incumbency": 0.04,
+    "plastic_success_tolerance": 0.015,
+    "minimum_mixture_share": 0.20
+  },
+  "standard": {
+    "cycles": 126,
+    "shift_period": 18,
+    "candidate_count": 7
+  },
+  "holdout": {
+    "cycles": 120,
+    "shift_period": 15,
+    "candidate_count": 7
+  },
+  "instrumentation_seeds": [2001, 2002, 2003, 2004],
+  "discovery_seeds": [2101, 2102, 2103, 2104, 2105, 2106, 2107, 2108],
+  "replication_seeds": [2201, 2202, 2203, 2204, 2205, 2206, 2207, 2208],
+  "holdout_seeds": [2301, 2302, 2303, 2304, 2305, 2306, 2307, 2308]
+}
