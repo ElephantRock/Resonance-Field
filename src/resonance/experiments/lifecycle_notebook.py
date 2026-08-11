@@ -13,8 +13,24 @@ def _metric(arm: Mapping[str, object], name: str) -> float:
     return float(metrics[name])
 
 
+def _selected_arm(record: Mapping[str, object]) -> Mapping[str, object]:
+    arms = record["arms"]
+    assert isinstance(arms, Sequence)
+    selected_label = str(record["selected_label"])
+    for arm in arms:
+        assert isinstance(arm, Mapping)
+        if str(arm["label"]) == selected_label:
+            return arm
+    raise ValueError(f"selected arm {selected_label!r} is missing from record")
+
+
 def render_record(record: Mapping[str, object]) -> str:
     number = int(record["number"])
+    selected = _selected_arm(record)
+    selected_metrics = selected["metrics"]
+    selected_invariants = selected["invariants"]
+    assert isinstance(selected_metrics, Mapping)
+    assert isinstance(selected_invariants, Mapping)
     lines = [
         f"<!-- lifecycle-063-074:experiment-{number:03d} -->",
         f"## Experiment {number:03d} — completed",
@@ -23,14 +39,14 @@ def render_record(record: Mapping[str, object]) -> str:
         "",
         f"- Focus: `{record['focus']}`",
         f"- Selected arm: `{record['selected_label']}`",
-        f"- Success: **{float(record['selected_metrics']['success_rate']):.6f}**",
-        f"- Identity incumbent share: **{float(record['selected_metrics']['identity_early_incumbent_share']):.6f}**",
-        f"- Winner HHI: **{float(record['selected_metrics']['mean_winner_hhi']):.6f}**",
-        f"- Public knowledge coverage: **{float(record['selected_metrics']['public_knowledge_coverage']):.6f}**",
-        f"- Cultural lineage HHI: **{float(record['selected_metrics']['cultural_lineage_hhi']):.6f}**",
-        f"- Exit count: **{float(record['selected_metrics']['exit_count']):.2f}**",
-        f"- Hard invariants: **{all(bool(v) for v in record['selected_invariants'].values())}**",
-        f"- Next focus: `{record.get('next_focus')}`",
+        f"- Success: **{float(selected_metrics['success_rate']):.6f}**",
+        f"- Identity incumbent share: **{float(selected_metrics['identity_early_incumbent_share']):.6f}**",
+        f"- Winner HHI: **{float(selected_metrics['mean_winner_hhi']):.6f}**",
+        f"- Public knowledge coverage: **{float(selected_metrics['public_knowledge_coverage']):.6f}**",
+        f"- Cultural lineage HHI: **{float(selected_metrics['cultural_lineage_hhi']):.6f}**",
+        f"- Exit count: **{float(selected_metrics['exit_count']):.2f}**",
+        f"- Hard invariants: **{all(bool(v) for v in selected_invariants.values())}**",
+        f"- Next focus: `{record.get('next_experiment_focus')}`",
     ]
     if record.get("validated") is not None:
         lines.append(f"- Validated: **{bool(record['validated'])}**")
