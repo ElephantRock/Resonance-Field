@@ -1,0 +1,71 @@
+name: Demand Structure Experiments 099-104
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/demand-structure-099-104.yml"
+      - ".github/workflows/demand-step.yml"
+      - "configs/experiments/demand-structure-099-104.json"
+      - "migrations/016_demand_structure_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/demand_*.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: demand-structure-099-104
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp099:
+    uses: ./.github/workflows/demand-step.yml
+    with:
+      experiment_number: 99
+    secrets: inherit
+  exp100:
+    needs: exp099
+    uses: ./.github/workflows/demand-step.yml
+    with:
+      experiment_number: 100
+      previous_artifact: demand-checkpoint-99
+    secrets: inherit
+  exp101:
+    needs: exp100
+    uses: ./.github/workflows/demand-step.yml
+    with:
+      experiment_number: 101
+      previous_artifact: demand-checkpoint-100
+    secrets: inherit
+  exp102:
+    needs: exp101
+    uses: ./.github/workflows/demand-step.yml
+    with:
+      experiment_number: 102
+      previous_artifact: demand-checkpoint-101
+    secrets: inherit
+  exp103:
+    needs: exp102
+    uses: ./.github/workflows/demand-step.yml
+    with:
+      experiment_number: 103
+      previous_artifact: demand-checkpoint-102
+    secrets: inherit
+  exp104:
+    needs: exp103
+    uses: ./.github/workflows/demand-step.yml
+    with:
+      experiment_number: 104
+      previous_artifact: demand-checkpoint-103
+    secrets: inherit
