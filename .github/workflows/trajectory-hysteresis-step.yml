@@ -1,0 +1,154 @@
+name: Trajectory/Hysteresis Experiment Step
+
+on:
+  workflow_call:
+    inputs:
+      experiment_number:
+        required: true
+        type: number
+      previous_artifact:
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      EXPERIMENT_NUMBER: ${{ inputs.experiment_number }}
+      OUTPUT_DIR: artifacts/trajectory-hysteresis-${{ inputs.experiment_number }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Download previous checkpoint
+        if: ${{ inputs.previous_artifact != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.previous_artifact }}
+          path: checkpoint-in
+      - name: Publish running status
+        continue-on-error: true
+        run: |
+          mkdir -p "$OUTPUT_DIR"
+          marker="<!-- trajectory-hysteresis-117-122:experiment-$(printf '%03d' "$EXPERIMENT_NUMBER") -->"
+          cat > "$OUTPUT_DIR/notebook.md" <<EOF
+          $marker
+          ## Experiment $(printf '%03d' "$EXPERIMENT_NUMBER") — running
+
+          - Commit: \`$GITHUB_SHA\`
+          - Workflow run: \`$GITHUB_RUN_ID\`
+          - Attempt: \`$GITHUB_RUN_ATTEMPT\`
+          - Status: **running**
+          EOF
+          python scripts/upsert_issue_comment.py \
+            --repo "$GITHUB_REPOSITORY" \
+            --issue 46 \
+            --body-file "$OUTPUT_DIR/notebook.md"
+      - name: Run checkpointed experiment
+        id: run_experiment
+        continue-on-error: true
+        run: |
+          args=(
+            --config configs/experiments/trajectory-hysteresis-117-122.json
+            --experiment "$EXPERIMENT_NUMBER"
+            --code-sha "$GITHUB_SHA"
+            --output-dir "$OUTPUT_DIR"
+          )
+          if [[ -n "${{ inputs.previous_artifact }}" ]]; then
+            args+=(--checkpoint-in checkpoint-in/checkpoint.json)
+          fi
+          python -m resonance.experiments.trajectory_hysteresis_step_cli "${args[@]}"
+      - name: Publish failed status
+        if: ${{ steps.run_experiment.outcome == 'failure' }}
+        continue-on-error: true
+        run: |
+          marker="<!-- trajectory-hysteresis-117-122:experiment-$(printf '%03d' "$EXPERIMENT_NUMBER") -->"
+          cat > "$OUTPUT_DIR/notebook.md" <<EOF
+          $marker
+          ## Experiment $(printf '%03d' "$EXPERIMENT_NUMBER") — failed
+
+          - Commit: \`$GITHUB_SHA\`
+          - Workflow run: \`$GITHUB_RUN_ID\`
+          - Attempt: \`$GITHUB_RUN_ATTEMPT\`
+          - Status: **failed before checkpoint publication**
+
+          The preceding experiment checkpoint remains authoritative; later experiments were not started.
+          EOF
+          python scripts/upsert_issue_comment.py \
+            --repo "$GITHUB_REPOSITORY" \
+            --issue 46 \
+            --body-file "$OUTPUT_DIR/notebook.md"
+      - name: Stop after failed experiment
+        if: ${{ steps.run_experiment.outcome == 'failure' }}
+        run: exit 1
+      - name: Upload experiment evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: trajectory-hysteresis-experiment-${{ inputs.experiment_number }}
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 90
+      - name: Upload next checkpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: trajectory-hysteresis-checkpoint-${{ inputs.experiment_number }}
+          path: ${{ env.OUTPUT_DIR }}/checkpoint.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 90
+      - name: Publish completed experiment
+        continue-on-error: true
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 46
+          --body-file "$OUTPUT_DIR/notebook.md"
+      - name: Publish final synthesis
+        if: ${{ inputs.experiment_number == 122 }}
+        continue-on-error: true
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 46
+          --body-file "$OUTPUT_DIR/campaign-summary.md"
+      - name: Update external-boundary dependency
+        if: ${{ inputs.experiment_number == 122 }}
+        continue-on-error: true
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 42
+          --body-file "$OUTPUT_DIR/boundary-update.md"
+      - name: Close completed campaign issue
+        if: ${{ inputs.experiment_number == 122 }}
+        continue-on-error: true
+        run: gh issue close 46 --repo "$GITHUB_REPOSITORY" --reason completed
