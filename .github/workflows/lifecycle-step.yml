@@ -70,7 +70,7 @@ jobs:
           EOF
           python scripts/upsert_issue_comment.py \
             --repo "$GITHUB_REPOSITORY" \
-            --issue 26 \
+            --issue 24 \
             --body-file "$OUTPUT_DIR/notebook.md"
       - name: Run checkpointed experiment
         id: run_experiment
@@ -104,7 +104,7 @@ jobs:
           EOF
           python scripts/upsert_issue_comment.py \
             --repo "$GITHUB_REPOSITORY" \
-            --issue 26 \
+            --issue 24 \
             --body-file "$OUTPUT_DIR/notebook.md"
       - name: Stop after failed experiment
         if: ${{ steps.run_experiment.outcome == 'failure' }}
@@ -130,7 +130,7 @@ jobs:
         run: >-
           python scripts/upsert_issue_comment.py
           --repo "$GITHUB_REPOSITORY"
-          --issue 26
+          --issue 24
           --body-file "$OUTPUT_DIR/notebook.md"
       - name: Publish final synthesis
         if: ${{ inputs.experiment_number == 74 }}
@@ -138,9 +138,9 @@ jobs:
         run: >-
           python scripts/upsert_issue_comment.py
           --repo "$GITHUB_REPOSITORY"
-          --issue 26
+          --issue 24
           --body-file "$OUTPUT_DIR/campaign-summary.md"
       - name: Close completed campaign issue
         if: ${{ inputs.experiment_number == 74 }}
         continue-on-error: true
-        run: gh issue close 26 --repo "$GITHUB_REPOSITORY" --reason completed
+        run: gh issue close 24 --repo "$GITHUB_REPOSITORY" --reason completed
