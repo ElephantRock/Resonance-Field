@@ -58,7 +58,7 @@ class CapabilityDecaySpec:
         return asdict(self)
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "CapabilityDecaySpec":
+    def from_mapping(cls, value: Mapping[str, object]) -> CapabilityDecaySpec:
         half_life = value.get("half_life_cycles")
         inactive = value.get("inactive_cycles")
         return cls(
@@ -96,7 +96,7 @@ class CapabilityDecayConfig:
     clock_visit_margin: float
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "CapabilityDecayConfig":
+    def from_mapping(cls, value: Mapping[str, object]) -> CapabilityDecayConfig:
         integration = IntegrationCampaignConfig.from_mapping(value)
         raw = value["capability_decay"]
         assert isinstance(raw, Mapping)
