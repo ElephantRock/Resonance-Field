@@ -1,0 +1,80 @@
+{
+  "name": "trajectory-hysteresis-117-122-v0.1",
+  "canonical_endogenous_config": "configs/experiments/endogenous-demand-105-110.json",
+  "feedback_strength": 0.5,
+  "history_feedback_strength": 0.25,
+  "anneal_epsilon": 0.10,
+  "endpoint_features": [
+    "winner_domain_mi",
+    "success_domain_hhi",
+    "practice_concentration",
+    "incumbent_share",
+    "activation_regime_alignment"
+  ],
+  "trajectory_features": [
+    "path_length",
+    "basin_transitions",
+    "momentum",
+    "trajectory_roughness"
+  ],
+  "history_kinds": [
+    "smooth_reference",
+    "aligned_history",
+    "counter_history",
+    "annealed_history"
+  ],
+  "matching": {
+    "max_feature_difference": 0.10,
+    "max_rms_distance": 0.06
+  },
+  "gates": {
+    "neutral_band": 0.005,
+    "minimum_endpoint_support": 0.50,
+    "minimum_path_gap": 0.03,
+    "minimum_basin_discordance": 0.25,
+    "minimum_momentum_gap": 0.15,
+    "minimum_effect_gap": 0.02,
+    "minimum_sign_discordance": 0.40,
+    "minimum_anneal_concentration_gain": 0.15,
+    "minimum_anneal_entropy_reduction": 0.10,
+    "success_tolerance": 0.015,
+    "knowledge_tolerance": 0.10
+  },
+  "predictor": {
+    "minimum_loo_accuracy": 0.75,
+    "minimum_loo_balanced_accuracy": 0.70,
+    "minimum_abs_spearman": 0.45,
+    "maximum_familywise_p": 0.10,
+    "minimum_validation_accuracy": 0.70,
+    "minimum_validation_balanced_accuracy": 0.65
+  },
+  "standard": {
+    "shift_period": 18,
+    "activation_cycle": 54,
+    "history_start": 0,
+    "history_end": 36,
+    "cycles": 126,
+    "candidate_count": 7
+  },
+  "timing_control": {
+    "shift_period": 18,
+    "activation_cycle": 63,
+    "history_start": 9,
+    "history_end": 45,
+    "cycles": 144,
+    "candidate_count": 7
+  },
+  "holdout": {
+    "shift_period": 15,
+    "activation_cycle": 45,
+    "history_start": 0,
+    "history_end": 30,
+    "cycles": 120,
+    "candidate_count": 7
+  },
+  "instrumentation_seeds": [1501, 1502, 1503, 1504],
+  "discovery_seeds": [1601, 1602, 1603, 1604, 1605, 1606, 1607, 1608, 1609, 1610, 1611, 1612],
+  "replication_seeds": [1701, 1702, 1703, 1704, 1705, 1706, 1707, 1708],
+  "timing_seeds": [1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808],
+  "holdout_seeds": [1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908]
+}

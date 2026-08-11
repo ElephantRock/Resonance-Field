@@ -1,0 +1,73 @@
+name: Trajectory/Hysteresis Experiments 117-122
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trajectory-hysteresis-117-122.yml"
+      - ".github/workflows/trajectory-hysteresis-step.yml"
+      - "configs/experiments/trajectory-hysteresis-117-122.json"
+      - "configs/experiments/endogenous-demand-105-110.json"
+      - "migrations/019_trajectory_hysteresis_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/trajectory_hysteresis_*.py"
+      - "src/resonance/experiments/endogenous_demand_campaign.py"
+      - "src/resonance/experiments/delayed_phase_campaign.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: trajectory-hysteresis-117-122
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp117:
+    uses: ./.github/workflows/trajectory-hysteresis-step.yml
+    with:
+      experiment_number: 117
+    secrets: inherit
+  exp118:
+    needs: exp117
+    uses: ./.github/workflows/trajectory-hysteresis-step.yml
+    with:
+      experiment_number: 118
+      previous_artifact: trajectory-hysteresis-checkpoint-117
+    secrets: inherit
+  exp119:
+    needs: exp118
+    uses: ./.github/workflows/trajectory-hysteresis-step.yml
+    with:
+      experiment_number: 119
+      previous_artifact: trajectory-hysteresis-checkpoint-118
+    secrets: inherit
+  exp120:
+    needs: exp119
+    uses: ./.github/workflows/trajectory-hysteresis-step.yml
+    with:
+      experiment_number: 120
+      previous_artifact: trajectory-hysteresis-checkpoint-119
+    secrets: inherit
+  exp121:
+    needs: exp120
+    uses: ./.github/workflows/trajectory-hysteresis-step.yml
+    with:
+      experiment_number: 121
+      previous_artifact: trajectory-hysteresis-checkpoint-120
+    secrets: inherit
+  exp122:
+    needs: exp121
+    uses: ./.github/workflows/trajectory-hysteresis-step.yml
+    with:
+      experiment_number: 122
+      previous_artifact: trajectory-hysteresis-checkpoint-121
+    secrets: inherit
