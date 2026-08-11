@@ -1,0 +1,72 @@
+name: Capability Decay Experiments 081-086
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/capability-decay-081-086.yml"
+      - ".github/workflows/capability-decay-step.yml"
+      - "configs/experiments/capability-decay-081-086.json"
+      - "migrations/013_capability_decay_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/capability_*.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/two_timescale_metrics.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: capability-decay-081-086
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp081:
+    uses: ./.github/workflows/capability-decay-step.yml
+    with:
+      experiment_number: 81
+    secrets: inherit
+  exp082:
+    needs: exp081
+    uses: ./.github/workflows/capability-decay-step.yml
+    with:
+      experiment_number: 82
+      previous_artifact: capability-decay-checkpoint-81
+    secrets: inherit
+  exp083:
+    needs: exp082
+    uses: ./.github/workflows/capability-decay-step.yml
+    with:
+      experiment_number: 83
+      previous_artifact: capability-decay-checkpoint-82
+    secrets: inherit
+  exp084:
+    needs: exp083
+    uses: ./.github/workflows/capability-decay-step.yml
+    with:
+      experiment_number: 84
+      previous_artifact: capability-decay-checkpoint-83
+    secrets: inherit
+  exp085:
+    needs: exp084
+    uses: ./.github/workflows/capability-decay-step.yml
+    with:
+      experiment_number: 85
+      previous_artifact: capability-decay-checkpoint-84
+    secrets: inherit
+  exp086:
+    needs: exp085
+    uses: ./.github/workflows/capability-decay-step.yml
+    with:
+      experiment_number: 86
+      previous_artifact: capability-decay-checkpoint-85
+    secrets: inherit
