@@ -7,8 +7,8 @@ import csv
 import json
 import math
 from collections import Counter
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 EXPECTED_CLASSES = {"absorbed": 19, "liminal": 6, "escape": 3, "never_crossed": 8}
 SHIFT_PERIOD = {
