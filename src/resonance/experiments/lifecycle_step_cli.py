@@ -12,6 +12,7 @@ from psycopg.rows import dict_row
 
 from .lifecycle_checkpoint import load_checkpoint, load_lifecycle_config, run_lifecycle_step
 from .lifecycle_corrections import install_lifecycle_corrections
+from .lifecycle_retrieval import install_diversified_retrieval_fix
 from .runner import apply_migrations
 
 
@@ -31,6 +32,7 @@ def main() -> int:
     if not args.dsn:
         raise SystemExit("--dsn or RESONANCE_TEST_DSN is required")
     install_lifecycle_corrections()
+    install_diversified_retrieval_fix()
     config, config_hash = load_lifecycle_config(args.config)
     checkpoint = load_checkpoint(args.checkpoint_in) if args.checkpoint_in else None
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
