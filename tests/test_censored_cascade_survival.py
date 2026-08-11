@@ -10,9 +10,9 @@ from resonance.experiments.censored_cascade_survival_audit import (
 
 
 def test_cox_direction_for_slower_recovery_at_high_predictor() -> None:
-    durations = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
-    events = [1, 1, 1, 1, 0, 0]
-    predictor = [-2.0, -1.0, -0.5, 0.5, 1.0, 2.0]
+    durations = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
+    events = [1, 0, 1, 1, 0, 1, 1, 0]
+    predictor = [-1.0, 0.5, -0.5, 0.8, 1.2, -0.2, 0.6, 1.5]
     model = cox_univariate(durations, events, predictor)
     assert model["converged"] is True
     assert float(model["beta"]) < 0.0
