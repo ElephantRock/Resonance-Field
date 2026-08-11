@@ -24,7 +24,7 @@ class ChaosEnvironment:
             raise ValueError("invalid chaos environment")
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "ChaosEnvironment":
+    def from_mapping(cls, value: Mapping[str, object]) -> ChaosEnvironment:
         return cls(
             cycles=int(value["cycles"]),
             shift_period=int(value["shift_period"]),
@@ -70,7 +70,7 @@ class ChaosPredictabilityConfig:
     holdout_seeds: tuple[int, ...]
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "ChaosPredictabilityConfig":
+    def from_mapping(cls, value: Mapping[str, object]) -> ChaosPredictabilityConfig:
         thresholds = value["distance_thresholds"]
         scaling = value["scaling_gates"]
         bounded = value["boundedness"]
