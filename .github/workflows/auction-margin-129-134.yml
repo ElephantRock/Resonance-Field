@@ -1,0 +1,73 @@
+name: Auction Margin Control Experiments 129-134
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/auction-margin-129-134.yml"
+      - ".github/workflows/auction-margin-step.yml"
+      - "configs/experiments/auction-margin-129-134.json"
+      - "configs/experiments/endogenous-demand-105-110.json"
+      - "configs/experiments/chaos-predictability-123-128.json"
+      - "migrations/021_auction_margin_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/auction_margin_*.py"
+      - "src/resonance/experiments/endogenous_demand_campaign.py"
+      - "src/resonance/experiments/chaos_predictability_campaign.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/market/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: auction-margin-129-134
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp129:
+    uses: ./.github/workflows/auction-margin-step.yml
+    with:
+      experiment_number: 129
+    secrets: inherit
+  exp130:
+    needs: exp129
+    uses: ./.github/workflows/auction-margin-step.yml
+    with:
+      experiment_number: 130
+      previous_artifact: auction-margin-checkpoint-129
+    secrets: inherit
+  exp131:
+    needs: exp130
+    uses: ./.github/workflows/auction-margin-step.yml
+    with:
+      experiment_number: 131
+      previous_artifact: auction-margin-checkpoint-130
+    secrets: inherit
+  exp132:
+    needs: exp131
+    uses: ./.github/workflows/auction-margin-step.yml
+    with:
+      experiment_number: 132
+      previous_artifact: auction-margin-checkpoint-131
+    secrets: inherit
+  exp133:
+    needs: exp132
+    uses: ./.github/workflows/auction-margin-step.yml
+    with:
+      experiment_number: 133
+      previous_artifact: auction-margin-checkpoint-132
+    secrets: inherit
+  exp134:
+    needs: exp133
+    uses: ./.github/workflows/auction-margin-step.yml
+    with:
+      experiment_number: 134
+      previous_artifact: auction-margin-checkpoint-133
+    secrets: inherit
