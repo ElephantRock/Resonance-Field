@@ -19,9 +19,10 @@ from resonance.experiments.integration_campaign import (
     ReputationPolicy,
 )
 from resonance.experiments.lifecycle_campaign import LifecycleArmSpec, LifecycleSpec
-from resonance.experiments.lifecycle_corrections import (
-    _isolated_public_trace_stats,
-    install_lifecycle_corrections,
+from resonance.experiments.lifecycle_corrections import install_lifecycle_corrections
+from resonance.experiments.lifecycle_retrieval import (
+    install_diversified_retrieval_fix,
+    selected_public_trace_stats,
 )
 from resonance.experiments.runner import apply_migrations
 from resonance.substrate.models import Trace
@@ -83,6 +84,7 @@ def test_fixed_exit_replaces_agents_and_preserves_market_invariants() -> None:
         pytest.skip("RESONANCE_TEST_DSN is required")
 
     install_lifecycle_corrections()
+    install_diversified_retrieval_fix()
     env = _environment()
     config = IntegrationCampaignConfig(
         name="lifecycle-integration-test-corrected",
@@ -142,55 +144,70 @@ def test_fixed_exit_replaces_agents_and_preserves_market_invariants() -> None:
         assert int(generations["count"]) > 0
 
 
-def test_public_trace_retrieval_is_scoped_to_current_cell_authors() -> None:
+def test_public_trace_retrieval_is_isolated_and_diversity_metrics_match_selected_set() -> None:
     dsn = os.getenv("RESONANCE_TEST_DSN")
     if not dsn:
         pytest.skip("RESONANCE_TEST_DSN is required")
 
     now = datetime(2031, 1, 1, tzinfo=UTC)
-    allowed = uuid4()
+    lineage_zero_best = uuid4()
+    lineage_zero_second = uuid4()
+    lineage_one = uuid4()
     foreign = uuid4()
     with _fresh_database(dsn) as connection:
         economy = PostgresEconomyRepository(connection)
-        economy.register_agent(allowed, at=now)
-        economy.register_agent(foreign, at=now)
+        for agent_id in (lineage_zero_best, lineage_zero_second, lineage_one, foreign):
+            economy.register_agent(agent_id, at=now)
         traces = PostgresTraceRepository(connection)
-        traces.add(
-            Trace(
-                author_agent_id=allowed,
-                kind="VERIFIED_OUTCOME",
-                content="skill-evidence:isolation-probe",
-                created_at=now,
-                updated_at=now,
-                initial_energy=0.2,
-                half_life_seconds=3600,
-                confidence=1.0,
-                quality_score=1.0,
+        for agent_id, energy in (
+            (lineage_zero_best, 0.8),
+            (lineage_zero_second, 0.7),
+            (lineage_one, 0.6),
+            (foreign, 0.9),
+        ):
+            traces.add(
+                Trace(
+                    author_agent_id=agent_id,
+                    kind="VERIFIED_OUTCOME",
+                    content="skill-evidence:isolation-probe",
+                    created_at=now,
+                    updated_at=now,
+                    initial_energy=energy,
+                    half_life_seconds=3600,
+                    confidence=1.0,
+                    quality_score=1.0,
+                )
             )
-        )
-        traces.add(
-            Trace(
-                author_agent_id=foreign,
-                kind="VERIFIED_OUTCOME",
-                content="skill-evidence:isolation-probe",
-                created_at=now,
-                updated_at=now,
-                initial_energy=0.9,
-                half_life_seconds=3600,
-                confidence=1.0,
-                quality_score=1.0,
-            )
-        )
 
-        stats = _isolated_public_trace_stats(
+        authors = {
+            lineage_zero_best: 0,
+            lineage_zero_second: 0,
+            lineage_one: 1,
+        }
+        standard = selected_public_trace_stats(
             connection,
             skill="isolation-probe",
             at=now,
-            author_lineage={allowed: 0},
+            author_lineage=authors,
             departed_agents=set(),
             top_k=2,
             diversified=False,
             diversified_lineages=2,
         )
-        assert stats["signal"] == pytest.approx(0.2)
-        assert stats["lineage_hhi"] == pytest.approx(1.0)
+        diversified = selected_public_trace_stats(
+            connection,
+            skill="isolation-probe",
+            at=now,
+            author_lineage=authors,
+            departed_agents=set(),
+            top_k=2,
+            diversified=True,
+            diversified_lineages=2,
+        )
+
+        # The stronger foreign trace is excluded. Standard top-2 is one lineage;
+        # diversified retrieval selects the best trace from each of two lineages.
+        assert standard["signal"] == pytest.approx(0.8)
+        assert standard["lineage_hhi"] == pytest.approx(1.0)
+        assert diversified["signal"] == pytest.approx(0.7)
+        assert diversified["lineage_hhi"] == pytest.approx(0.5)
