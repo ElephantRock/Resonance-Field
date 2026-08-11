@@ -1,0 +1,49 @@
+{
+  "name": "delayed-onset-phase-observability-111-116-v0.1",
+  "canonical_endogenous_config": "configs/experiments/endogenous-demand-105-110.json",
+  "feedback_strength": 0.5,
+  "knowledge_tolerance": 0.1,
+  "success_tolerance": 0.015,
+  "state_features": [
+    "winner_domain_mi",
+    "success_domain_hhi",
+    "practice_concentration",
+    "incumbent_share",
+    "activation_regime_alignment"
+  ],
+  "standard": {
+    "shift_period": 18,
+    "burn_in_cycles": 36,
+    "cycles": 108,
+    "candidate_count": 7
+  },
+  "timing_transfer": {
+    "shift_period": 18,
+    "burn_in_cycles": 54,
+    "cycles": 126,
+    "candidate_count": 7
+  },
+  "holdout": {
+    "shift_period": 15,
+    "burn_in_cycles": 30,
+    "cycles": 90,
+    "candidate_count": 7
+  },
+  "equivalence_seeds": [1001, 1002, 1003, 1004],
+  "discovery_seeds": [1101, 1102, 1103, 1104, 1105, 1106, 1107, 1108, 1109, 1110, 1111, 1112],
+  "replication_seeds": [1201, 1202, 1203, 1204, 1205, 1206, 1207, 1208],
+  "timing_transfer_seeds": [1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308],
+  "holdout_seeds": [1401, 1402, 1403, 1404, 1405, 1406, 1407, 1408],
+  "minimum_positive_signs": 3,
+  "minimum_negative_signs": 3,
+  "selection": {
+    "minimum_loo_balanced_accuracy": 0.75,
+    "minimum_loo_accuracy": 0.75,
+    "minimum_abs_spearman": 0.5,
+    "maximum_familywise_p": 0.1
+  },
+  "validation": {
+    "minimum_accuracy": 0.75,
+    "minimum_balanced_accuracy": 0.75
+  }
+}

@@ -1,0 +1,74 @@
+name: Delayed-Onset Phase Observability Experiments 111-116
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/delayed-phase-111-116.yml"
+      - ".github/workflows/delayed-phase-step.yml"
+      - "configs/experiments/delayed-phase-111-116.json"
+      - "configs/experiments/endogenous-demand-105-110.json"
+      - "migrations/018_delayed_phase_observability_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/delayed_phase_*.py"
+      - "src/resonance/experiments/endogenous_demand_campaign.py"
+      - "src/resonance/experiments/endogenous_demand_config.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: delayed-phase-111-116
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp111:
+    uses: ./.github/workflows/delayed-phase-step.yml
+    with:
+      experiment_number: 111
+    secrets: inherit
+  exp112:
+    needs: exp111
+    uses: ./.github/workflows/delayed-phase-step.yml
+    with:
+      experiment_number: 112
+      previous_artifact: delayed-phase-checkpoint-111
+    secrets: inherit
+  exp113:
+    needs: exp112
+    uses: ./.github/workflows/delayed-phase-step.yml
+    with:
+      experiment_number: 113
+      previous_artifact: delayed-phase-checkpoint-112
+    secrets: inherit
+  exp114:
+    needs: exp113
+    uses: ./.github/workflows/delayed-phase-step.yml
+    with:
+      experiment_number: 114
+      previous_artifact: delayed-phase-checkpoint-113
+    secrets: inherit
+  exp115:
+    needs: exp114
+    uses: ./.github/workflows/delayed-phase-step.yml
+    with:
+      experiment_number: 115
+      previous_artifact: delayed-phase-checkpoint-114
+    secrets: inherit
+  exp116:
+    needs: exp115
+    uses: ./.github/workflows/delayed-phase-step.yml
+    with:
+      experiment_number: 116
+      previous_artifact: delayed-phase-checkpoint-115
+    secrets: inherit
