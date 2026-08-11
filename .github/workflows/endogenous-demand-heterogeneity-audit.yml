@@ -1,0 +1,79 @@
+name: Endogenous Demand Heterogeneity Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/endogenous-demand-heterogeneity-audit.yml"
+      - "src/resonance/experiments/endogenous_demand_heterogeneity.py"
+      - "src/resonance/experiments/endogenous_demand_heterogeneity_cli.py"
+      - "tests/test_endogenous_demand_heterogeneity.py"
+
+concurrency:
+  group: endogenous-demand-heterogeneity-105-110
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/endogenous-demand-heterogeneity
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Reconstruct historical cells and run audit
+        run: >-
+          python -m resonance.experiments.endogenous_demand_heterogeneity_cli
+          --config configs/experiments/endogenous-demand-105-110.json
+          --output-dir "$OUTPUT_DIR"
+          --code-sha "$GITHUB_SHA"
+      - name: Upload audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: endogenous-demand-heterogeneity-audit
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 90
+      - name: Publish audit to issue 41
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 41
+          --body-file "$OUTPUT_DIR/audit-report.md"
+      - name: Freeze dependency update on boundary issue 42
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 42
+          --body-file "$OUTPUT_DIR/boundary-update.md"
+      - name: Close completed audit issue
+        run: gh issue close 41 --repo "$GITHUB_REPOSITORY" --reason completed
