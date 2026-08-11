@@ -33,7 +33,7 @@ class LifecycleConfig:
     holdout_shift_period: int
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "LifecycleConfig":
+    def from_mapping(cls, value: Mapping[str, object]) -> LifecycleConfig:
         integration = IntegrationCampaignConfig.from_mapping(value)
         raw = value["lifecycle"]
         assert isinstance(raw, Mapping)
