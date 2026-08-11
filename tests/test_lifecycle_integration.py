@@ -127,7 +127,9 @@ def test_public_trace_retrieval_is_scoped_to_current_cell_authors() -> None:
     allowed = uuid4()
     foreign = uuid4()
     with psycopg.connect(dsn, autocommit=True, row_factory=dict_row) as connection:
-        apply_migrations(connection)
+        # The preceding integration test applies migrations once for this module. Reapplying the
+        # historical migration chain after Experiment-063 evidence exists would temporarily
+        # reintroduce older experiment-number constraints before later migrations expand them.
         economy = PostgresEconomyRepository(connection)
         economy.register_agent(allowed, at=now)
         economy.register_agent(foreign, at=now)
