@@ -1,0 +1,86 @@
+name: Post-Crossing Reconvergence Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/post-crossing-reconvergence-audit.yml"
+      - "src/resonance/experiments/post_crossing_reconvergence_audit.py"
+      - "src/resonance/experiments/post_crossing_reconvergence_audit_cli.py"
+      - "tests/test_post_crossing_reconvergence_audit.py"
+      - "docs/post-crossing-reconvergence-audit.md"
+
+concurrency:
+  group: post-crossing-reconvergence-audit-129-134
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/post-crossing-reconvergence-audit
+      EXPECTED_DIR: retained/auction-margin
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Download retained campaign evidence
+        run: |
+          mkdir -p "$EXPECTED_DIR"
+          for number in 130 132 133 134; do
+            gh run download 31530045100 \
+              --repo "$GITHUB_REPOSITORY" \
+              --name "auction-margin-experiment-$number" \
+              --dir "$EXPECTED_DIR/$number"
+          done
+      - name: Reconstruct historical twins and run audit
+        run: >-
+          python -m resonance.experiments.post_crossing_reconvergence_audit_cli
+          --config configs/experiments/auction-margin-129-134.json
+          --expected-dir "$EXPECTED_DIR"
+          --output-dir "$OUTPUT_DIR"
+          --code-sha "$GITHUB_SHA"
+      - name: Upload audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: post-crossing-reconvergence-audit
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 90
+      - name: Publish audit result
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 60
+          --body-file "$OUTPUT_DIR/audit-report.md"
+      - name: Close completed audit issue
+        run: gh issue close 60 --repo "$GITHUB_REPOSITORY" --reason completed
