@@ -1,0 +1,71 @@
+name: Matching Objective Experiments 093-098
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/matching-objective-093-098.yml"
+      - ".github/workflows/matching-step.yml"
+      - "configs/experiments/matching-objective-093-098.json"
+      - "migrations/015_matching_objective_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/matching_*.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: matching-objective-093-098
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp093:
+    uses: ./.github/workflows/matching-step.yml
+    with:
+      experiment_number: 93
+    secrets: inherit
+  exp094:
+    needs: exp093
+    uses: ./.github/workflows/matching-step.yml
+    with:
+      experiment_number: 94
+      previous_artifact: matching-checkpoint-93
+    secrets: inherit
+  exp095:
+    needs: exp094
+    uses: ./.github/workflows/matching-step.yml
+    with:
+      experiment_number: 95
+      previous_artifact: matching-checkpoint-94
+    secrets: inherit
+  exp096:
+    needs: exp095
+    uses: ./.github/workflows/matching-step.yml
+    with:
+      experiment_number: 96
+      previous_artifact: matching-checkpoint-95
+    secrets: inherit
+  exp097:
+    needs: exp096
+    uses: ./.github/workflows/matching-step.yml
+    with:
+      experiment_number: 97
+      previous_artifact: matching-checkpoint-96
+    secrets: inherit
+  exp098:
+    needs: exp097
+    uses: ./.github/workflows/matching-step.yml
+    with:
+      experiment_number: 98
+      previous_artifact: matching-checkpoint-97
+    secrets: inherit
