@@ -1,0 +1,75 @@
+name: Critical Margin Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/critical-margin-audit.yml"
+      - "src/resonance/experiments/critical_margin_audit.py"
+      - "src/resonance/experiments/critical_margin_audit_cli.py"
+      - "tests/test_critical_margin_audit.py"
+      - "docs/critical-margin-audit.md"
+
+concurrency:
+  group: critical-margin-audit-105-128
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/critical-margin-audit
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install Python package
+        run: pip install -e '.[dev]'
+      - name: Run critical-margin reconstruction audit
+        run: >-
+          python -m resonance.experiments.critical_margin_audit_cli
+          --endogenous-config configs/experiments/endogenous-demand-105-110.json
+          --chaos-config configs/experiments/chaos-predictability-123-128.json
+          --output-dir "$OUTPUT_DIR"
+          --code-sha "$GITHUB_SHA"
+      - name: Upload audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: critical-margin-audit-105-128
+          path: ${{ env.OUTPUT_DIR }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 90
+      - name: Publish audit to issue 53
+        run: >-
+          python scripts/upsert_issue_comment.py
+          --repo "$GITHUB_REPOSITORY"
+          --issue 53
+          --body-file "$OUTPUT_DIR/audit-report.md"
+      - name: Close completed audit issue
+        run: gh issue close 53 --repo "$GITHUB_REPOSITORY" --reason completed
