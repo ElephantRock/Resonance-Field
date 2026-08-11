@@ -19,7 +19,7 @@ def _repeat_rate(schedule: list[int], *, shift_period: int, domain_count: int) -
     for start in range(0, len(schedule), shift_period):
         end = min(len(schedule), start + shift_period)
         domains = [_domain(0, schedule[index], domain_count) for index in range(start, end)]
-        values.extend(float(a == b) for a, b in zip(domains, domains[1:]))
+        values.extend(float(a == b) for a, b in zip(domains, domains[1:], strict=False))
     return sum(values) / len(values)
 
 
