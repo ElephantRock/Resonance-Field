@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from resonance.experiments import lifecycle_campaign as lc
 from resonance.experiments import lifecycle_checkpoint as cp
+from resonance.experiments.lifecycle_config import load_lifecycle_config
 from resonance.experiments.lifecycle_corrections import (
     _plasticity_valid,
     corrected_lifecycle_effects,
@@ -11,7 +12,6 @@ from resonance.experiments.lifecycle_corrections import (
     stochastic_exit_hazard,
 )
 from resonance.experiments.lifecycle_notebook import render_record
-from resonance.experiments.lifecycle_config import load_lifecycle_config
 
 
 def _metrics(**overrides: float) -> dict[str, float]:
