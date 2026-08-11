@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import os
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from uuid import uuid4
 
 import psycopg
 import pytest
+from psycopg import sql
+from psycopg.conninfo import conninfo_to_dict, make_conninfo
 from psycopg.rows import dict_row
 
 from resonance.economy import PostgresEconomyRepository
@@ -25,6 +28,28 @@ from resonance.substrate.models import Trace
 from resonance.substrate.postgres import PostgresTraceRepository
 
 pytestmark = pytest.mark.integration
+
+
+@contextmanager
+def _fresh_database(dsn: str):
+    """Give each lifecycle integration regression an independently migrated database."""
+    params = conninfo_to_dict(dsn)
+    database_name = f"lifecycle_test_{uuid4().hex}"
+    admin_dsn = make_conninfo(**{**params, "dbname": "postgres"})
+    test_dsn = make_conninfo(**{**params, "dbname": database_name})
+    with psycopg.connect(admin_dsn, autocommit=True) as admin:
+        admin.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(database_name)))
+    try:
+        with psycopg.connect(test_dsn, autocommit=True, row_factory=dict_row) as connection:
+            apply_migrations(connection)
+            yield connection
+    finally:
+        with psycopg.connect(admin_dsn, autocommit=True) as admin:
+            admin.execute(
+                "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = %s",
+                (database_name,),
+            )
+            admin.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(database_name)))
 
 
 def _environment() -> IntegrationEnvironment:
@@ -82,8 +107,7 @@ def test_fixed_exit_replaces_agents_and_preserves_market_invariants() -> None:
         knowledge_signal_threshold=0.20,
     )
 
-    with psycopg.connect(dsn, autocommit=True, row_factory=dict_row) as connection:
-        apply_migrations(connection)
+    with _fresh_database(dsn) as connection:
         result = lifecycle_campaign.run_lifecycle_arm(
             connection,
             config=config,
@@ -126,10 +150,7 @@ def test_public_trace_retrieval_is_scoped_to_current_cell_authors() -> None:
     now = datetime(2031, 1, 1, tzinfo=UTC)
     allowed = uuid4()
     foreign = uuid4()
-    with psycopg.connect(dsn, autocommit=True, row_factory=dict_row) as connection:
-        # The preceding integration test applies migrations once for this module. Reapplying the
-        # historical migration chain after Experiment-063 evidence exists would temporarily
-        # reintroduce older experiment-number constraints before later migrations expand them.
+    with _fresh_database(dsn) as connection:
         economy = PostgresEconomyRepository(connection)
         economy.register_agent(allowed, at=now)
         economy.register_agent(foreign, at=now)
