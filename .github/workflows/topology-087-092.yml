@@ -1,0 +1,71 @@
+name: Coordination Topology Experiments 087-092
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/topology-087-092.yml"
+      - ".github/workflows/topology-step.yml"
+      - "configs/experiments/topology-087-092.json"
+      - "migrations/014_coordination_topology_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/topology_*.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: topology-087-092
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp087:
+    uses: ./.github/workflows/topology-step.yml
+    with:
+      experiment_number: 87
+    secrets: inherit
+  exp088:
+    needs: exp087
+    uses: ./.github/workflows/topology-step.yml
+    with:
+      experiment_number: 88
+      previous_artifact: topology-checkpoint-87
+    secrets: inherit
+  exp089:
+    needs: exp088
+    uses: ./.github/workflows/topology-step.yml
+    with:
+      experiment_number: 89
+      previous_artifact: topology-checkpoint-88
+    secrets: inherit
+  exp090:
+    needs: exp089
+    uses: ./.github/workflows/topology-step.yml
+    with:
+      experiment_number: 90
+      previous_artifact: topology-checkpoint-89
+    secrets: inherit
+  exp091:
+    needs: exp090
+    uses: ./.github/workflows/topology-step.yml
+    with:
+      experiment_number: 91
+      previous_artifact: topology-checkpoint-90
+    secrets: inherit
+  exp092:
+    needs: exp091
+    uses: ./.github/workflows/topology-step.yml
+    with:
+      experiment_number: 92
+      previous_artifact: topology-checkpoint-91
+    secrets: inherit
