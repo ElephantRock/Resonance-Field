@@ -1,0 +1,45 @@
+{
+  "name": "auction-margin-control-129-134-v0.1",
+  "canonical_endogenous_config": "configs/experiments/endogenous-demand-105-110.json",
+  "feedback_strength": 0.5,
+  "near_radius": 0.01,
+  "buffered_radius": 1.0,
+  "probe_epsilon": 0.1,
+  "distance_thresholds": {
+    "micro": 0.10,
+    "meso": 0.10,
+    "macro": 0.05,
+    "persistent_hits": 3,
+    "persistent_window": 5
+  },
+  "propagation_gates": {
+    "minimum_macro_crossing_share": 0.40,
+    "minimum_basin_disagreement_share": 0.30,
+    "minimum_bounded_share": 0.75,
+    "maximum_success_loss": 0.015,
+    "maximum_knowledge_loss": 0.10
+  },
+  "standard": {
+    "cycles": 126,
+    "shift_period": 18,
+    "candidate_count": 7,
+    "activation_cycle": 36
+  },
+  "timing_transfer": {
+    "cycles": 144,
+    "shift_period": 18,
+    "candidate_count": 7,
+    "activation_cycle": 54
+  },
+  "holdout": {
+    "cycles": 120,
+    "shift_period": 15,
+    "candidate_count": 7,
+    "activation_cycle": 30
+  },
+  "instrumentation_seeds": [2401, 2402, 2403, 2404],
+  "discovery_seeds": [2501, 2502, 2503, 2504, 2505, 2506, 2507, 2508, 2509, 2510, 2511, 2512],
+  "timing_transfer_seeds": [2601, 2602, 2603, 2604, 2605, 2606, 2607, 2608],
+  "replication_seeds": [2701, 2702, 2703, 2704, 2705, 2706, 2707, 2708],
+  "holdout_seeds": [2801, 2802, 2803, 2804, 2805, 2806, 2807, 2808]
+}
