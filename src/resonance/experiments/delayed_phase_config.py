@@ -36,7 +36,7 @@ class PhaseEnvironment:
             raise ValueError("candidate_count must be positive")
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "PhaseEnvironment":
+    def from_mapping(cls, value: Mapping[str, object]) -> PhaseEnvironment:
         return cls(
             shift_period=int(value["shift_period"]),
             burn_in_cycles=int(value["burn_in_cycles"]),
@@ -71,7 +71,7 @@ class DelayedPhaseConfig:
     minimum_validation_balanced_accuracy: float
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "DelayedPhaseConfig":
+    def from_mapping(cls, value: Mapping[str, object]) -> DelayedPhaseConfig:
         selection = value["selection"]
         validation = value["validation"]
         assert isinstance(selection, Mapping) and isinstance(validation, Mapping)
