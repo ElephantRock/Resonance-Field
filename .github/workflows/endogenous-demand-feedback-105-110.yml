@@ -1,0 +1,71 @@
+name: Endogenous Demand Feedback Experiments 105-110
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/endogenous-demand-feedback-105-110.yml"
+      - ".github/workflows/endogenous-demand-step.yml"
+      - "configs/experiments/endogenous-demand-105-110.json"
+      - "migrations/017_endogenous_demand_feedback_experiments.sql"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/endogenous_demand_*.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: endogenous-demand-feedback-105-110
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp105:
+    uses: ./.github/workflows/endogenous-demand-step.yml
+    with:
+      experiment_number: 105
+    secrets: inherit
+  exp106:
+    needs: exp105
+    uses: ./.github/workflows/endogenous-demand-step.yml
+    with:
+      experiment_number: 106
+      previous_artifact: endogenous-demand-checkpoint-105
+    secrets: inherit
+  exp107:
+    needs: exp106
+    uses: ./.github/workflows/endogenous-demand-step.yml
+    with:
+      experiment_number: 107
+      previous_artifact: endogenous-demand-checkpoint-106
+    secrets: inherit
+  exp108:
+    needs: exp107
+    uses: ./.github/workflows/endogenous-demand-step.yml
+    with:
+      experiment_number: 108
+      previous_artifact: endogenous-demand-checkpoint-107
+    secrets: inherit
+  exp109:
+    needs: exp108
+    uses: ./.github/workflows/endogenous-demand-step.yml
+    with:
+      experiment_number: 109
+      previous_artifact: endogenous-demand-checkpoint-108
+    secrets: inherit
+  exp110:
+    needs: exp109
+    uses: ./.github/workflows/endogenous-demand-step.yml
+    with:
+      experiment_number: 110
+      previous_artifact: endogenous-demand-checkpoint-109
+    secrets: inherit
