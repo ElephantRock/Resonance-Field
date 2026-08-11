@@ -1,0 +1,71 @@
+name: Capability-Preserving Access Experiments 075-080
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/access-075-080.yml"
+      - ".github/workflows/access-step.yml"
+      - "configs/experiments/access-075-080.json"
+      - "scripts/upsert_issue_comment.py"
+      - "src/resonance/experiments/access_*.py"
+      - "src/resonance/experiments/lifecycle_campaign.py"
+      - "src/resonance/experiments/lifecycle_corrections.py"
+      - "src/resonance/experiments/lifecycle_retrieval.py"
+      - "src/resonance/experiments/integration_campaign.py"
+      - "src/resonance/market/**"
+      - "src/resonance/reputation/**"
+      - "src/resonance/economy/**"
+      - "src/resonance/substrate/**"
+
+concurrency:
+  group: access-075-080
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  exp075:
+    uses: ./.github/workflows/access-step.yml
+    with:
+      experiment_number: 75
+    secrets: inherit
+  exp076:
+    needs: exp075
+    uses: ./.github/workflows/access-step.yml
+    with:
+      experiment_number: 76
+      previous_artifact: access-checkpoint-75
+    secrets: inherit
+  exp077:
+    needs: exp076
+    uses: ./.github/workflows/access-step.yml
+    with:
+      experiment_number: 77
+      previous_artifact: access-checkpoint-76
+    secrets: inherit
+  exp078:
+    needs: exp077
+    uses: ./.github/workflows/access-step.yml
+    with:
+      experiment_number: 78
+      previous_artifact: access-checkpoint-77
+    secrets: inherit
+  exp079:
+    needs: exp078
+    uses: ./.github/workflows/access-step.yml
+    with:
+      experiment_number: 79
+      previous_artifact: access-checkpoint-78
+    secrets: inherit
+  exp080:
+    needs: exp079
+    uses: ./.github/workflows/access-step.yml
+    with:
+      experiment_number: 80
+      previous_artifact: access-checkpoint-79
+    secrets: inherit
