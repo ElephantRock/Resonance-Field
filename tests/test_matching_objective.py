@@ -51,8 +51,8 @@ def test_baseline_objective_is_exact_production_score() -> None:
 
 def test_confidence_light_objective_can_change_winner_on_same_bids() -> None:
     task = _task()
-    confidence_bid = _bid(task, confidence=0.95, price=90, speed=18)
-    efficient_bid = _bid(task, confidence=0.55, price=30, speed=4)
+    confidence_bid = _bid(task, confidence=0.95, price=55, speed=8)
+    efficient_bid = _bid(task, confidence=0.55, price=45, speed=6)
     spec = MatchingObjectiveSpec(
         mode="weighted",
         confidence_weight=0.15,
