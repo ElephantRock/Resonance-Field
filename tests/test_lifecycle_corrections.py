@@ -50,7 +50,7 @@ def test_stochastic_hazard_matches_total_expected_lifetime() -> None:
     hazard = stochastic_exit_hazard(lifetime_cycles=24, minimum_age=6)
     assert hazard == 1 / 19
     expected_age = 6 + (1 - hazard) / hazard
-    assert expected_age == 24
+    assert abs(expected_age - 24) < 1e-12
 
 
 def test_lifecycle_effects_distinguish_uuid_from_logical_turnover() -> None:
