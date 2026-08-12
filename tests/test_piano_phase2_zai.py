@@ -30,6 +30,7 @@ def test_zai_request_is_zero_temperature_json_mode_without_provider_seed() -> No
 
     assert body["model"] == MODEL
     assert "seed" not in body
+    assert "request_id" not in body
     assert body["thinking"] == {"type": "disabled"}
     assert body["do_sample"] is False
     assert body["temperature"] == 0.0
@@ -145,6 +146,87 @@ def test_zai_retries_invalid_structured_output_when_enabled(
     assert reply.payload["intended_action"] == "OBSERVE"
 
 
+def test_zai_v2_format_recovery_changes_only_transport_instruction() -> None:
+    request = ModelRequest(
+        stage="post_action_report",
+        prompt="Frozen scientific post-action prompt.",
+        seed=8001,
+        max_output_tokens=128,
+    )
+    backend = ZAIChatCompletionsBackend(
+        api_key="test-key",
+        model_snapshot=MODEL,
+        allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
+        retry_contract_errors=True,
+        contract_retry_prompt_hardening=True,
+        unique_request_id_per_attempt=True,
+    )
+
+    first = backend.request_body(request, contract_attempt=1, physical_attempt=1)
+    repaired = backend.request_body(request, contract_attempt=2, physical_attempt=2)
+
+    assert first["messages"][1] == repaired["messages"][1] == {
+        "role": "user",
+        "content": request.prompt,
+    }
+    assert "FORMAT-RECOVERY" not in first["messages"][0]["content"]
+    assert "FORMAT-RECOVERY-2" in repaired["messages"][0]["content"]
+    assert '"claims_success":true' in first["messages"][0]["content"]
+    assert first["request_id"] != repaired["request_id"]
+    for key in (
+        "model",
+        "thinking",
+        "do_sample",
+        "temperature",
+        "max_tokens",
+        "stream",
+        "response_format",
+    ):
+        assert first[key] == repaired[key]
+
+
+def test_zai_v2_contract_recovery_advances_only_after_contract_failure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bodies = []
+
+    def fake_urlopen(request, *, timeout):
+        del timeout
+        body = json.loads(request.data.decode())
+        bodies.append(body)
+        if len(bodies) == 1:
+            return _FakeResponse(_response({"report": "Observed success."}))
+        return _FakeResponse(
+            _response({"report": "Observed success.", "claims_success": True})
+        )
+
+    monkeypatch.setattr(zai_module, "urlopen", fake_urlopen)
+    monkeypatch.setattr(zai_module.time, "sleep", lambda delay: None)
+    backend = ZAIChatCompletionsBackend(
+        api_key="test-key",
+        model_snapshot=MODEL,
+        allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
+        max_attempts=3,
+        retry_contract_errors=True,
+        contract_retry_prompt_hardening=True,
+        unique_request_id_per_attempt=True,
+    )
+    request = ModelRequest(
+        stage="post_action_report",
+        prompt="Frozen scientific post-action prompt.",
+        seed=8001,
+        max_output_tokens=128,
+    )
+
+    reply = backend.complete(request)
+
+    assert reply.payload["claims_success"] is True
+    assert len(bodies) == 2
+    assert bodies[0]["messages"][1] == bodies[1]["messages"][1]
+    assert "FORMAT-RECOVERY" not in bodies[0]["messages"][0]["content"]
+    assert "FORMAT-RECOVERY-2" in bodies[1]["messages"][0]["content"]
+
+
 def test_zai_model_drift_is_not_retried_as_contract_error(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -169,6 +251,8 @@ def test_zai_model_drift_is_not_retried_as_contract_error(
         allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
         max_attempts=3,
         retry_contract_errors=True,
+        contract_retry_prompt_hardening=True,
+        unique_request_id_per_attempt=True,
     )
 
     with pytest.raises(RuntimeError, match="model drift"):
