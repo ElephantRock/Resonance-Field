@@ -5,6 +5,7 @@ on:
     branches: [experiment/llm-epistemic-confirmatory-corpus]
     paths:
       - "configs/corpora/llm-epistemic-142-145-confirmatory/acquisition-plans/**"
+      - "configs/corpora/llm-epistemic-142-145-confirmatory/selected/**"
       - "tools/confirmatory_curation/**"
       - ".github/workflows/llm-epistemic-confirmatory-curation.yml"
   workflow_dispatch:
@@ -19,6 +20,8 @@ jobs:
     env:
       SCIENTIFIC_BASE_SHA: c33d29a3ad359c040b63c644fb8e552bd28f1615
       PLAN_ROOT: configs/corpora/llm-epistemic-142-145-confirmatory/acquisition-plans
+      SELECTED_ROOT: configs/corpora/llm-epistemic-142-145-confirmatory/selected
+      DESIGN: configs/experiments/llm-epistemic-substrate-142-145-confirmatory-design.json
       OUTPUT_ROOT: artifacts/llm-epistemic-142-145-confirmatory/candidate-freezes
 
     steps:
@@ -62,7 +65,10 @@ jobs:
           print("Frozen scientific implementation unchanged.")
           PY
       - name: Verify curation utility syntax
-        run: python -m py_compile tools/confirmatory_curation/freeze_batch.py
+        run: |
+          python -m py_compile \
+            tools/confirmatory_curation/freeze_batch.py \
+            tools/confirmatory_curation/validate_selected.py
       - name: Freeze all declared candidate source batches
         shell: bash
         run: |
@@ -80,6 +86,12 @@ jobs:
           test "$count" -gt 0
           printf '{"plan_count":%s,"treatment_execution":false,"evaluator_execution":false,"confirmatory_outcomes_observed":false}\n' \
             "$count" > "$OUTPUT_ROOT/curation-index.json"
+      - name: Validate selected case bundles against frozen per-case design
+        run: |
+          PYTHONPATH=src python tools/confirmatory_curation/validate_selected.py \
+            --selected-root "$SELECTED_ROOT" \
+            --design "$DESIGN" \
+            --output "$OUTPUT_ROOT/selected-validation.json"
       - name: Upload frozen candidate evidence
         uses: actions/upload-artifact@v4
         with:
