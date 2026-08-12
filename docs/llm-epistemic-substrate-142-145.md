@@ -2,7 +2,9 @@
 
 ## Status
 
-Instrumentation only. One complete stochastic pilot has executed; it is non-inferential and ceiling-saturated on primary accuracy. The confirmatory corpus remains unsealed and inaccessible.
+Instrumentation only. One stochastic pilot and three harder multi-domain calibration cases have executed. Calibration outcomes are non-inferential and are used only to validate mechanics, scoring, resource controls, and benchmark difficulty. The 96 confirmatory cases remain uncreated, unobserved, and inaccessible.
+
+The current instrumentation evidence shows a repeated retrieval-efficiency advantage for structured G/R substrates over P/S, but **does not establish a replicated primary accuracy advantage for R over G**.
 
 ## Objective
 
@@ -45,30 +47,32 @@ Instrumentation artifacts persist the complete canonical event-log payload as we
 
 ## Corpus
 
-Evidence is naturalistic but frozen. Confirmatory execution has no live-web access.
+Evidence is naturalistic but frozen. Confirmatory execution will have no live-web access.
 
-Eligible source families include technical documentation, standards, papers, changelogs, incident reports, public filings, and other human-authored primary or high-quality secondary documents that can be redistributed or referenced under the project’s data policy.
+Eligible source families include technical documentation, standards, papers, changelogs, incident reports, public filings, and other human-authored primary or high-quality secondary documents that can be redistributed or referenced under the project data policy.
 
 Every source is stored or snapshotted with a cryptographic digest. Every case has a manifest containing source IDs, hashes, provenance, acquisition metadata, and the producer allocation plan.
 
-Cases must include realistic epistemic difficulty: stale evidence, contradictions, duplicates, recent incorrect claims, and facts distributed across sources. A case is invalid if one producer’s assigned bundle is sufficient to answer the held-out task alone.
+Cases should include realistic epistemic difficulty: stale evidence, contradictions, duplicates, recent incorrect claims, and facts distributed across sources. No producer may receive all preregistered required evidence sources.
+
+When a case depends on an active contradiction or distractor producer, the case may prospectively declare `minimum_events_per_producer`. The instrumentation runner checks this floor on the canonical producer log **before substrate replay or evaluator execution**. The field is optional and absent from historical manifests, preserving their canonical mappings and hashes.
 
 ## Cohorts
 
 - **Instrumentation:** up to 24 cases. These may be inspected and used to repair mechanical failures and calibrate benchmark difficulty.
-- **Confirmatory:** 96 held-out cases. These remain inaccessible until the protocol, source manifest, model identities, prompts, generation parameters, budgets, scoring code, and analysis are frozen.
+- **Confirmatory:** 96 held-out cases. These remain inaccessible until the protocol, source manifest, model policy, prompts, generation parameters, budgets, scoring code, and analysis are frozen.
 
 Instrumentation outcomes are non-inferential and cannot be pooled into confirmatory inference.
 
-The instrumentation code path rejects any manifest containing a confirmatory case. Current workflows additionally reject confirmatory material by filename/stage guards and emit `confirmatory_access: false` and `confirmatory_cases_evaluated: false` evidence.
+The instrumentation code path rejects any manifest containing a confirmatory case. Workflows additionally reject confirmatory material by filename/stage guards and emit `confirmatory_access: false` and `confirmatory_cases_evaluated: false` evidence.
 
 ## Agents and provider identity
 
 Producer and evaluator model identities are frozen only at the confirmatory seal. The experiment records both requested and provider-returned model identities wherever the provider exposes them.
 
-A confirmatory workflow must reject a returned identity that violates the sealed model policy. Requested model strings alone are insufficient evidence of the model actually served.
+Current Z.AI instrumentation requests `glm-5.1`, while successful artifacts have reported `glm-5.2` as the served producer/evaluator model. This mismatch is retained as audit evidence; confirmatory execution must enforce an explicit sealed policy on the **returned** identity rather than trusting the requested string alone.
 
-Producer agents receive the research question as a research brief plus only their assigned frozen sources. They do **not** receive accepted answers or required-source labels. Their output is limited to source-grounded atomic events using the frozen relation ontology.
+Producer agents receive the research question as a research brief plus only their assigned frozen sources. They do **not** receive accepted answers, semantic scoring groups, forbidden terms, or required-source labels. Their output is limited to source-grounded atomic events using the frozen relation ontology.
 
 Producer-local conversational state, scratchpads, tool state, and transient memory are discarded after the canonical event log is created.
 
@@ -83,13 +87,38 @@ Two common tools are available in every arm:
 
 The subject-list tool prevents arbitrary entity spelling from dominating exact retrieval while avoiding object/answer leakage.
 
-Each case/arm receives five independent evaluator draws. The evaluator must return a structured answer, confidence, and cited event IDs. For multi-value questions, the answer field must contain only requested values in question order separated by `; `, with no prose or labels.
+Each case/arm receives five independent evaluator draws. The evaluator returns a structured answer, confidence, and cited event IDs.
+
+## Frozen instrumentation resource controls
+
+The current common evaluator controls are:
+
+- 12 retrieval-operation units per factual retrieval call;
+- **24 total retrieval-operation units per evaluator answer**;
+- **8 tool rounds per evaluator answer**;
+- subject discovery is zero-cost;
+- when either the operation ceiling or tool-round ceiling is reached, factual tools are disabled and the evaluator must finalize from evidence already returned.
+
+Mechanical repairs introduced during Calibration 002 and Calibration 004 changed only boundary finalization behavior. They did not increase the 24-operation or 8-round ceilings.
+
+Z.AI transport retries are explicit and bounded. Only transient business codes 1302/1305 are retried with bounded exponential backoff; quota, subscription, and policy-limit failures stop immediately. SDK-internal retries are disabled inside that wrapper so retry behavior is auditable.
 
 ## Primary endpoint
 
 The single primary endpoint is **post-agent task accuracy**: correctness on the held-out task after all producer-local state has been destroyed.
 
-Answers are scored deterministically against accepted answer strings frozen in the case manifest. Scoring is arm-blind.
+Scoring is deterministic and arm-blind.
+
+Historical cases that were frozen with accepted-answer strings retain normalized whole-string membership scoring. Calibration 003 demonstrated that this is too brittle for multi-value naturalistic tasks because semantically identical punctuation variants can be misclassified.
+
+Prospectively, a case may instead freeze `semantic_answer_requirements` containing:
+
+- required groups of alternative acceptable terms; and
+- optional forbidden contradictory terms.
+
+A semantic-scored answer is correct only when every required group is represented and no forbidden term is present. The requirements are frozen in the case manifest before execution and are never shown to producers or evaluators.
+
+Calibration 004 was the first case executed under this prospective semantic contract.
 
 Using a single primary endpoint avoids the endpoint dependence observed in Experiments 138–141.
 
@@ -97,7 +126,7 @@ Using a single primary endpoint avoids the endpoint dependence observed in Exper
 
 Secondary diagnostics include evidence-path F1, provenance precision/recall, contradiction-resolution accuracy, unsupported-synthesis rate, bridge recovery, calibration Brier score, retrieval operation units, token use, and latency.
 
-A non-empty answer with no valid deposited citation support is explicitly counted as **unsupported synthesis**, even when the answer text happens to match the accepted answer. Raw accuracy therefore cannot conceal unsupported success.
+A non-empty answer with no valid deposited citation support is explicitly counted as **unsupported synthesis**, even when the answer text happens to match the accepted answer. Raw accuracy therefore cannot conceal completely unsupported success.
 
 Secondary outcomes may explain mechanisms but cannot rescue a failed primary result.
 
@@ -141,26 +170,45 @@ A confirmatory result is admissible only if:
 - the confirmatory corpus and source manifest hashes match the sealed manifest; and
 - no treatment, metric, scoring, or analysis parameter changes after unsealing.
 
-## First stochastic pilot
+## Instrumentation chronology
 
-The first complete stochastic pilot, `instr-python-packaging-001`, executed successfully in workflow run `31608304587` after a transport-level structured-output defect was repaired and regression-tested.
+### Pilot 001 — Python packaging
 
-All 20 evaluator executions were correct: 5/5 for P, S, G, and R. Unsupported synthesis was zero in every draw. The case therefore validates the complete stochastic/post-agent transfer machinery but is **ceiling-saturated** and does not estimate a primary accuracy treatment effect.
+Run `31608304587`. P/S/G/R all scored 5/5. The case validated the full stochastic pipeline but was ceiling-saturated on primary accuracy.
 
-Graph and Resonance used substantially fewer retrieval-operation units than Pile and Shared Memory on this case, but this is a one-case secondary instrumentation observation only.
+Detailed record: `docs/llm-epistemic-substrate-142-145-pilot-results.md`.
 
-The workflow requested `glm-5.1`; all evaluator completions in the successful artifact reported `glm-5.2`. This requested/returned identity mismatch must be resolved before confirmatory model sealing.
+### Calibration 002 — Python annotations
 
-Detailed results and audit identifiers are in `docs/llm-epistemic-substrate-142-145-pilot-results.md`.
+Successful run `31617588775`. P scored 4/5; S/G/R scored 5/5. Mean retrieval units were P 23.4, S 24.0, G 15.8, R 11.8. This is the only current harder case with an observed primary accuracy separation between an unstructured arm and structured arms. R and G remained tied on accuracy.
 
-## Current engineering/scientific boundary
+Detailed record: `docs/llm-epistemic-substrate-142-145-calibration-002-results.md`.
 
-Before the instrumentation cohort expands, the project should:
+### Calibration 003 — Rust 2024
 
-1. use a provider endpoint/plan whose terms authorize this experiment runner;
-2. freeze and enforce provider-returned model identity;
-3. retain complete canonical producer event logs in artifacts;
-4. curate a harder difficulty-calibration tranche containing contradictions, stale/current evidence, multi-hop composition, plausible distractors, and at least three distributed required facts; and
-5. freeze a total per-answer retrieval-operation ceiling rather than relying solely on a per-call ceiling.
+Successful run `31620858330`. The frozen whole-string scorer misclassified semantically correct punctuation variants in G/R; deterministic diagnostic semantic completeness was P 5/5, S 3/5, G 5/5, R 5/5. S's two incomplete draws were genuine resource-exhaustion failures. Calibration 003 remains frozen with its original raw score plus diagnostic audit and is not retroactively rescored.
 
-The current Z.AI Coding Plan endpoint is not being used for further custom paid experiment calls pending an authorized provider path. No confirmatory case may be opened during this work.
+Detailed record: `docs/llm-epistemic-substrate-142-145-calibration-003-results.md`.
+
+### Calibration 004 — Go toolchain selection
+
+Successful v2 run `31624101126`. This was the first prospectively semantic-scored case. All arms scored 5/5. Mean retrieval units were P 20.4, S 18.6, G 7.8, R 7.0. P/G/R had evidence-path F1 and provenance recall 1.0; S mean evidence-path F1 was 0.92 and provenance recall 0.867.
+
+The intended fourth-source distractor produced zero events, so this case did not test active distractor competition after deposition. That finding motivated the prospective producer-deposit floor.
+
+Detailed record: `docs/llm-epistemic-substrate-142-145-calibration-004-results.md`.
+
+## Current scientific boundary
+
+The multi-domain instrumentation evidence supports a repeated **retrieval-efficiency mechanism**: G/R generally recover distributed evidence using substantially fewer operation units than P/S. It does not yet support a replicated primary accuracy claim for R over G.
+
+The next calibration cases should therefore:
+
+1. preserve the 24-operation and 8-round ceilings;
+2. use prospective semantic scoring for multi-value answers;
+3. preregister a nonzero producer-deposit floor when contradiction/distractor activity is part of the design;
+4. include active stale/current or contradictory claims rather than merely adjacent distractor documents;
+5. vary domain and vocabulary beyond Python, Rust, and Go; and
+6. retain complete canonical event logs plus requested/returned model identities.
+
+No confirmatory case may be opened until instrumentation mechanics, model-identity policy, scoring, and analysis are frozen.
