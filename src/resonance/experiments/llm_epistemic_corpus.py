@@ -32,6 +32,14 @@ def _string_groups(value: object, label: str) -> tuple[tuple[str, ...], ...]:
     return tuple(_string_tuple(group, f"{label} group") for group in value)
 
 
+def _optional_positive_int(value: object, label: str) -> int | None:
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f"{label} must be a positive integer")
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class SemanticAnswerRequirements:
     """Prospectively frozen deterministic semantic correctness contract."""
@@ -85,6 +93,7 @@ class ResearchCaseManifest:
     accepted_answers: tuple[str, ...]
     required_source_ids: tuple[str, ...]
     semantic_answer_requirements: SemanticAnswerRequirements | None = None
+    minimum_events_per_producer: int | None = None
 
     def validate(self, known_sources: set[str]) -> None:
         if self.cohort not in ("instrumentation", "confirmatory"):
@@ -107,6 +116,13 @@ class ResearchCaseManifest:
             raise ValueError("accepted_answers must contain non-empty answers")
         if self.semantic_answer_requirements is not None:
             self.semantic_answer_requirements.validate()
+        if self.minimum_events_per_producer is not None:
+            if self.minimum_events_per_producer < 1:
+                raise ValueError("minimum_events_per_producer must be a positive integer")
+            if any(not producer_sources for _, producer_sources in self.producer_source_allocations):
+                raise ValueError(
+                    "minimum_events_per_producer requires every producer to have assigned sources"
+                )
         required = set(self.required_source_ids)
         if len(required) < 2 or not required <= source_set:
             raise ValueError("collective evidence must require at least two case sources")
@@ -139,6 +155,8 @@ class ResearchCaseManifest:
             value["semantic_answer_requirements"] = (
                 self.semantic_answer_requirements.canonical_mapping()
             )
+        if self.minimum_events_per_producer is not None:
+            value["minimum_events_per_producer"] = self.minimum_events_per_producer
         return value
 
 
@@ -282,6 +300,10 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 ),
                 semantic_answer_requirements=_parse_semantic_answer_requirements(
                     raw_case.get("semantic_answer_requirements")
+                ),
+                minimum_events_per_producer=_optional_positive_int(
+                    raw_case.get("minimum_events_per_producer"),
+                    "minimum_events_per_producer",
                 ),
             )
         )
