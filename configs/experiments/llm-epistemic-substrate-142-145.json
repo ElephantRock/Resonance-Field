@@ -1,0 +1,117 @@
+{
+  "name": "llm-epistemic-substrate-142-145-v0.1",
+  "stage": "instrumentation_scaffold",
+  "parent_campaign": "epistemic-substrate-138-141-v0.1",
+  "experiments": {
+    "142": "pile",
+    "143": "shared_memory",
+    "144": "provenance_graph",
+    "145": "resonance_field"
+  },
+  "causal_unit": "canonical_epistemic_event_log",
+  "producer_phase": {
+    "run_once_per_case": true,
+    "replay_identical_event_log_across_arms": true,
+    "producer_local_state_destroyed_before_substrate_evaluation": true,
+    "live_web_allowed": false,
+    "source_access": "frozen_corpus_only",
+    "structured_event_output_required": true
+  },
+  "corpus": {
+    "mode": "frozen_naturalistic_documents",
+    "instrumentation_case_count": 24,
+    "confirmatory_case_count": 96,
+    "confirmatory_cases_sealed": false,
+    "content_sha256_required": true,
+    "source_manifest_sha256_required": true,
+    "minimum_sources_per_case": 4,
+    "minimum_producers_per_case": 4,
+    "require_collective_evidence": true,
+    "allow_stale_evidence": true,
+    "allow_contradictory_evidence": true,
+    "allow_duplicate_evidence": true,
+    "allow_recent_incorrect_evidence": true
+  },
+  "agents": {
+    "producer_model_identity_frozen_at_confirmatory_seal": true,
+    "evaluator_model_identity_frozen_at_confirmatory_seal": true,
+    "producer_prompt_sha256_required": true,
+    "evaluator_prompt_sha256_required": true,
+    "identical_generation_parameters_across_arms": true,
+    "independent_evaluator_draws_per_case_arm": 5,
+    "arm_order_randomized": true,
+    "scoring_blinded_to_arm": true
+  },
+  "event_schema": {
+    "schema_version": "1.0",
+    "required_fields": [
+      "event_id",
+      "case_id",
+      "producer_id",
+      "source_id",
+      "source_sha256",
+      "subject",
+      "predicate",
+      "object",
+      "confidence",
+      "observed_at"
+    ],
+    "optional_fields": [
+      "source_locator",
+      "support_event_ids",
+      "contradict_event_ids",
+      "uncertainty",
+      "metadata"
+    ]
+  },
+  "primary_endpoint": "post_agent_task_accuracy",
+  "secondary_endpoints": [
+    "evidence_path_f1",
+    "provenance_precision",
+    "provenance_recall",
+    "contradiction_resolution_accuracy",
+    "unsupported_synthesis_rate",
+    "bridge_recovery",
+    "calibration_brier",
+    "retrieval_operation_units",
+    "evaluator_input_tokens",
+    "evaluator_output_tokens",
+    "wall_clock_latency_ms"
+  ],
+  "planned_contrasts": [
+    ["shared_memory", "pile"],
+    ["provenance_graph", "shared_memory"],
+    ["resonance_field", "provenance_graph"],
+    ["resonance_field", "pile"]
+  ],
+  "confirmatory_priority": [
+    ["resonance_field", "provenance_graph"],
+    ["resonance_field", "pile"]
+  ],
+  "analysis": {
+    "paired_by_case": true,
+    "evaluator_draws_nested_within_case": true,
+    "familywise_alpha": 0.05,
+    "multiple_testing": "holm",
+    "confidence_interval": 0.95,
+    "bootstrap_resamples": 10000,
+    "randomization_resamples": 100000,
+    "minimum_total_effect_r_minus_p": 0.08,
+    "minimum_incremental_effect_r_minus_g": 0.03
+  },
+  "quality_gates": {
+    "identical_event_log_across_arms": true,
+    "identical_evaluator_model_prompt_and_budget_across_arms": true,
+    "no_producer_state_available_to_evaluator": true,
+    "no_live_web_during_evaluation": true,
+    "no_cross_arm_state_leakage": true,
+    "maximum_unsupported_synthesis_rate": 0.05,
+    "minimum_event_provenance_completeness": 0.99,
+    "confirmatory_protocol_changes_after_unseal": false
+  },
+  "interpretation": {
+    "positive_r_minus_g": "field dynamics add capability beyond a static provenance graph under stochastic LLM reasoning",
+    "null_r_minus_g_positive_g_minus_p": "structured relational memory transfers, but resonance dynamics do not add validated external capability",
+    "null_all": "the deterministic 138-141 effect does not externally replicate under this frozen LLM/corpus regime"
+  }
+}
