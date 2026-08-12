@@ -44,13 +44,17 @@ def _optional_positive_int(value: object, label: str) -> int | None:
 class SemanticAnswerRequirements:
     """Prospectively frozen deterministic semantic correctness contract."""
 
-    required_groups: tuple[tuple[str, ...], ...]
+    required_groups: tuple[tuple[str, ...], ...] = ()
     forbidden_terms: tuple[str, ...] = ()
+    required_slots: tuple[tuple[str, ...], ...] = ()
 
     def validate(self) -> None:
-        if not self.required_groups:
-            raise ValueError("semantic answer requirements need at least one required group")
-        for group in self.required_groups:
+        if bool(self.required_groups) == bool(self.required_slots):
+            raise ValueError(
+                "semantic answer requirements need exactly one of required_groups or required_slots"
+            )
+        groups = self.required_groups or self.required_slots
+        for group in groups:
             if not group or any(not term.strip() for term in group):
                 raise ValueError("semantic answer requirement groups need non-empty alternatives")
         if any(not term.strip() for term in self.forbidden_terms):
@@ -58,10 +62,14 @@ class SemanticAnswerRequirements:
 
     def canonical_mapping(self) -> dict[str, object]:
         self.validate()
-        return {
-            "required_groups": [list(group) for group in self.required_groups],
+        value: dict[str, object] = {
             "forbidden_terms": list(self.forbidden_terms),
         }
+        if self.required_groups:
+            value["required_groups"] = [list(group) for group in self.required_groups]
+        else:
+            value["required_slots"] = [list(slot) for slot in self.required_slots]
+        return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -116,6 +124,7 @@ class ResearchCaseManifest:
     required_source_ids: tuple[str, ...]
     semantic_answer_requirements: SemanticAnswerRequirements | None = None
     minimum_events_per_producer: int | None = None
+    minimum_temporal_conflict_keys: int | None = None
 
     def validate(self, known_sources: set[str]) -> None:
         if self.cohort not in ("instrumentation", "confirmatory"):
@@ -144,6 +153,13 @@ class ResearchCaseManifest:
             if any(not producer_sources for _, producer_sources in self.producer_source_allocations):
                 raise ValueError(
                     "minimum_events_per_producer requires every producer to have assigned sources"
+                )
+        if self.minimum_temporal_conflict_keys is not None:
+            if self.minimum_temporal_conflict_keys < 1:
+                raise ValueError("minimum_temporal_conflict_keys must be a positive integer")
+            if self.minimum_events_per_producer is None:
+                raise ValueError(
+                    "minimum_temporal_conflict_keys requires minimum_events_per_producer"
                 )
         required = set(self.required_source_ids)
         if len(required) < 2 or not required <= source_set:
@@ -179,6 +195,8 @@ class ResearchCaseManifest:
             )
         if self.minimum_events_per_producer is not None:
             value["minimum_events_per_producer"] = self.minimum_events_per_producer
+        if self.minimum_temporal_conflict_keys is not None:
+            value["minimum_temporal_conflict_keys"] = self.minimum_temporal_conflict_keys
         return value
 
 
@@ -233,8 +251,19 @@ def _parse_semantic_answer_requirements(value: object) -> SemanticAnswerRequirem
         return None
     if not isinstance(value, dict):
         raise ValueError("semantic_answer_requirements must be an object")
+    raw_groups = value.get("required_groups")
+    raw_slots = value.get("required_slots")
     requirements = SemanticAnswerRequirements(
-        required_groups=_string_groups(value.get("required_groups"), "semantic required groups"),
+        required_groups=(
+            _string_groups(raw_groups, "semantic required groups")
+            if raw_groups is not None
+            else ()
+        ),
+        required_slots=(
+            _string_groups(raw_slots, "semantic required slots")
+            if raw_slots is not None
+            else ()
+        ),
         forbidden_terms=_string_tuple(
             value.get("forbidden_terms", []),
             "semantic forbidden terms",
@@ -320,6 +349,10 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 minimum_events_per_producer=_optional_positive_int(
                     raw_case.get("minimum_events_per_producer"),
                     "minimum_events_per_producer",
+                ),
+                minimum_temporal_conflict_keys=_optional_positive_int(
+                    raw_case.get("minimum_temporal_conflict_keys"),
+                    "minimum_temporal_conflict_keys",
                 ),
             )
         )
