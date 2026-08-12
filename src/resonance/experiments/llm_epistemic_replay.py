@@ -55,9 +55,12 @@ def replay_event_log(
     event_log: EpistemicEventLog,
     substrate_config: EpistemicSubstrateConfig,
 ) -> ReplayedEvidence:
-    """Convert one substrate-neutral event log into the exact Claim representation used by 138–141."""
+    """Convert one substrate-neutral event log into the Claim representation used by 138–141."""
     event_log.validate()
-    entities = sorted({event.subject for event in event_log.events} | {event.object for event in event_log.events})
+    entities = sorted(
+        {event.subject for event in event_log.events}
+        | {event.object for event in event_log.events}
+    )
     relations = sorted({event.predicate for event in event_log.events})
     producers = sorted({event.producer_id for event in event_log.events})
     sources = sorted({event.source_id for event in event_log.events})
