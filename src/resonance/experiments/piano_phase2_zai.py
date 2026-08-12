@@ -1,13 +1,14 @@
 """Z.AI Chat Completions backend for the PIANO model-backed campaigns.
 
 The implementation uses only the Python standard library. Z.AI exposes an
-OpenAI-compatible Chat Completions surface, but its documented structured-output
-mode is ``json_object`` rather than strict server-side JSON Schema. Field therefore
+OpenAI-compatible Chat Completions surface, but its structured-output mode is
+``json_object`` rather than server-enforced field schemas. Field therefore
 validates the returned object locally against the frozen stage contract.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 from collections.abc import Mapping, Sequence
@@ -46,6 +47,8 @@ class ZAIChatCompletionsBackend:
         max_attempts: int = 4,
         retry_backoff_cap_seconds: float = 8.0,
         retry_contract_errors: bool = False,
+        contract_retry_prompt_hardening: bool = False,
+        unique_request_id_per_attempt: bool = False,
     ) -> None:
         if not api_key.strip():
             raise ValueError("api_key must not be empty")
@@ -72,38 +75,83 @@ class ZAIChatCompletionsBackend:
         self.max_attempts = max_attempts
         self.retry_backoff_cap_seconds = retry_backoff_cap_seconds
         self.retry_contract_errors = retry_contract_errors
+        self.contract_retry_prompt_hardening = contract_retry_prompt_hardening
+        self.unique_request_id_per_attempt = unique_request_id_per_attempt
 
-    def _format_instruction(self, stage: str) -> str:
+    def _format_template(self, stage: str) -> str:
+        if stage == "intention":
+            return '{"intention":"<non-empty string>","intended_action":"OBSERVE"}'
+        if stage == "speech":
+            return '{"speech":"<non-empty string>","speech_action":"OBSERVE"}'
+        if stage == "action":
+            return '{"action":"OBSERVE","payload":{},"confidence":0.5}'
+        if stage == "post_action_report":
+            return '{"report":"<non-empty string>","claims_success":true}'
+        raise ValueError(f"unsupported Phase-2 model stage {stage!r}")
+
+    def _format_instruction(self, stage: str, *, contract_attempt: int = 1) -> str:
         actions = ", ".join(self.allowed_actions)
         if stage == "intention":
-            return (
+            instruction = (
                 "Return exactly one JSON object with keys intention and intended_action. "
                 f"intention must be a non-empty string; intended_action must be one of: {actions}."
             )
-        if stage == "speech":
-            return (
+        elif stage == "speech":
+            instruction = (
                 "Return exactly one JSON object with keys speech and speech_action. "
                 f"speech must be a non-empty string; speech_action must be one of: {actions}."
             )
-        if stage == "action":
-            return (
+        elif stage == "action":
+            instruction = (
                 "Return exactly one JSON object with keys action, payload, confidence. "
                 f"action must be one of: {actions}; payload must be an empty JSON object; "
                 "confidence must be a number from 0 through 1."
             )
-        if stage == "post_action_report":
-            return (
+        elif stage == "post_action_report":
+            instruction = (
                 "Return exactly one JSON object with keys report and claims_success. "
                 "report must be a non-empty string; claims_success must be boolean."
             )
-        raise ValueError(f"unsupported Phase-2 model stage {stage!r}")
+        else:
+            raise ValueError(f"unsupported Phase-2 model stage {stage!r}")
 
-    def request_body(self, request: ModelRequest) -> dict[str, object]:
-        """Build the exact provider request; exposed for offline contract tests."""
-        return {
+        if not self.contract_retry_prompt_hardening:
+            return instruction
+
+        instruction += (
+            " Required object shape example: "
+            f"{self._format_template(stage)}. The example values are illustrative only. "
+            "Do not rename, omit, or add keys. Return JSON only."
+        )
+        if contract_attempt > 1:
+            instruction += (
+                f" FORMAT-RECOVERY-{contract_attempt}: a prior physical provider response for this "
+                "same logical call violated only the output contract. Re-evaluate the unchanged "
+                "user request and return a fresh answer in exactly the required object shape. "
+                "Do not discuss the formatting failure and do not add commentary outside the JSON."
+            )
+        return instruction
+
+    def request_body(
+        self,
+        request: ModelRequest,
+        *,
+        contract_attempt: int = 1,
+        physical_attempt: int = 1,
+    ) -> dict[str, object]:
+        """Build one provider request; exposed for offline contract tests."""
+        if contract_attempt <= 0 or physical_attempt <= 0:
+            raise ValueError("attempt counters must be positive")
+        body: dict[str, object] = {
             "model": self.model_snapshot,
             "messages": [
-                {"role": "system", "content": self._format_instruction(request.stage)},
+                {
+                    "role": "system",
+                    "content": self._format_instruction(
+                        request.stage,
+                        contract_attempt=contract_attempt,
+                    ),
+                },
                 {"role": "user", "content": request.prompt},
             ],
             "thinking": {"type": "disabled"},
@@ -113,6 +161,22 @@ class ZAIChatCompletionsBackend:
             "stream": False,
             "response_format": {"type": "json_object"},
         }
+        if self.unique_request_id_per_attempt:
+            body["request_id"] = self._request_id(request, physical_attempt)
+        return body
+
+    def _request_id(self, request: ModelRequest, physical_attempt: int) -> str:
+        payload = "|".join(
+            (
+                self.model_snapshot,
+                request.stage,
+                str(request.seed),
+                str(request.max_output_tokens),
+                request.prompt,
+                str(physical_attempt),
+            )
+        ).encode()
+        return "piano-" + hashlib.sha256(payload).hexdigest()[:48]
 
     def _validate_payload(self, stage: str, payload: Mapping[str, object]) -> None:
         actions = set(self.allowed_actions)
@@ -205,20 +269,28 @@ class ZAIChatCompletionsBackend:
         return min(self.retry_backoff_cap_seconds, 2.0 ** (attempt - 1))
 
     def complete(self, request: ModelRequest) -> ModelReply:
-        body = json.dumps(self.request_body(request), separators=(",", ":")).encode("utf-8")
-        http_request = Request(
-            _CHAT_COMPLETIONS_URL,
-            data=body,
-            headers={
-                "Authorization": f"Bearer {self._api_key}",
-                "Content-Type": "application/json",
-                "Accept-Language": "en-US,en",
-                "User-Agent": "resonance-field-piano-phase3-zai/0.4",
-            },
-            method="POST",
-        )
         started = time.perf_counter()
-        for attempt in range(1, self.max_attempts + 1):
+        contract_failures = 0
+        for physical_attempt in range(1, self.max_attempts + 1):
+            body = json.dumps(
+                self.request_body(
+                    request,
+                    contract_attempt=contract_failures + 1,
+                    physical_attempt=physical_attempt,
+                ),
+                separators=(",", ":"),
+            ).encode("utf-8")
+            http_request = Request(
+                _CHAT_COMPLETIONS_URL,
+                data=body,
+                headers={
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Content-Type": "application/json",
+                    "Accept-Language": "en-US,en",
+                    "User-Agent": "resonance-field-piano-zai/0.5",
+                },
+                method="POST",
+            )
             try:
                 with urlopen(http_request, timeout=self.timeout_seconds) as response:
                     raw = response.read()
@@ -226,22 +298,27 @@ class ZAIChatCompletionsBackend:
                 return self._decode(raw, latency_ms, request.stage)
             except HTTPError as exc:
                 retryable = exc.code == 429 or exc.code >= 500
-                if not retryable or attempt == self.max_attempts:
+                if not retryable or physical_attempt == self.max_attempts:
                     detail = exc.read().decode("utf-8", errors="replace")
                     raise RuntimeError(f"Z.AI HTTP {exc.code}: {detail}") from exc
                 retry_after = exc.headers.get("Retry-After")
-                delay = float(retry_after) if retry_after else self._retry_delay(attempt)
+                delay = (
+                    float(retry_after)
+                    if retry_after
+                    else self._retry_delay(physical_attempt)
+                )
                 time.sleep(delay)
             except _ZAIContractError as exc:
-                if not self.retry_contract_errors or attempt == self.max_attempts:
+                if not self.retry_contract_errors or physical_attempt == self.max_attempts:
                     raise RuntimeError(f"Z.AI structured-output contract error: {exc}") from exc
-                time.sleep(self._retry_delay(attempt))
+                contract_failures += 1
+                time.sleep(self._retry_delay(physical_attempt))
             except TimeoutError as exc:
-                if attempt == self.max_attempts:
+                if physical_attempt == self.max_attempts:
                     raise RuntimeError("Z.AI transport timeout") from exc
-                time.sleep(self._retry_delay(attempt))
+                time.sleep(self._retry_delay(physical_attempt))
             except URLError as exc:
-                if attempt == self.max_attempts:
+                if physical_attempt == self.max_attempts:
                     raise RuntimeError(f"Z.AI transport error: {exc.reason}") from exc
-                time.sleep(self._retry_delay(attempt))
+                time.sleep(self._retry_delay(physical_attempt))
         raise AssertionError("unreachable")
