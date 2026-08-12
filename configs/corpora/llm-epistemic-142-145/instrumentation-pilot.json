@@ -1,0 +1,72 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "py-pep-668",
+      "repository": "python/peps",
+      "commit_sha": "f866e77409305866038471574f075cd8d83eee9e",
+      "path": "peps/pep-0668.rst",
+      "git_blob_sha": "d53dceb81f8f2265abbcac415ad246505dab7fd7",
+      "media_type": "text/x-rst",
+      "title": "PEP 668 — Marking Python base environments as externally managed",
+      "acquired_at": "2026-08-12T12:30:00Z"
+    },
+    {
+      "source_id": "pip-news",
+      "repository": "pypa/pip",
+      "commit_sha": "634a6ec1a5d9dcc2433571cdb2f4c58a4bb29caf",
+      "path": "NEWS.rst",
+      "git_blob_sha": "646b858b361ed3363f12604bba5541e5c8b2a7ac",
+      "media_type": "text/x-rst",
+      "title": "pip NEWS",
+      "acquired_at": "2026-08-12T12:30:00Z"
+    },
+    {
+      "source_id": "cpython-venv-docs",
+      "repository": "python/cpython",
+      "commit_sha": "614e3ec0c63291615b792587fedd46ae47f0a9cb",
+      "path": "Doc/library/venv.rst",
+      "git_blob_sha": "1ad2401fe2f3f3135db7ed697abbdd979d7e2c24",
+      "media_type": "text/x-rst",
+      "title": "Python venv documentation",
+      "acquired_at": "2026-08-12T12:30:00Z"
+    },
+    {
+      "source_id": "cpython-whatsnew-313",
+      "repository": "python/cpython",
+      "commit_sha": "deb33ecba34c5c113626d9cd89e51d8708afc0c7",
+      "path": "Doc/whatsnew/3.13.rst",
+      "git_blob_sha": "d8845fe921ededac4b494f291b735671511ef3f9",
+      "media_type": "text/x-rst",
+      "title": "What's New In Python 3.13",
+      "acquired_at": "2026-08-12T12:30:00Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-python-packaging-001",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "py-pep-668",
+        "pip-news",
+        "cpython-venv-docs",
+        "cpython-whatsnew-313"
+      ],
+      "producer_source_allocations": [
+        ["producer-1", ["py-pep-668"]],
+        ["producer-2", ["pip-news"]],
+        ["producer-3", ["cpython-venv-docs"]],
+        ["producer-4", ["cpython-whatsnew-313"]]
+      ],
+      "held_out_question_id": "instr-python-packaging-001-q1",
+      "question": "According to the frozen sources, which Python standard-library module is the recommended mechanism for creating an isolated environment, and which pip option explicitly permits installation into an EXTERNALLY-MANAGED Python installation?",
+      "accepted_answers": [
+        "venv; --break-system-packages",
+        "venv and --break-system-packages",
+        "venv, --break-system-packages"
+      ],
+      "required_source_ids": ["py-pep-668", "pip-news"]
+    }
+  ]
+}
