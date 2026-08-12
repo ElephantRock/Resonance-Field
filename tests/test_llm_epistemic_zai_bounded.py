@@ -47,7 +47,7 @@ def _completion(content: str, *, tool_calls: list[object] | None = None) -> Simp
     )
 
 
-def _tool() -> SubstrateRetrievalTool:
+def _tool(*, total_budget: int = 1) -> SubstrateRetrievalTool:
     config, _ = load_epistemic_substrate_config(PARENT_CONFIG)
     log = EpistemicEventLog(
         schema_version="1.0",
@@ -69,35 +69,47 @@ def _tool() -> SubstrateRetrievalTool:
     )
     evidence = replay_event_log(log, config)
     substrate = make_replayed_substrate("provenance_graph", evidence, config)
-    return SubstrateRetrievalTool(log, evidence, substrate, total_budget=1)
+    return SubstrateRetrievalTool(log, evidence, substrate, total_budget=total_budget)
 
 
-def test_budget_exhaustion_forces_no_more_tools_and_final_json() -> None:
-    call = SimpleNamespace(
+def _retrieval_call() -> SimpleNamespace:
+    return SimpleNamespace(
         id="call-1",
         function=SimpleNamespace(
             name="retrieve_epistemic_events",
             arguments=json.dumps({"subject": "pip", "predicate": "supports"}),
         ),
     )
-    final = {
+
+
+def _final_payload() -> dict[str, object]:
+    return {
         "answer": "break-system-packages",
         "confidence": 0.9,
         "cited_event_ids": ["event-1"],
     }
-    fake = FakeClient([_completion("", tool_calls=[call]), _completion(json.dumps(final))])
-    client = ZAIBudgetFinalizingEvaluatorClient(client=fake)
-    tool = _tool()
 
-    answer = client.evaluate(
-        EvaluatorTask(
-            case_id="case-1",
-            question_id="question-1",
-            question="Which option does pip support?",
-            draw_id=1,
-        ),
-        tool,
+
+def _task() -> EvaluatorTask:
+    return EvaluatorTask(
+        case_id="case-1",
+        question_id="question-1",
+        question="Which option does pip support?",
+        draw_id=1,
     )
+
+
+def test_budget_exhaustion_forces_no_more_tools_and_final_json() -> None:
+    fake = FakeClient(
+        [
+            _completion("", tool_calls=[_retrieval_call()]),
+            _completion(json.dumps(_final_payload())),
+        ]
+    )
+    client = ZAIBudgetFinalizingEvaluatorClient(client=fake)
+    tool = _tool(total_budget=1)
+
+    answer = client.evaluate(_task(), tool)
 
     assert answer.answer == "break-system-packages"
     assert answer.retrieval_operation_units == 1
@@ -106,3 +118,24 @@ def test_budget_exhaustion_forces_no_more_tools_and_final_json() -> None:
     assert calls[0]["tool_choice"] == "auto"
     assert calls[1]["tool_choice"] == "none"
     assert "retrieval-operation budget is exhausted" in calls[1]["messages"][-1]["content"]
+
+
+def test_round_ceiling_forces_final_json_without_spending_remaining_budget() -> None:
+    fake = FakeClient(
+        [
+            _completion("", tool_calls=[_retrieval_call()]),
+            _completion(json.dumps(_final_payload())),
+        ]
+    )
+    client = ZAIBudgetFinalizingEvaluatorClient(client=fake, max_tool_rounds=1)
+    tool = _tool(total_budget=10)
+
+    answer = client.evaluate(_task(), tool)
+
+    assert answer.answer == "break-system-packages"
+    assert answer.retrieval_operation_units == 1
+    assert tool.remaining_budget == 9
+    calls = fake.chat.completions.calls
+    assert calls[0]["tool_choice"] == "auto"
+    assert calls[1]["tool_choice"] == "none"
+    assert "retrieval-round ceiling is reached" in calls[1]["messages"][-1]["content"]
