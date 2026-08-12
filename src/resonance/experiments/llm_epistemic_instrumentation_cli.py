@@ -19,9 +19,9 @@ from .llm_epistemic_openai import (
 from .llm_epistemic_zai import (
     DEFAULT_ZAI_BASE_URL,
     DEFAULT_ZAI_MODEL,
-    ZAIEvaluatorClient,
     ZAIProducerClient,
 )
+from .llm_epistemic_zai_bounded import ZAIBudgetFinalizingEvaluatorClient
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,7 +46,7 @@ def _clients(args: argparse.Namespace):
         base_url = args.base_url or DEFAULT_ZAI_BASE_URL
         return (
             ZAIProducerClient(model=model, base_url=base_url),
-            ZAIEvaluatorClient(model=model, base_url=base_url),
+            ZAIBudgetFinalizingEvaluatorClient(model=model, base_url=base_url),
             model,
             base_url,
         )
