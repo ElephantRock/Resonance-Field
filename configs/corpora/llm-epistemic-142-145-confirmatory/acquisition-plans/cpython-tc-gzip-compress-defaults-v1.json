@@ -36,7 +36,7 @@
       "repository": "python/cpython",
       "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
       "path": "Doc/library/gzip.rst",
-      "git_blob_sha": "9211e5a7c4ed5acb89d123036488d9f2de16d437",
+      "git_blob_sha": "9211e5f18c6b6e69a5dafc0753d04bec97292206",
       "media_type": "text/x-rst",
       "title": "Current CPython gzip documentation",
       "evidence_observed_at": "2026-08-12T20:16:47Z",
