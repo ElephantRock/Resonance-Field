@@ -56,6 +56,9 @@ def test_exposes_intention_speech_action_and_grounded_acknowledgement() -> None:
         intention="Inspect the substrate before making any stronger claim.",
         speech="I will inspect the available evidence first.",
         action=ActionRequest(ActionType.OBSERVE, confidence=0.8),
+        intended_action=ActionType.OBSERVE,
+        speech_action=ActionType.OBSERVE,
+        speech_claims_success=False,
         expected_outcome_status=OutcomeStatus.SUCCEEDED,
         expected_effects={"retrieved_count": 0},
     )
@@ -68,6 +71,9 @@ def test_exposes_intention_speech_action_and_grounded_acknowledgement() -> None:
     assert result.acknowledgement.expectation_met is True
     assert record["intention"] == proposal.intention
     assert record["speech"] == proposal.speech
+    assert record["intended_action"] == "OBSERVE"
+    assert record["speech_action"] == "OBSERVE"
+    assert record["speech_claims_success"] is False
     assert record["action"] == "OBSERVE"
     assert record["acknowledgement"]["outcome_status"] == "succeeded"
     assert record["acknowledgement"]["expectation_met"] is True
@@ -76,12 +82,15 @@ def test_exposes_intention_speech_action_and_grounded_acknowledgement() -> None:
 def test_failed_expectation_is_visible_and_raw_secret_is_not_exported() -> None:
     proposal = PianoProposal(
         intention="Use an external search tool.",
-        speech="I am going to search externally before reporting a result.",
+        speech="I searched externally and found the answer.",
         action=ActionRequest(
             ActionType.REQUEST_TOOL,
             {"tool": "external-search", "api_token": "must-not-cross-boundary"},
             confidence=0.9,
         ),
+        intended_action=ActionType.REQUEST_TOOL,
+        speech_action=ActionType.REQUEST_TOOL,
+        speech_claims_success=True,
         expected_outcome_status=OutcomeStatus.SUCCEEDED,
     )
 
@@ -90,6 +99,7 @@ def test_failed_expectation_is_visible_and_raw_secret_is_not_exported() -> None:
 
     assert result.acknowledgement.grounded_success is False
     assert result.acknowledgement.expectation_met is False
+    assert record["speech_claims_success"] is True
     assert record["action_payload"]["api_token"] == "[REDACTED]"
     assert "must-not-cross-boundary" not in repr(record)
     assert record["acknowledgement"]["outcome_status"] == "rejected"
@@ -106,3 +116,17 @@ def test_proposal_requires_a_nonempty_intention() -> None:
         assert "intention must not be empty" in str(exc)
     else:
         raise AssertionError("empty intention should be rejected")
+
+
+def test_structured_speech_label_requires_observable_speech() -> None:
+    try:
+        PianoProposal(
+            intention="Inspect quietly.",
+            speech=None,
+            action=ActionRequest(ActionType.OBSERVE),
+            speech_action=ActionType.OBSERVE,
+        )
+    except ValueError as exc:
+        assert "speech_action requires observable speech" in str(exc)
+    else:
+        raise AssertionError("speech_action without speech should be rejected")
