@@ -1,22 +1,125 @@
-name: LLM Epistemic Substrate 142-145 Stochastic Pilot — ARCHIVED
+name: LLM Epistemic Substrate 142-145 Stochastic Pilot
 
 on:
+  push:
+    branches: [experiment/llm-epistemic-substrate]
+    paths:
+      - "configs/corpora/llm-epistemic-142-145/pilot-trigger-zai-v*.txt"
   workflow_dispatch:
 
 permissions:
   contents: read
 
-# The outcome-bearing Z.AI Coding Plan pilot completed successfully in run 31608304587.
-# This workflow is intentionally disabled after review of the provider's Coding Plan
-# usage boundary. Re-enabling model execution requires an explicit code revision that
-# identifies an authorized provider endpoint/plan. Historical workflow definitions are
-# preserved in the commit history and the sealed pilot artifact.
-
 jobs:
-  archived:
-    if: ${{ false }}
+  pilot:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CONFIG: configs/experiments/llm-epistemic-substrate-142-145.json
+      PARENT_CONFIG: configs/experiments/epistemic-substrate-138-141.json
+      PILOT_PLAN: configs/corpora/llm-epistemic-142-145/instrumentation-pilot.json
+      PILOT_DIR: artifacts/llm-epistemic-substrate-142-145/pilot-corpus
+      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145/stochastic-pilot-zai
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
+      ZAI_MODEL: glm-5.1
+
     steps:
-      - run: |
-          echo "Archived after stochastic pilot run 31608304587."
-          echo "No provider call is authorized by this workflow."
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install frozen instrumentation stack
+        run: pip install -e '.[dev,llm]'
+      - name: Verify instrumentation-only implementation
+        run: |
+          ruff check \
+            scripts/freeze_llm_epistemic_sources.py \
+            src/resonance/experiments/llm_epistemic_config.py \
+            src/resonance/experiments/llm_epistemic_corpus.py \
+            src/resonance/experiments/llm_epistemic_events.py \
+            src/resonance/experiments/llm_epistemic_ontology.py \
+            src/resonance/experiments/llm_epistemic_replay.py \
+            src/resonance/experiments/llm_epistemic_agents.py \
+            src/resonance/experiments/llm_epistemic_openai.py \
+            src/resonance/experiments/llm_epistemic_zai.py \
+            src/resonance/experiments/llm_epistemic_scoring.py \
+            src/resonance/experiments/llm_epistemic_instrumentation.py \
+            src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
+            tests/test_llm_epistemic_zai.py
+          pytest tests/test_llm_epistemic_*.py
+      - name: Prove confirmatory cohort remains sealed
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          value = json.loads(Path("configs/experiments/llm-epistemic-substrate-142-145.json").read_text())
+          if value["stage"] != "instrumentation_scaffold":
+              raise SystemExit("pilot requires instrumentation_scaffold stage")
+          if value["corpus"]["confirmatory_cases_sealed"]:
+              raise SystemExit("pilot refuses a sealed/unlocked confirmatory cohort")
+          if list(Path("configs").glob("**/*142-145*confirmatory*")):
+              raise SystemExit("confirmatory corpus material is present")
+          PY
+      - name: Freeze immutable pilot sources
+        run: |
+          python scripts/freeze_llm_epistemic_sources.py \
+            --plan "$PILOT_PLAN" \
+            --output-dir "$PILOT_DIR"
+      - name: Record Z.AI credential availability
+        id: credential
+        shell: bash
+        run: |
+          mkdir -p "$OUTPUT_DIR"
+          if [[ -n "$ZAI_API_KEY" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' \
+              '{"provider":"zai","zai_api_key_available":true,"model_execution_attempted":false}' \
+              > "$OUTPUT_DIR/credential-status.json"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            printf '%s\n' \
+              '{"provider":"zai","zai_api_key_available":false,"model_execution_attempted":false}' \
+              > "$OUTPUT_DIR/credential-status.json"
+          fi
+      - name: Run one-case stochastic P S G R pilot through Z.AI
+        if: steps.credential.outputs.available == 'true'
+        run: |
+          python -m resonance.experiments.llm_epistemic_instrumentation_cli \
+            --config "$CONFIG" \
+            --parent-config "$PARENT_CONFIG" \
+            --manifest "$PILOT_DIR/manifest.json" \
+            --corpus-root "$PILOT_DIR" \
+            --provider zai \
+            --model "$ZAI_MODEL" \
+            --base-url "$ZAI_BASE_URL" \
+            --code-sha "$GITHUB_SHA" \
+            --output "$OUTPUT_DIR/pilot-result.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("artifacts/llm-epistemic-substrate-142-145/stochastic-pilot-zai/credential-status.json")
+          value = json.loads(path.read_text())
+          value["model_execution_attempted"] = True
+          value["model"] = "glm-5.1"
+          value["base_url"] = "https://api.z.ai/api/coding/paas/v4"
+          path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
+          PY
+      - name: Record skipped pilot when Z.AI credential unavailable
+        if: steps.credential.outputs.available != 'true'
+        run: |
+          printf '%s\n' \
+            'ZAI_API_KEY is not configured in repository Actions secrets; stochastic pilot was not executed.' \
+            > "$OUTPUT_DIR/README.txt"
+      - name: Upload pilot evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-epistemic-substrate-142-145-stochastic-pilot-zai
+          path: |
+            ${{ env.OUTPUT_DIR }}/
+            ${{ env.PILOT_DIR }}/freeze-record.json
+            ${{ env.PILOT_DIR }}/manifest.json
+          if-no-files-found: error
+          retention-days: 90
