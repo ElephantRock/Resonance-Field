@@ -5,18 +5,21 @@ on:
     branches:
       - experiment/piano-agent-runtime
       - experiment/piano-agent-runtime-factorial
+      - experiment/piano-agent-runtime-intention-stress
   pull_request:
     paths:
       - src/resonance/experiments/piano_agent_runtime.py
       - src/resonance/experiments/piano_phase1_fixture.py
       - src/resonance/experiments/piano_phase2.py
       - src/resonance/experiments/piano_phase2_factorial.py
+      - src/resonance/experiments/piano_phase2_intention_stress.py
       - src/resonance/experiments/piano_phase2_openai.py
       - src/resonance/experiments/piano_phase2_zai.py
       - tests/test_piano_agent_runtime.py
       - tests/test_piano_phase1_fixture.py
       - tests/test_piano_phase2.py
       - tests/test_piano_phase2_factorial.py
+      - tests/test_piano_phase2_intention_stress.py
       - tests/test_piano_phase2_openai.py
       - tests/test_piano_phase2_zai.py
       - docs/piano-agent-runtime-experiment.md
@@ -47,12 +50,14 @@ jobs:
           src/resonance/experiments/piano_phase1_fixture.py
           src/resonance/experiments/piano_phase2.py
           src/resonance/experiments/piano_phase2_factorial.py
+          src/resonance/experiments/piano_phase2_intention_stress.py
           src/resonance/experiments/piano_phase2_openai.py
           src/resonance/experiments/piano_phase2_zai.py
           tests/test_piano_agent_runtime.py
           tests/test_piano_phase1_fixture.py
           tests/test_piano_phase2.py
           tests/test_piano_phase2_factorial.py
+          tests/test_piano_phase2_intention_stress.py
           tests/test_piano_phase2_openai.py
           tests/test_piano_phase2_zai.py
       - name: Test experimental contract
@@ -62,6 +67,7 @@ jobs:
           tests/test_piano_phase1_fixture.py
           tests/test_piano_phase2.py
           tests/test_piano_phase2_factorial.py
+          tests/test_piano_phase2_intention_stress.py
           tests/test_piano_phase2_openai.py
           tests/test_piano_phase2_zai.py
       - name: Emit Phase 1 fixture records
