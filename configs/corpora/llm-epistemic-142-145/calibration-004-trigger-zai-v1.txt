@@ -1,0 +1,4 @@
+One-shot trigger for instrumentation case instr-go-toolchain-004 through Z.AI.
+Frozen before outcome: four commit-pinned Go sources, three required producer sources, semantic answer requirements, 5 draws x 4 arms, 12 per-call retrieval units, and 24 total retrieval-operation units per evaluator answer.
+The primary scorer requires GOTOOLCHAIN=auto, +auto, +path, and toolchaintrace=1 while forbidding GOTOOLCHAIN=local.
+This marker must not be edited or reused for another outcome-bearing run.
