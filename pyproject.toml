@@ -23,7 +23,7 @@ dev = [
   "ruff>=0.6",
 ]
 llm = [
-  "openai>=2.45,<3",
+  "openai==2.54.0",
 ]
 
 [tool.hatch.build.targets.wheel]
