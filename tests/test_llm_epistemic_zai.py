@@ -40,6 +40,7 @@ def _completion(
     reasoning_content: str | None = None,
     prompt_tokens: int = 0,
     completion_tokens: int = 0,
+    model: str = "glm-5.1",
 ) -> SimpleNamespace:
     message = SimpleNamespace(
         content=content,
@@ -47,7 +48,7 @@ def _completion(
         reasoning_content=reasoning_content,
     )
     return SimpleNamespace(
-        model="glm-5.1",
+        model=model,
         choices=[SimpleNamespace(message=message)],
         usage=SimpleNamespace(
             prompt_tokens=prompt_tokens,
@@ -114,13 +115,15 @@ def _retrieval_tool() -> SubstrateRetrievalTool:
 
 
 def test_zai_producer_uses_source_controlled_timestamp_and_json_mode() -> None:
-    fake = FakeClient([_completion(json.dumps(_producer_payload(0.9)))])
+    fake = FakeClient([_completion(json.dumps(_producer_payload(0.9)), model="glm-5.2")])
     client = ZAIProducerClient(client=fake)
 
     events = client.produce(_producer_task())
 
     assert events[0].observed_at == "2026-08-04T00:00:00Z"
     assert events[0].metadata["provider"] == "zai"
+    assert events[0].metadata["requested_model"] == "glm-5.1"
+    assert events[0].metadata["response_model"] == "glm-5.2"
     call = fake.chat.completions.calls[0]
     assert call["response_format"] == {"type": "json_object"}
     assert call["extra_body"] == {
