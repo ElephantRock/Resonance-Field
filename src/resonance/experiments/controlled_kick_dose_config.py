@@ -16,7 +16,7 @@ class InstrumentationCell:
     kick_cycles: tuple[int, ...]
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "InstrumentationCell":
+    def from_mapping(cls, value: Mapping[str, object]) -> InstrumentationCell:
         return cls(
             seed=int(value["seed"]),
             dose=int(value["dose"]),
@@ -56,7 +56,7 @@ class KickDoseConfig:
     k4_zero_within_arm_timing_variance: bool
 
     @classmethod
-    def from_mapping(cls, value: Mapping[str, object]) -> "KickDoseConfig":
+    def from_mapping(cls, value: Mapping[str, object]) -> KickDoseConfig:
         environment = value["environment"]
         recovery = value["recovery"]
         quality = value["quality_gates"]
