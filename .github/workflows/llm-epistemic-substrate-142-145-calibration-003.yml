@@ -39,11 +39,13 @@ jobs:
             src/resonance/experiments/llm_epistemic_agents.py \
             src/resonance/experiments/llm_epistemic_zai.py \
             src/resonance/experiments/llm_epistemic_zai_bounded.py \
+            src/resonance/experiments/llm_epistemic_zai_retry.py \
             src/resonance/experiments/llm_epistemic_instrumentation.py \
             src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
             tests/test_llm_epistemic_retrieval_budget.py \
             tests/test_llm_epistemic_zai.py \
-            tests/test_llm_epistemic_zai_bounded.py
+            tests/test_llm_epistemic_zai_bounded.py \
+            tests/test_llm_epistemic_zai_retry.py
           pytest tests/test_llm_epistemic_*.py
       - name: Prove confirmatory cohort remains sealed
         run: |
