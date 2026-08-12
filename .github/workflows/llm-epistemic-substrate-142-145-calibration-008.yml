@@ -1,0 +1,89 @@
+name: LLM Epistemic Substrate 142-145 PostgreSQL WAL Calibration 008
+
+on:
+  push:
+    branches: [experiment/llm-epistemic-substrate]
+    paths:
+      - configs/corpora/llm-epistemic-142-145/calibration-008-trigger-zai-v*.txt
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CONFIG: configs/experiments/llm-epistemic-substrate-142-145.json
+      PARENT_CONFIG: configs/experiments/epistemic-substrate-138-141.json
+      CALIBRATION_PLAN: configs/corpora/llm-epistemic-142-145/instrumentation-calibration-008.json
+      CALIBRATION_DIR: artifacts/llm-epistemic-substrate-142-145/calibration-008-corpus
+      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145/calibration-008-zai
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
+      ZAI_MODEL: glm-5.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - name: Install stack
+        run: pip install -e '.[dev,llm]'
+      - name: Verify implementation
+        run: |
+          ruff check scripts/freeze_llm_epistemic_sources.py src/resonance/experiments/llm_epistemic_*.py tests/test_llm_epistemic_*.py
+          pytest tests/test_llm_epistemic_*.py
+      - name: Prove instrumentation boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value=json.loads(Path('configs/experiments/llm-epistemic-substrate-142-145.json').read_text())
+          assert value['stage']=='instrumentation_scaffold'
+          assert not value['corpus']['confirmatory_cases_sealed']
+          assert not list(Path('configs').glob('**/*142-145*confirmatory*'))
+          assert value['agents']['total_retrieval_operation_budget_per_answer']==24
+          PY
+      - name: Freeze PostgreSQL WAL sources
+        run: python scripts/freeze_llm_epistemic_sources.py --plan "$CALIBRATION_PLAN" --output-dir "$CALIBRATION_DIR"
+      - name: Verify calibration contracts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value=json.loads(Path('artifacts/llm-epistemic-substrate-142-145/calibration-008-corpus/manifest.json').read_text())
+          case=value['cases'][0]
+          req=case['semantic_answer_requirements']
+          assert req['required_slots']==[['replica'],['WAL_LEVEL_REPLICA'],['replica'],['logical']]
+          assert case['minimum_events_per_producer']==1
+          assert case['minimum_temporal_conflict_keys']==1
+          assert set(case['required_source_ids'])=={
+              'postgres-wal-config-current',
+              'postgres-wal-docs-current',
+              'postgres-guc-tables-current',
+          }
+          times={s['source_id']:s.get('evidence_observed_at') for s in value['sources']}
+          assert times['postgres-wal-config-95']=='2016-01-04T21:29:34Z'
+          for source_id in ('postgres-wal-config-current','postgres-wal-docs-current','postgres-guc-tables-current'):
+              assert times[source_id]=='2026-08-12T17:15:48Z'
+          PY
+      - name: Require Z.AI credential
+        shell: bash
+        run: test -n "$ZAI_API_KEY"
+      - name: Run stochastic calibration
+        run: |
+          mkdir -p "$OUTPUT_DIR"
+          python -m resonance.experiments.llm_epistemic_instrumentation_cli --config "$CONFIG" --parent-config "$PARENT_CONFIG" --manifest "$CALIBRATION_DIR/manifest.json" --corpus-root "$CALIBRATION_DIR" --provider zai --model "$ZAI_MODEL" --base-url "$ZAI_BASE_URL" --code-sha "$GITHUB_SHA" --output "$OUTPUT_DIR/calibration-result.json"
+      - name: Upload calibration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-epistemic-substrate-142-145-calibration-008-zai
+          path: |
+            ${{ env.OUTPUT_DIR }}/
+            ${{ env.CALIBRATION_DIR }}/freeze-record.json
+            ${{ env.CALIBRATION_DIR }}/manifest.json
+          if-no-files-found: warn
+          retention-days: 90
