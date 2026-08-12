@@ -146,28 +146,26 @@ def run_kick_cell(
 ):
     environment = campaign_environment(base, config)
     original_market = lc.PostgresMarketService
-    provider_holder: list[_BurstMarginSignalProvider] = []
+    provider = _BurstMarginSignalProvider(
+        connection,
+        margin_config=margin_config,
+        experiment_number=experiment_number,
+        cohort="instrumentation" if experiment_number == 135 else "inferential",
+        seed=seed,
+        kick_cycles=kick_cycles,
+    )
 
     class BurstMarginMarketService(original_market):
         def __init__(self, inner_connection, economy, *, bid_signal_provider=None):
             if bid_signal_provider is not None:
                 raise RuntimeError("controlled-kick cells require reputation-neutral matching")
-            provider = _BurstMarginSignalProvider(
-                inner_connection,
-                margin_config=margin_config,
-                experiment_number=experiment_number,
-                cohort="instrumentation" if experiment_number == 135 else "inferential",
-                seed=seed,
-                kick_cycles=kick_cycles,
-            )
-            provider_holder.append(provider)
             super().__init__(inner_connection, economy, bid_signal_provider=provider)
 
         def award(self, task_id, *, at):
             result = super().award(task_id, at=at)
-            if result is not None and provider_holder:
+            if result is not None:
                 cycle = int(result.task.success_condition.get("campaign_cycle", -1))
-                audit = provider_holder[0].audits.get(cycle)
+                audit = provider.audits.get(cycle)
                 if audit is not None:
                     audit.awarded_winner_slot = _slot(result.winning_bid)
                     audit.probe_crossed = audit.awarded_winner_slot != audit.natural_winner_slot
@@ -189,9 +187,6 @@ def run_kick_cell(
     finally:
         lc.PostgresMarketService = original_market
 
-    if len(provider_holder) != 1:
-        raise RuntimeError("controlled-kick market provider was not installed exactly once")
-    provider = provider_holder[0]
     for cycle in kick_cycles:
         audit = provider.audits[cycle]
         if audit.plan_count != 1 or audit.awarded_winner_slot is None:
