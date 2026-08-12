@@ -1,0 +1,83 @@
+name: Epistemic Substrate 138-141 Confirmatory
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmatory_seal:
+        description: "Explicit seal required for a deliberate duplicate execution"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  confirmatory:
+    if: ${{ inputs.confirmatory_seal == 'OPEN-138-141-CONFIRMATORY' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OUTPUT_DIR: artifacts/epistemic-substrate-138-141-confirmatory
+      CONFIG: configs/experiments/epistemic-substrate-138-141.json
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install frozen package
+        run: pip install -e '.[dev]'
+      - name: Verify frozen implementation
+        run: |
+          ruff check \
+            src/resonance/experiments/epistemic_substrate_config.py \
+            src/resonance/experiments/epistemic_substrate_campaign.py \
+            src/resonance/experiments/epistemic_substrate_analysis.py \
+            src/resonance/experiments/epistemic_substrate_cli.py \
+            src/resonance/experiments/epistemic_substrate_confirmatory_cli.py \
+            tests/test_epistemic_substrate_config.py \
+            tests/test_epistemic_substrate_campaign.py \
+            tests/test_epistemic_substrate_analysis.py \
+            tests/test_epistemic_substrate_confirmatory_cli.py
+          pytest \
+            tests/test_epistemic_substrate_config.py \
+            tests/test_epistemic_substrate_campaign.py \
+            tests/test_epistemic_substrate_analysis.py \
+            tests/test_epistemic_substrate_confirmatory_cli.py
+      - name: Record sealed manifest
+        run: |
+          mkdir -p "$OUTPUT_DIR"
+          sha256sum \
+            "$CONFIG" \
+            docs/epistemic-substrate-138-141.md \
+            src/resonance/experiments/epistemic_substrate_config.py \
+            src/resonance/experiments/epistemic_substrate_campaign.py \
+            src/resonance/experiments/epistemic_substrate_analysis.py \
+            src/resonance/experiments/epistemic_substrate_cli.py \
+            src/resonance/experiments/epistemic_substrate_confirmatory_cli.py \
+            > "$OUTPUT_DIR/seal-manifest.sha256"
+          printf '%s\n' "$GITHUB_SHA" > "$OUTPUT_DIR/github-sha.txt"
+      - name: Regenerate matching non-inferential instrumentation evidence
+        run: |
+          python -m resonance.experiments.epistemic_substrate_cli \
+            --config "$CONFIG" \
+            --code-sha "$GITHUB_SHA" \
+            --output "$OUTPUT_DIR/instrumentation.json"
+      - name: Open confirmatory seal and run Experiments 138-141
+        run: |
+          python -m resonance.experiments.epistemic_substrate_confirmatory_cli \
+            --config "$CONFIG" \
+            --instrumentation-evidence "$OUTPUT_DIR/instrumentation.json" \
+            --confirmatory-seal "$CONFIRMATORY_SEAL" \
+            --code-sha "$GITHUB_SHA" \
+            --output "$OUTPUT_DIR/confirmatory.json"
+        env:
+          CONFIRMATORY_SEAL: ${{ inputs.confirmatory_seal }}
+      - name: Upload sealed evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: epistemic-substrate-138-141-confirmatory
+          path: ${{ env.OUTPUT_DIR }}/
+          if-no-files-found: error
+          retention-days: 90
