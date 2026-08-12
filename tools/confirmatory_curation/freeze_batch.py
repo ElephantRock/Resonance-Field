@@ -88,6 +88,7 @@ def freeze_batch(
         raise ValueError("curation acquisition plan may not execute evaluators")
     if plan.get("confirmatory_outcomes_observed") is not False:
         raise ValueError("curation acquisition plan may not observe outcomes")
+    acquired_at = _required_string(plan, "acquired_at")
 
     raw_sources = plan.get("sources")
     if not isinstance(raw_sources, list) or not raw_sources:
@@ -148,6 +149,7 @@ def freeze_batch(
                 "bytes": len(content),
                 "media_type": media_type,
                 "title": title,
+                "acquired_at": acquired_at,
                 "evidence_observed_at": evidence_observed_at,
                 "upstream_project_id": upstream_project_id,
                 "upstream_organization_id": upstream_organization_id,
@@ -163,6 +165,7 @@ def freeze_batch(
         "candidate_id": plan.get("candidate_id"),
         "plan_sha256": _sha256(raw_plan),
         "source_count": len(frozen),
+        "acquired_at": acquired_at,
         "treatment_execution": False,
         "evaluator_execution": False,
         "confirmatory_outcomes_observed": False,
