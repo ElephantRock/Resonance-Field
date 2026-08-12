@@ -4,7 +4,7 @@ on:
   push:
     branches: [experiment/llm-epistemic-substrate]
     paths:
-      - "configs/corpora/llm-epistemic-142-145/pilot-trigger-zai-v1.txt"
+      - "configs/corpora/llm-epistemic-142-145/pilot-trigger-zai-v*.txt"
   workflow_dispatch:
 
 permissions:
