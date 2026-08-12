@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import os
 import time
+from collections.abc import Callable
 from types import SimpleNamespace
-from typing import Any, Callable
+from typing import Any
 
 TRANSIENT_ZAI_RATE_CODES = frozenset({"1302", "1305"})
 
