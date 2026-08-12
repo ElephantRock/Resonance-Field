@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-tc-threadpoolexecutor-max-workers",
+  "acquired_at": "2026-08-12T23:01:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-threadpool-docs-312",
+      "repository": "python/cpython",
+      "commit_sha": "0fb18b02c8ad56299d6a2910be0bab8ad601ef24",
+      "path": "Doc/library/concurrent.futures.rst",
+      "git_blob_sha": "6503d1fcf70a32554904302aaedd2c1447e424d2",
+      "media_type": "text/x-rst",
+      "title": "CPython 3.12 concurrent.futures documentation",
+      "evidence_observed_at": "2023-10-02T11:48:14Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-threadpool-code-312",
+      "repository": "python/cpython",
+      "commit_sha": "0fb18b02c8ad56299d6a2910be0bab8ad601ef24",
+      "path": "Lib/concurrent/futures/thread.py",
+      "git_blob_sha": "3b3a36a5093336cfd9491d3cf269d49fdac9dd63",
+      "media_type": "text/x-python",
+      "title": "CPython 3.12 ThreadPoolExecutor implementation",
+      "evidence_observed_at": "2023-10-02T11:48:14Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-threadpool-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
+      "path": "Doc/library/concurrent.futures.rst",
+      "git_blob_sha": "1f34dc66228e30858035fbde7b648cdbcb36e419",
+      "media_type": "text/x-rst",
+      "title": "Current CPython concurrent.futures documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-threadpool-code-current",
+      "repository": "python/cpython",
+      "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
+      "path": "Lib/concurrent/futures/thread.py",
+      "git_blob_sha": "909359b648709fe980db610c8834c34f2b2d2e76",
+      "media_type": "text/x-python",
+      "title": "Current CPython ThreadPoolExecutor implementation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}
