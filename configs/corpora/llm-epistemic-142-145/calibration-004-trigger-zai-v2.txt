@@ -1,0 +1,4 @@
+One-shot retry for instrumentation case instr-go-toolchain-004 through Z.AI after retrieval-round finalization was repaired.
+Unchanged from v1: four commit-pinned Go sources, three required producer sources, semantic answer requirements, 5 draws x 4 arms, maximum 8 retrieval rounds, 12 per-call retrieval units, and 24 total retrieval-operation units per evaluator answer.
+Mechanical repair only: after the eighth allowed tool round, tools are disabled and the evaluator must finalize using evidence already retrieved; no ninth tool round and no extra operation units are permitted.
+This marker must not be edited or reused for another outcome-bearing run.
