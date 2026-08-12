@@ -1,0 +1,4 @@
+One-shot retry for instrumentation case instr-rust-edition-003 through Z.AI after transient HTTP 429 code 1302 handling was added.
+Unchanged from v1: four commit-pinned Rust sources, question, accepted answers, 5 draws x 4 arms, 12 per-call retrieval units, and 24 total retrieval-operation units per evaluator answer.
+Mechanical repair only: retry Z.AI business codes 1302/1305 with bounded exponential backoff; quota/subscription/policy-limit 429 codes are not retried.
+This marker must not be edited or reused for another outcome-bearing run.
