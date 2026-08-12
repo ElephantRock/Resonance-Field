@@ -19,12 +19,12 @@ from resonance.agents import (
     ActionType,
     AgentObservation,
     DecisionEventStore,
-    OutcomeStatus,
     PolicyGateway,
 )
 from resonance.market.service import MarketService
 from resonance.substrate.repository import TraceRepository
 
+from .piano_agent_runtime import PianoAgentRuntime
 from .piano_phase2 import (
     ModelBackend,
     ModelUsage,
@@ -41,7 +41,6 @@ from .piano_phase3_social import (
     _meta_int,
     _meta_str,
 )
-from .piano_agent_runtime import PianoAgentRuntime
 
 
 class Phase4AuthorityArm(StrEnum):
