@@ -18,6 +18,8 @@ EXPECTED_CONTRASTS = (
     ("resonance_field", "provenance_graph"),
     ("resonance_field", "pile"),
 )
+EXPECTED_INSTRUMENTATION_CASE_COUNT = 24
+EXPECTED_CONFIRMATORY_CASE_COUNT = 512
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,8 +43,9 @@ class LLMEpistemicConfig:
             raise ValueError("campaign stage changed before seal")
         if dict(self.experiments) != EXPECTED_EXPERIMENTS:
             raise ValueError("experiment-to-arm assignment changed")
-        if (self.instrumentation_case_count, self.confirmatory_case_count) != (24, 96):
-            raise ValueError("case cohort sizes changed")
+        expected_counts = (EXPECTED_INSTRUMENTATION_CASE_COUNT, EXPECTED_CONFIRMATORY_CASE_COUNT)
+        if (self.instrumentation_case_count, self.confirmatory_case_count) != expected_counts:
+            raise ValueError("case cohort sizes changed outside the frozen protocol revision")
         if self.confirmatory_cases_sealed:
             raise ValueError("confirmatory cases must remain unsealed during scaffold stage")
         if self.evaluator_draws != 5:
@@ -53,7 +56,6 @@ class LLMEpistemicConfig:
             raise ValueError("planned contrasts changed")
         if (self.minimum_total_effect, self.minimum_incremental_effect) != (0.08, 0.03):
             raise ValueError("minimum effect gates changed")
-
 
 
 def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
@@ -78,4 +80,9 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
     return config
 
 
-__all__ = ["LLMEpistemicConfig", "load_llm_epistemic_config"]
+__all__ = [
+    "EXPECTED_CONFIRMATORY_CASE_COUNT",
+    "EXPECTED_INSTRUMENTATION_CASE_COUNT",
+    "LLMEpistemicConfig",
+    "load_llm_epistemic_config",
+]
