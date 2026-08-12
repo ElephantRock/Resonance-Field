@@ -145,7 +145,12 @@ def _winner_same_flags(rows: list[dict[str, str]]) -> dict[int, bool]:
     previous_damage = 0
     for row in sorted(rows, key=lambda item: _int(item, "cycle")):
         cycle = _int(row, "cycle")
-        components = json.loads(row["micro_components"])
+        raw_components = row["micro_components"]
+        components = (
+            json.loads(raw_components)
+            if isinstance(raw_components, str)
+            else raw_components
+        )
         cumulative = int(round(float(components["winner_damage"]) * (cycle + 1)))
         increment = cumulative - previous_damage
         if increment not in (0, 1):
