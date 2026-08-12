@@ -8,9 +8,11 @@ on:
       - "src/resonance/experiments/epistemic_substrate_campaign.py"
       - "src/resonance/experiments/epistemic_substrate_analysis.py"
       - "src/resonance/experiments/epistemic_substrate_cli.py"
+      - "src/resonance/experiments/epistemic_substrate_confirmatory_cli.py"
       - "tests/test_epistemic_substrate_config.py"
       - "tests/test_epistemic_substrate_campaign.py"
       - "tests/test_epistemic_substrate_analysis.py"
+      - "tests/test_epistemic_substrate_confirmatory_cli.py"
       - "docs/epistemic-substrate-138-141.md"
       - ".github/workflows/epistemic-substrate-138-141.yml"
   workflow_dispatch:
@@ -40,15 +42,18 @@ jobs:
             src/resonance/experiments/epistemic_substrate_campaign.py \
             src/resonance/experiments/epistemic_substrate_analysis.py \
             src/resonance/experiments/epistemic_substrate_cli.py \
+            src/resonance/experiments/epistemic_substrate_confirmatory_cli.py \
             tests/test_epistemic_substrate_config.py \
             tests/test_epistemic_substrate_campaign.py \
-            tests/test_epistemic_substrate_analysis.py
+            tests/test_epistemic_substrate_analysis.py \
+            tests/test_epistemic_substrate_confirmatory_cli.py
       - name: Test campaign mechanics and frozen inference
         run: |
           pytest \
             tests/test_epistemic_substrate_config.py \
             tests/test_epistemic_substrate_campaign.py \
-            tests/test_epistemic_substrate_analysis.py
+            tests/test_epistemic_substrate_analysis.py \
+            tests/test_epistemic_substrate_confirmatory_cli.py
       - name: Run non-inferential instrumentation
         run: |
           python -m resonance.experiments.epistemic_substrate_cli \
