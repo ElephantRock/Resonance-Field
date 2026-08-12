@@ -124,6 +124,35 @@ def test_producer_deposit_floor_is_prospective_and_round_trips(tmp_path: Path) -
     assert loaded.sha256() == manifest.sha256()
 
 
+def test_generic_conflict_floor_is_prospective_and_requires_deposit_floor(tmp_path: Path) -> None:
+    legacy = _case("instrumentation")
+    assert "minimum_conflict_keys" not in legacy.canonical_mapping()
+
+    invalid = replace(legacy, minimum_conflict_keys=1)
+    try:
+        invalid.validate({"source-1", "source-2", "source-3", "source-4"})
+    except ValueError as exc:
+        assert "requires minimum_events_per_producer" in str(exc)
+    else:
+        raise AssertionError("generic conflict floor accepted without producer floor")
+
+    guarded = replace(
+        legacy,
+        minimum_events_per_producer=1,
+        minimum_conflict_keys=1,
+    )
+    manifest = CorpusManifest(
+        manifest_version="1.0",
+        sources=tuple(_source(index) for index in range(1, 5)),
+        cases=(guarded,),
+    )
+    path = tmp_path / "conflict-guard.json"
+    path.write_text(manifest.canonical_bytes().decode())
+    loaded = load_corpus_manifest(path)
+    assert loaded.cases[0].minimum_conflict_keys == 1
+    assert loaded.sha256() == manifest.sha256()
+
+
 def test_temporal_conflict_floor_is_prospective_and_requires_deposit_floor(tmp_path: Path) -> None:
     legacy = _case("instrumentation")
     assert "minimum_temporal_conflict_keys" not in legacy.canonical_mapping()
