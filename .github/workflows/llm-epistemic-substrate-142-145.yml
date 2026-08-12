@@ -3,6 +3,7 @@ name: LLM Epistemic Substrate 142-145 Instrumentation
 on:
   pull_request:
     paths:
+      - "pyproject.toml"
       - "configs/experiments/llm-epistemic-substrate-142-145.json"
       - "docs/llm-epistemic-substrate-142-145.md"
       - "src/resonance/experiments/llm_epistemic_*.py"
@@ -28,8 +29,8 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-      - name: Install package
-        run: pip install -e '.[dev]'
+      - name: Install package and optional LLM provider
+        run: pip install -e '.[dev,llm]'
       - name: Lint replication layer
         run: |
           ruff check --output-format=github \
@@ -38,12 +39,14 @@ jobs:
             src/resonance/experiments/llm_epistemic_events.py \
             src/resonance/experiments/llm_epistemic_replay.py \
             src/resonance/experiments/llm_epistemic_agents.py \
+            src/resonance/experiments/llm_epistemic_openai.py \
             tests/test_llm_epistemic_config.py \
             tests/test_llm_epistemic_corpus.py \
             tests/test_llm_epistemic_events.py \
             tests/test_llm_epistemic_replay.py \
-            tests/test_llm_epistemic_agents.py
-      - name: Test replication mechanics
+            tests/test_llm_epistemic_agents.py \
+            tests/test_llm_epistemic_openai.py
+      - name: Test replication mechanics and provider contract
         run: pytest tests/test_llm_epistemic_*.py
       - name: Enforce instrumentation-only boundary
         run: |
