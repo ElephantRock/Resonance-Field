@@ -22,6 +22,7 @@ from .llm_epistemic_zai import (
     ZAIProducerClient,
 )
 from .llm_epistemic_zai_bounded import ZAIBudgetFinalizingEvaluatorClient
+from .llm_epistemic_zai_retry import RetryingZAIClient
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -44,9 +45,14 @@ def _clients(args: argparse.Namespace):
             raise SystemExit("ZAI_API_KEY is required for Z.AI stochastic instrumentation")
         model = args.model or DEFAULT_ZAI_MODEL
         base_url = args.base_url or DEFAULT_ZAI_BASE_URL
+        retrying_client = RetryingZAIClient(base_url=base_url)
         return (
-            ZAIProducerClient(model=model, base_url=base_url),
-            ZAIBudgetFinalizingEvaluatorClient(model=model, base_url=base_url),
+            ZAIProducerClient(model=model, base_url=base_url, client=retrying_client),
+            ZAIBudgetFinalizingEvaluatorClient(
+                model=model,
+                base_url=base_url,
+                client=retrying_client,
+            ),
             model,
             base_url,
         )
