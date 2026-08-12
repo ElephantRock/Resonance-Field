@@ -45,6 +45,12 @@ EXPECTED_ARMS = {
         "activation_dynamics": True,
     },
 }
+EXPECTED_EVIDENCE_REGIMES = {
+    "fast_change": 8,
+    "slow_change": 8,
+    "recent_rumor": 8,
+    "stable_confirmation": 24,
+}
 EXPECTED_RESONANCE = {
     "initial_activation": 1.0,
     "decay_factor_per_epoch": 0.97,
@@ -52,6 +58,7 @@ EXPECTED_RESONANCE = {
     "contradiction_gain": 0.10,
     "bridge_gain": 0.20,
     "maximum_activation": 3.0,
+    "contradiction_override_margin": 0.60,
 }
 EXPECTED_PRIMARY_ENDPOINTS = (
     "transfer_accuracy",
@@ -88,19 +95,27 @@ class EpistemicSubstrateConfig:
     benchmark_mode: str
     entity_count: int
     relation_count: int
+    relation_count_semantics: str
+    relation_type_count: int
     source_packet_count: int
     agent_count: int
     observations_per_agent: int
     discovery_query_count: int
     transfer_query_count: int
     transfer_path_hops: tuple[int, ...]
+    final_epoch: int
+    evidence_regimes_canonical: str
     producer_memory_destroyed_before_transfer: bool
     max_substrate_writes_per_agent: int
     max_retrieval_items_per_query: int
+    pile_claim_cost: int
+    shared_claim_cost: int
+    graph_claim_cost: int
     max_graph_hops_per_query: int
     max_reasoning_steps_per_query: int
     arms_canonical: str
     resonance_canonical: str
+    contradiction_override_margin: float
     primary_endpoints: tuple[str, ...]
     confirmatory_contrasts: tuple[tuple[str, str], ...]
     paired_by_world_seed: bool
@@ -129,6 +144,7 @@ class EpistemicSubstrateConfig:
         experiments = _mapping(value["experiments"], "experiments")
         arms = _mapping(value["arms"], "arms")
         resonance = _mapping(value["resonance"], "resonance")
+        evidence_regimes = _mapping(benchmark["evidence_regimes"], "evidence_regimes")
 
         raw_contrasts = value["confirmatory_contrasts"]
         if not isinstance(raw_contrasts, Sequence) or isinstance(raw_contrasts, (str, bytes)):
@@ -149,21 +165,29 @@ class EpistemicSubstrateConfig:
             benchmark_mode=str(benchmark["mode"]),
             entity_count=int(benchmark["entity_count"]),
             relation_count=int(benchmark["relation_count"]),
+            relation_count_semantics=str(benchmark["relation_count_semantics"]),
+            relation_type_count=int(benchmark["relation_type_count"]),
             source_packet_count=int(benchmark["source_packet_count"]),
             agent_count=int(benchmark["agent_count"]),
             observations_per_agent=int(benchmark["observations_per_agent"]),
             discovery_query_count=int(benchmark["discovery_query_count"]),
             transfer_query_count=int(benchmark["transfer_query_count"]),
             transfer_path_hops=_int_tuple(benchmark["transfer_path_hops"], "transfer_path_hops"),
+            final_epoch=int(benchmark["final_epoch"]),
+            evidence_regimes_canonical=_canonical(evidence_regimes),
             producer_memory_destroyed_before_transfer=bool(
                 benchmark["producer_memory_destroyed_before_transfer"]
             ),
             max_substrate_writes_per_agent=int(budget["max_substrate_writes_per_agent"]),
             max_retrieval_items_per_query=int(budget["max_retrieval_items_per_query"]),
+            pile_claim_cost=int(budget["pile_claim_cost"]),
+            shared_claim_cost=int(budget["shared_claim_cost"]),
+            graph_claim_cost=int(budget["graph_claim_cost"]),
             max_graph_hops_per_query=int(budget["max_graph_hops_per_query"]),
             max_reasoning_steps_per_query=int(budget["max_reasoning_steps_per_query"]),
             arms_canonical=_canonical(arms),
             resonance_canonical=_canonical(resonance),
+            contradiction_override_margin=float(resonance["contradiction_override_margin"]),
             primary_endpoints=tuple(str(item) for item in raw_endpoints),
             confirmatory_contrasts=tuple(contrasts),
             paired_by_world_seed=bool(analysis["paired_by_world_seed"]),
@@ -201,17 +225,23 @@ class EpistemicSubstrateConfig:
             raise ValueError("experiment-to-arm assignment changed")
         if self.arms_canonical != _canonical(EXPECTED_ARMS):
             raise ValueError("substrate arm semantics changed")
+        if self.evidence_regimes_canonical != _canonical(EXPECTED_EVIDENCE_REGIMES):
+            raise ValueError("evidence regime mixture changed")
         if self.resonance_canonical != _canonical(EXPECTED_RESONANCE):
             raise ValueError("resonance dynamics changed")
         if self.benchmark_mode != "deterministic_relational_world":
             raise ValueError("benchmark mode changed")
+        if self.relation_count_semantics != "observation_claims":
+            raise ValueError("relation count semantics changed")
         if (
             self.entity_count,
             self.relation_count,
+            self.relation_type_count,
             self.source_packet_count,
             self.agent_count,
             self.observations_per_agent,
-        ) != (96, 192, 64, 32, 6):
+            self.final_epoch,
+        ) != (96, 192, 4, 64, 32, 6, 40):
             raise ValueError("benchmark population or evidence geometry changed")
         if (self.discovery_query_count, self.transfer_query_count) != (24, 32):
             raise ValueError("query counts changed")
@@ -222,10 +252,15 @@ class EpistemicSubstrateConfig:
         if (
             self.max_substrate_writes_per_agent,
             self.max_retrieval_items_per_query,
+            self.pile_claim_cost,
+            self.shared_claim_cost,
+            self.graph_claim_cost,
             self.max_graph_hops_per_query,
             self.max_reasoning_steps_per_query,
-        ) != (6, 12, 4, 8):
-            raise ValueError("cross-arm budget changed")
+        ) != (6, 12, 3, 1, 1, 4, 8):
+            raise ValueError("cross-arm budget or representation costs changed")
+        if self.contradiction_override_margin != 0.60:
+            raise ValueError("contradiction override margin changed")
         if self.primary_endpoints != EXPECTED_PRIMARY_ENDPOINTS:
             raise ValueError("primary endpoints changed")
         if self.confirmatory_contrasts != EXPECTED_CONFIRMATORY_CONTRASTS:
