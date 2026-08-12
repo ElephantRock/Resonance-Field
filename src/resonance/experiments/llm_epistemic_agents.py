@@ -94,6 +94,7 @@ class SubstrateRetrievalTool:
         if event_log.sha256() != evidence.event_log_sha256:
             raise ValueError("retrieval tool event log does not match replayed evidence")
         self._events = {event.event_id: event for event in event_log.events}
+        self._subjects = tuple(sorted({event.subject for event in event_log.events}, key=str.casefold))
         self._evidence = evidence
         self._substrate = substrate
 
@@ -111,8 +112,8 @@ class SubstrateRetrievalTool:
         return RetrievalToolResult(events, chosen_event_id, retrieval.cost, retrieval.complete)
 
     def subjects(self) -> tuple[str, ...]:
-        """Expose substrate-neutral subject vocabulary without revealing factual objects."""
-        return tuple(sorted(self._evidence.index.entity_to_id, key=str.casefold))
+        """Expose the shared subject vocabulary without revealing factual objects."""
+        return self._subjects
 
     def _event_for_claim(self, claim_id: int) -> RetrievedEvent:
         event_id = self._evidence.index.claim_to_event_id[claim_id]
