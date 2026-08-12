@@ -1,10 +1,11 @@
 {
   "name": "llm-epistemic-substrate-142-145-v0.1",
   "stage": "instrumentation_scaffold",
-  "protocol_revision": "002-success-rule-and-power-semantics",
+  "protocol_revision": "003-provider-identity-freeze",
   "protocol_revision_history": [
     "001-confirmatory-sample-size-512",
-    "002-success-rule-and-power-semantics"
+    "002-success-rule-and-power-semantics",
+    "003-provider-identity-freeze"
   ],
   "parent_campaign": "epistemic-substrate-138-141-v0.1",
   "experiments": {
@@ -14,6 +15,25 @@
     "145": "resonance_field"
   },
   "causal_unit": "canonical_epistemic_event_log",
+  "provider": {
+    "name": "zai",
+    "protocol": "openai_compatible_chat_completions",
+    "base_url": "https://api.z.ai/api/coding/paas/v4",
+    "requested_model": "glm-5.1",
+    "expected_response_model": "glm-5.2",
+    "identity_probe_run_id": 31642753502,
+    "identity_probe_artifact_id": 9159514128,
+    "identity_probe_artifact_digest": "sha256:c56a57e94a57657054195960bb0bd556aadd504b7d6d2ba9e53a19babba4757a",
+    "identity_probe_json_sha256": "835bc51a029517d6d3f5271c5f0f0d98e286df79b486d64742517742c81d7581",
+    "request_contract_sha256": "739fba6b309308d0798003f7c1c6a5d9b859b8ad2c4d94fc3bdcd75a8f246acd",
+    "temperature": 1.0,
+    "thinking_enabled": true,
+    "clear_thinking": false,
+    "sdk_internal_retries": 0,
+    "transient_retry_business_codes": ["1302", "1305"],
+    "maximum_transient_retries": 5,
+    "fail_closed_on_response_model_mismatch": true
+  },
   "producer_phase": {
     "run_once_per_case": true,
     "replay_identical_event_log_across_arms": true,
