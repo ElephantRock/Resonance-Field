@@ -15,6 +15,7 @@ from .llm_epistemic_agents import (
     SubstrateRetrievalTool,
 )
 from .llm_epistemic_events import EpistemicEvent
+from .llm_epistemic_ontology import RELATION_ONTOLOGY
 
 DEFAULT_INSTRUMENTATION_MODEL = "gpt-5.6-terra"
 
@@ -39,7 +40,7 @@ def _producer_schema(source_ids: tuple[str, ...]) -> dict[str, Any]:
                     "properties": {
                         "source_id": {"type": "string", "enum": list(source_ids)},
                         "subject": {"type": "string", "minLength": 1},
-                        "predicate": {"type": "string", "minLength": 1},
+                        "predicate": {"type": "string", "enum": list(RELATION_ONTOLOGY)},
                         "object": {"type": "string", "minLength": 1},
                         "confidence": {"type": "number", "minimum": 0, "maximum": 1},
                         "observed_at": {"type": "string", "minLength": 1},
@@ -90,11 +91,13 @@ def _text_format(name: str, schema: dict[str, Any]) -> dict[str, Any]:
 
 
 def _producer_input(task: ProducerTask) -> str:
+    relation_list = ", ".join(RELATION_ONTOLOGY)
     parts = [
         f"Case: {task.case_id}",
         f"Producer: {task.producer_id}",
         "Extract atomic factual claims only from the assigned frozen sources below.",
-        "Use concise normalized subject/predicate/object strings.",
+        "Use concise normalized entity names and only the frozen predicate vocabulary.",
+        f"Allowed predicates: {relation_list}.",
         "observed_at must be a timezone-aware ISO-8601 time supported by the source; "
         "if a source gives only a date, use 00:00:00Z for that date.",
         "Do not infer cross-source conclusions. Do not cite a source not assigned to you.",
@@ -219,7 +222,7 @@ class OpenAIEvaluatorClient:
                 "type": "object",
                 "properties": {
                     "subject": {"type": "string"},
-                    "predicate": {"type": "string"},
+                    "predicate": {"type": "string", "enum": list(RELATION_ONTOLOGY)},
                 },
                 "required": ["subject", "predicate"],
                 "additionalProperties": False,
