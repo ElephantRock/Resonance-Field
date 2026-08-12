@@ -138,7 +138,10 @@ def run_probe(*, requested_model: str, base_url: str) -> dict[str, Any]:
     if any(not model for model in response_models):
         raise RuntimeError("provider omitted response model identity during probe")
     if len(set(response_models)) != 1:
-        raise RuntimeError(f"provider response identity was inconsistent across probe calls: {response_models}")
+        raise RuntimeError(
+            "provider response identity was inconsistent across probe calls: "
+            f"{response_models}"
+        )
 
     request_contract = {
         "probe_version": PROBE_VERSION,
