@@ -1,4 +1,4 @@
-"""Z.AI Chat Completions backend for the PIANO Phase-2-ZAI campaign.
+"""Z.AI Chat Completions backend for the PIANO model-backed campaigns.
 
 The implementation uses only the Python standard library. Z.AI exposes an
 OpenAI-compatible Chat Completions surface, but its documented structured-output
@@ -19,10 +19,14 @@ from .piano_phase2 import ModelReply, ModelRequest
 _CHAT_COMPLETIONS_URL = "https://api.z.ai/api/coding/paas/v4/chat/completions"
 
 
+class _ZAIContractError(RuntimeError):
+    """Provider response was syntactically/structurally invalid for the stage contract."""
+
+
 def _require_exact_keys(payload: Mapping[str, object], expected: set[str], stage: str) -> None:
     actual = set(payload)
     if actual != expected:
-        raise RuntimeError(
+        raise _ZAIContractError(
             f"Z.AI {stage} payload keys differ from frozen contract: "
             f"expected {sorted(expected)!r}, received {sorted(actual)!r}"
         )
@@ -40,6 +44,8 @@ class ZAIChatCompletionsBackend:
         temperature: float = 0.0,
         timeout_seconds: float = 60.0,
         max_attempts: int = 4,
+        retry_backoff_cap_seconds: float = 8.0,
+        retry_contract_errors: bool = False,
     ) -> None:
         if not api_key.strip():
             raise ValueError("api_key must not be empty")
@@ -56,12 +62,16 @@ class ZAIChatCompletionsBackend:
             raise ValueError("timeout_seconds must be positive")
         if max_attempts <= 0:
             raise ValueError("max_attempts must be positive")
+        if retry_backoff_cap_seconds <= 0:
+            raise ValueError("retry_backoff_cap_seconds must be positive")
         self._api_key = api_key
         self.model_snapshot = model_snapshot
         self.allowed_actions = actions
         self.temperature = temperature
         self.timeout_seconds = timeout_seconds
         self.max_attempts = max_attempts
+        self.retry_backoff_cap_seconds = retry_backoff_cap_seconds
+        self.retry_contract_errors = retry_contract_errors
 
     def _format_instruction(self, stage: str) -> str:
         actions = ", ".join(self.allowed_actions)
@@ -109,42 +119,49 @@ class ZAIChatCompletionsBackend:
         if stage == "intention":
             _require_exact_keys(payload, {"intention", "intended_action"}, stage)
             if not isinstance(payload["intention"], str) or not payload["intention"].strip():
-                raise RuntimeError("Z.AI intention must be a non-empty string")
+                raise _ZAIContractError("Z.AI intention must be a non-empty string")
             if payload["intended_action"] not in actions:
-                raise RuntimeError("Z.AI intended_action is outside the frozen action vocabulary")
+                raise _ZAIContractError(
+                    "Z.AI intended_action is outside the frozen action vocabulary"
+                )
             return
         if stage == "speech":
             _require_exact_keys(payload, {"speech", "speech_action"}, stage)
             if not isinstance(payload["speech"], str) or not payload["speech"].strip():
-                raise RuntimeError("Z.AI speech must be a non-empty string")
+                raise _ZAIContractError("Z.AI speech must be a non-empty string")
             if payload["speech_action"] not in actions:
-                raise RuntimeError("Z.AI speech_action is outside the frozen action vocabulary")
+                raise _ZAIContractError(
+                    "Z.AI speech_action is outside the frozen action vocabulary"
+                )
             return
         if stage == "action":
             _require_exact_keys(payload, {"action", "payload", "confidence"}, stage)
             if payload["action"] not in actions:
-                raise RuntimeError("Z.AI action is outside the frozen action vocabulary")
+                raise _ZAIContractError("Z.AI action is outside the frozen action vocabulary")
             if not isinstance(payload["payload"], Mapping) or payload["payload"]:
-                raise RuntimeError("Z.AI action payload must be an empty object")
+                raise _ZAIContractError("Z.AI action payload must be an empty object")
             confidence = payload["confidence"]
             if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
-                raise RuntimeError("Z.AI confidence must be numeric")
+                raise _ZAIContractError("Z.AI confidence must be numeric")
             if not 0.0 <= float(confidence) <= 1.0:
-                raise RuntimeError("Z.AI confidence must be between 0 and 1")
+                raise _ZAIContractError("Z.AI confidence must be between 0 and 1")
             return
         if stage == "post_action_report":
             _require_exact_keys(payload, {"report", "claims_success"}, stage)
             if not isinstance(payload["report"], str) or not payload["report"].strip():
-                raise RuntimeError("Z.AI report must be a non-empty string")
+                raise _ZAIContractError("Z.AI report must be a non-empty string")
             if not isinstance(payload["claims_success"], bool):
-                raise RuntimeError("Z.AI claims_success must be boolean")
+                raise _ZAIContractError("Z.AI claims_success must be boolean")
             return
         raise ValueError(f"unsupported Phase-2 model stage {stage!r}")
 
     def _decode(self, raw: bytes, latency_ms: float, stage: str) -> ModelReply:
-        value = json.loads(raw.decode("utf-8"))
+        try:
+            value = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise _ZAIContractError("Z.AI response was not valid JSON") from exc
         if not isinstance(value, Mapping):
-            raise RuntimeError("Z.AI response must be a JSON object")
+            raise _ZAIContractError("Z.AI response must be a JSON object")
         model = value.get("model")
         if model != self.model_snapshot:
             raise RuntimeError(
@@ -152,27 +169,30 @@ class ZAIChatCompletionsBackend:
             )
         choices = value.get("choices")
         if not isinstance(choices, list) or len(choices) != 1:
-            raise RuntimeError("Z.AI response must contain exactly one choice")
+            raise _ZAIContractError("Z.AI response must contain exactly one choice")
         choice = choices[0]
         if not isinstance(choice, Mapping):
-            raise RuntimeError("Z.AI choice must be an object")
+            raise _ZAIContractError("Z.AI choice must be an object")
         message = choice.get("message")
         if not isinstance(message, Mapping):
-            raise RuntimeError("Z.AI choice must contain a message")
+            raise _ZAIContractError("Z.AI choice must contain a message")
         content = message.get("content")
         if not isinstance(content, str) or not content.strip():
-            raise RuntimeError("Z.AI response contained no JSON content")
-        payload = json.loads(content)
+            raise _ZAIContractError("Z.AI response contained no JSON content")
+        try:
+            payload = json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise _ZAIContractError("Z.AI structured output was not valid JSON") from exc
         if not isinstance(payload, Mapping):
-            raise RuntimeError("Z.AI structured output must be an object")
+            raise _ZAIContractError("Z.AI structured output must be an object")
         self._validate_payload(stage, payload)
         usage = value.get("usage", {})
         if not isinstance(usage, Mapping):
-            raise RuntimeError("Z.AI usage must be an object")
+            raise _ZAIContractError("Z.AI usage must be an object")
         input_tokens = usage.get("prompt_tokens", 0)
         output_tokens = usage.get("completion_tokens", 0)
         if not isinstance(input_tokens, int) or not isinstance(output_tokens, int):
-            raise RuntimeError("Z.AI token usage must be integer-valued")
+            raise _ZAIContractError("Z.AI token usage must be integer-valued")
         return ModelReply(
             payload=payload,
             model_snapshot=self.model_snapshot,
@@ -180,6 +200,9 @@ class ZAIChatCompletionsBackend:
             output_tokens=output_tokens,
             latency_ms=latency_ms,
         )
+
+    def _retry_delay(self, attempt: int) -> float:
+        return min(self.retry_backoff_cap_seconds, 2.0 ** (attempt - 1))
 
     def complete(self, request: ModelRequest) -> ModelReply:
         body = json.dumps(self.request_body(request), separators=(",", ":")).encode("utf-8")
@@ -190,7 +213,7 @@ class ZAIChatCompletionsBackend:
                 "Authorization": f"Bearer {self._api_key}",
                 "Content-Type": "application/json",
                 "Accept-Language": "en-US,en",
-                "User-Agent": "resonance-field-piano-phase2-zai/0.3",
+                "User-Agent": "resonance-field-piano-phase3-zai/0.4",
             },
             method="POST",
         )
@@ -207,14 +230,18 @@ class ZAIChatCompletionsBackend:
                     detail = exc.read().decode("utf-8", errors="replace")
                     raise RuntimeError(f"Z.AI HTTP {exc.code}: {detail}") from exc
                 retry_after = exc.headers.get("Retry-After")
-                delay = float(retry_after) if retry_after else min(8.0, 2.0 ** (attempt - 1))
+                delay = float(retry_after) if retry_after else self._retry_delay(attempt)
                 time.sleep(delay)
+            except _ZAIContractError as exc:
+                if not self.retry_contract_errors or attempt == self.max_attempts:
+                    raise RuntimeError(f"Z.AI structured-output contract error: {exc}") from exc
+                time.sleep(self._retry_delay(attempt))
             except TimeoutError as exc:
                 if attempt == self.max_attempts:
                     raise RuntimeError("Z.AI transport timeout") from exc
-                time.sleep(min(8.0, 2.0 ** (attempt - 1)))
+                time.sleep(self._retry_delay(attempt))
             except URLError as exc:
                 if attempt == self.max_attempts:
                     raise RuntimeError(f"Z.AI transport error: {exc.reason}") from exc
-                time.sleep(min(8.0, 2.0 ** (attempt - 1)))
+                time.sleep(self._retry_delay(attempt))
         raise AssertionError("unreachable")
