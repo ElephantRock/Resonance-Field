@@ -1,0 +1,110 @@
+{
+  "name": "epistemic-substrate-138-141-v0.1",
+  "experiments": {
+    "138": "pile",
+    "139": "shared_memory",
+    "140": "provenance_graph",
+    "141": "resonance_field"
+  },
+  "benchmark": {
+    "mode": "deterministic_relational_world",
+    "entity_count": 96,
+    "relation_count": 192,
+    "source_packet_count": 64,
+    "agent_count": 32,
+    "observations_per_agent": 6,
+    "discovery_query_count": 24,
+    "transfer_query_count": 32,
+    "transfer_path_hops": [2, 3, 4],
+    "producer_memory_destroyed_before_transfer": true
+  },
+  "budget": {
+    "max_substrate_writes_per_agent": 6,
+    "max_retrieval_items_per_query": 12,
+    "max_graph_hops_per_query": 4,
+    "max_reasoning_steps_per_query": 8
+  },
+  "arms": {
+    "pile": {
+      "persistent_reports": true,
+      "cross_agent_reads_during_discovery": false,
+      "relational_edges": false,
+      "provenance": false,
+      "activation_dynamics": false
+    },
+    "shared_memory": {
+      "persistent_reports": true,
+      "cross_agent_reads_during_discovery": true,
+      "relational_edges": false,
+      "provenance": true,
+      "activation_dynamics": false
+    },
+    "provenance_graph": {
+      "persistent_reports": true,
+      "cross_agent_reads_during_discovery": true,
+      "relational_edges": true,
+      "provenance": true,
+      "activation_dynamics": false
+    },
+    "resonance_field": {
+      "persistent_reports": true,
+      "cross_agent_reads_during_discovery": true,
+      "relational_edges": true,
+      "provenance": true,
+      "activation_dynamics": true
+    }
+  },
+  "resonance": {
+    "initial_activation": 1.0,
+    "decay_factor_per_epoch": 0.97,
+    "independent_confirmation_gain": 0.25,
+    "contradiction_gain": 0.10,
+    "bridge_gain": 0.20,
+    "maximum_activation": 3.0
+  },
+  "primary_endpoints": [
+    "transfer_accuracy",
+    "collective_emergence_ratio"
+  ],
+  "secondary_endpoints": [
+    "evidence_coverage",
+    "contradiction_resolution_f1",
+    "bridge_recall",
+    "provenance_completeness",
+    "knowledge_survival_rate",
+    "duplicate_work_rate",
+    "false_synthesis_rate",
+    "retrieval_items_consumed"
+  ],
+  "confirmatory_contrasts": [
+    ["shared_memory", "pile"],
+    ["provenance_graph", "shared_memory"],
+    ["resonance_field", "provenance_graph"],
+    ["resonance_field", "pile"]
+  ],
+  "analysis": {
+    "paired_by_world_seed": true,
+    "alpha": 0.05,
+    "multiple_testing": "holm",
+    "confidence_interval": 0.95,
+    "bootstrap_resamples": 10000,
+    "minimum_total_effect_transfer_accuracy": 0.10,
+    "minimum_total_effect_collective_emergence_ratio": 0.10
+  },
+  "quality_gates": {
+    "require_identical_worlds_across_arms": true,
+    "require_identical_agent_observations_across_arms": true,
+    "require_identical_query_sets_across_arms": true,
+    "require_identical_budgets_across_arms": true,
+    "require_no_cross_arm_state_leakage": true,
+    "maximum_false_synthesis_rate": 0.05,
+    "maximum_provenance_loss_graph_arms": 0.01
+  },
+  "instrumentation_seeds": [3101, 3102, 3103, 3104, 3105, 3106, 3107, 3108],
+  "confirmatory_seeds": [3201, 3202, 3203, 3204, 3205, 3206, 3207, 3208, 3209, 3210, 3211, 3212, 3213, 3214, 3215, 3216, 3217, 3218, 3219, 3220, 3221, 3222, 3223, 3224, 3225, 3226, 3227, 3228, 3229, 3230, 3231, 3232, 3233, 3234, 3235, 3236, 3237, 3238, 3239, 3240, 3241, 3242, 3243, 3244, 3245, 3246, 3247, 3248, 3249, 3250, 3251, 3252, 3253, 3254, 3255, 3256, 3257, 3258, 3259, 3260, 3261, 3262, 3263, 3264],
+  "accepted_limitations": {
+    "primary_benchmark_is_synthetic": true,
+    "no_live_llm_or_web_calls_in_confirmatory_campaign": true,
+    "interpretation": "Experiments 138-141 identify the causal contribution of substrate structure under deterministic agent capabilities. External validity to stochastic LLM swarms requires a separately preregistered replication and cannot rescue a null result here."
+  }
+}
