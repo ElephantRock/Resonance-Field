@@ -73,6 +73,7 @@ class SourceManifestEntry:
     acquired_at: str
     local_path: str | None = None
     canonical_url: str | None = None
+    evidence_observed_at: str | None = None
 
     def validate(self) -> None:
         if not self.source_id or not self.title or not self.media_type or not self.acquired_at:
@@ -80,6 +81,27 @@ class SourceManifestEntry:
         _validate_sha256(self.sha256, "source sha256")
         if not self.local_path and not self.canonical_url:
             raise ValueError("source must have a local_path or canonical_url")
+        if self.evidence_observed_at is not None and not self.evidence_observed_at.strip():
+            raise ValueError("evidence_observed_at must be non-empty when provided")
+
+    @property
+    def controlled_evidence_time(self) -> str:
+        return self.evidence_observed_at or self.acquired_at
+
+    def canonical_mapping(self) -> dict[str, object]:
+        self.validate()
+        value: dict[str, object] = {
+            "source_id": self.source_id,
+            "sha256": self.sha256.lower(),
+            "media_type": self.media_type,
+            "title": self.title,
+            "acquired_at": self.acquired_at,
+            "local_path": self.local_path,
+            "canonical_url": self.canonical_url,
+        }
+        if self.evidence_observed_at is not None:
+            value["evidence_observed_at"] = self.evidence_observed_at
+        return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -189,19 +211,8 @@ class CorpusManifest:
     def canonical_bytes(self) -> bytes:
         self.validate()
         payload = {
-            "manifest_version": self.manifest_version,
-            "sources": [
-                {
-                    "source_id": source.source_id,
-                    "sha256": source.sha256.lower(),
-                    "media_type": source.media_type,
-                    "title": source.title,
-                    "acquired_at": source.acquired_at,
-                    "local_path": source.local_path,
-                    "canonical_url": source.canonical_url,
-                }
-                for source in self.sources
-            ],
+            "manifest_version": "1.0",
+            "sources": [source.canonical_mapping() for source in self.sources],
             "cases": [case.canonical_mapping() for case in self.cases],
         }
         return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
@@ -261,6 +272,11 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 canonical_url=(
                     str(raw_source["canonical_url"])
                     if raw_source.get("canonical_url") is not None
+                    else None
+                ),
+                evidence_observed_at=(
+                    str(raw_source["evidence_observed_at"])
+                    if raw_source.get("evidence_observed_at") is not None
                     else None
                 ),
             )
