@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
+from resonance.experiments.censored_cascade_survival_audit import _first_full_regime_sync
 from resonance.experiments.controlled_kick_dose_136 import (
     cox_ph,
     kaplan_meier,
@@ -73,3 +74,21 @@ def test_ols_uses_student_t_slope_test() -> None:
 def test_km_rmst_immediate_recovery_is_one_cycle() -> None:
     _, rmst = kaplan_meier([1, 1], [1, 1], horizon=180)
     assert math.isclose(rmst, 1.0)
+
+
+def test_t_sync_accepts_live_micro_component_mappings() -> None:
+    rows = [
+        {
+            "cycle": cycle,
+            "micro_components": {"winner_damage": 0.0},
+        }
+        for cycle in range(24)
+    ]
+    t_sync, observed = _first_full_regime_sync(
+        rows,  # type: ignore[arg-type]
+        activation=3,
+        cycles=24,
+        shift_period=6,
+    )
+    assert observed is True
+    assert t_sync == 4
