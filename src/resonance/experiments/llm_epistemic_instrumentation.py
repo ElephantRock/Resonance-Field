@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import random
+from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -86,6 +87,41 @@ def _observed_producer_models(event_log: Any) -> list[str]:
     return sorted(values)
 
 
+def _producer_event_counts(
+    case: ResearchCaseManifest,
+    event_log: Any,
+) -> dict[str, int]:
+    observed = Counter(event.producer_id for event in event_log.events)
+    return {
+        producer_id: observed.get(producer_id, 0)
+        for producer_id, _source_ids in case.producer_source_allocations
+    }
+
+
+def _enforce_minimum_producer_deposits(
+    case: ResearchCaseManifest,
+    event_log: Any,
+) -> dict[str, int]:
+    counts = _producer_event_counts(case, event_log)
+    minimum = case.minimum_events_per_producer
+    if minimum is None:
+        return counts
+    shortfalls = {
+        producer_id: count
+        for producer_id, count in counts.items()
+        if count < minimum
+    }
+    if shortfalls:
+        details = ", ".join(
+            f"{producer_id}={count}" for producer_id, count in sorted(shortfalls.items())
+        )
+        raise ValueError(
+            "producer deposit floor not met before substrate replay: "
+            f"minimum={minimum}; {details}"
+        )
+    return counts
+
+
 def run_instrumentation_case(
     case: ResearchCaseManifest,
     manifest: CorpusManifest,
@@ -99,6 +135,7 @@ def run_instrumentation_case(
         raise PermissionError("instrumentation runner cannot execute a confirmatory case")
     sources = _frozen_sources(manifest, corpus_root)
     event_log = run_producers(_producer_tasks(case, sources), producer_client)
+    producer_event_counts = _enforce_minimum_producer_deposits(case, event_log)
     evidence = replay_event_log(event_log, substrate_config)
     event_log_sha256 = event_log.sha256()
     draws: list[dict[str, Any]] = []
@@ -142,6 +179,7 @@ def run_instrumentation_case(
         "event_count": len(event_log.events),
         "event_log": _event_log_mapping(event_log),
         "producer_ids": list(event_log.producer_ids()),
+        "producer_event_counts": producer_event_counts,
         "observed_producer_models": _observed_producer_models(event_log),
         "observed_evaluator_models": sorted(evaluator_models),
         "draws": draws,
