@@ -40,7 +40,9 @@
     "identical_generation_parameters_across_arms": true,
     "independent_evaluator_draws_per_case_arm": 5,
     "arm_order_randomized": true,
-    "scoring_blinded_to_arm": true
+    "scoring_blinded_to_arm": true,
+    "per_call_retrieval_operation_budget": 12,
+    "total_retrieval_operation_budget_per_answer": 24
   },
   "event_schema": {
     "schema_version": "1.0",
