@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import random
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -122,6 +122,45 @@ def _enforce_minimum_producer_deposits(
     return counts
 
 
+def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
+    grouped: dict[tuple[str, str], list[Any]] = defaultdict(list)
+    for event in event_log.events:
+        grouped[(event.subject, event.predicate)].append(event)
+
+    conflicts: list[dict[str, Any]] = []
+    for (subject, predicate), events in sorted(grouped.items()):
+        producers = {event.producer_id for event in events}
+        observed_times = {event.observed_at for event in events}
+        objects = {event.object for event in events}
+        if len(producers) < 2 or len(observed_times) < 2 or len(objects) < 2:
+            continue
+        conflicts.append(
+            {
+                "subject": subject,
+                "predicate": predicate,
+                "objects": sorted(objects),
+                "producer_ids": sorted(producers),
+                "observed_at": sorted(observed_times),
+                "event_ids": sorted(event.event_id for event in events),
+            }
+        )
+    return tuple(conflicts)
+
+
+def _enforce_temporal_conflict_floor(
+    case: ResearchCaseManifest,
+    event_log: Any,
+) -> tuple[dict[str, Any], ...]:
+    conflicts = _temporal_conflict_keys(event_log)
+    minimum = case.minimum_temporal_conflict_keys
+    if minimum is not None and len(conflicts) < minimum:
+        raise ValueError(
+            "temporal conflict-key floor not met before substrate replay: "
+            f"minimum={minimum}; observed={len(conflicts)}"
+        )
+    return conflicts
+
+
 def run_instrumentation_case(
     case: ResearchCaseManifest,
     manifest: CorpusManifest,
@@ -136,6 +175,7 @@ def run_instrumentation_case(
     sources = _frozen_sources(manifest, corpus_root)
     event_log = run_producers(_producer_tasks(case, sources), producer_client)
     producer_event_counts = _enforce_minimum_producer_deposits(case, event_log)
+    temporal_conflict_keys = _enforce_temporal_conflict_floor(case, event_log)
     evidence = replay_event_log(event_log, substrate_config)
     event_log_sha256 = event_log.sha256()
     draws: list[dict[str, Any]] = []
@@ -180,6 +220,8 @@ def run_instrumentation_case(
         "event_log": _event_log_mapping(event_log),
         "producer_ids": list(event_log.producer_ids()),
         "producer_event_counts": producer_event_counts,
+        "temporal_conflict_key_count": len(temporal_conflict_keys),
+        "temporal_conflict_keys": list(temporal_conflict_keys),
         "observed_producer_models": _observed_producer_models(event_log),
         "observed_evaluator_models": sorted(evaluator_models),
         "draws": draws,
