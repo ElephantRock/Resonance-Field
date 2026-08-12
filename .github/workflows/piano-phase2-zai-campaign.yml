@@ -1,0 +1,55 @@
+name: PIANO Phase 2 Z.AI Campaign
+
+on:
+  push:
+    branches:
+      - experiment/piano-agent-runtime
+    paths:
+      - .github/workflows/piano-phase2-zai-campaign.yml
+
+permissions:
+  contents: read
+
+env:
+  PIANO_FIELD_SHA: 5fd619d9b2170b4344b6872798db4f09fc35924b
+  PIANO_WORLD_SHA: c892894a1c3819dc1509cd71a5a1c9984ce2c1bf
+
+jobs:
+  campaign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require Z.AI credential
+        run: |
+          if [ -z "$ZAI_API_KEY" ]; then
+            echo "::error::ZAI_API_KEY is not available to Resonance-Field Actions"
+            exit 2
+          fi
+      - name: Checkout frozen World and Field revisions
+        run: |
+          git clone https://github.com/ElephantRock/Resonance-World.git ../world
+          git -C ../world checkout "$PIANO_WORLD_SHA"
+          test "$(git -C ../world rev-parse HEAD)" = "$PIANO_WORLD_SHA"
+          git clone https://github.com/ElephantRock/Resonance-Field.git ../field-pinned
+          git -C ../field-pinned checkout "$PIANO_FIELD_SHA"
+          test "$(git -C ../field-pinned rev-parse HEAD)" = "$PIANO_FIELD_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install frozen experiment revisions
+        run: python -m pip install -e '../field-pinned[dev]' -e '../world[dev]'
+      - name: Execute frozen 60-pair campaign
+        working-directory: ../world
+        run: |
+          python -m experiments.piano_society.phase2_campaign \
+            --config experiments/piano_society/phase2_config.json \
+            --output-dir output/piano_society/phase2-live
+      - uses: actions/upload-artifact@v4
+        with:
+          name: piano-society-phase2-zai-live
+          path: ../world/output/piano_society/phase2-live
+          if-no-files-found: error
+          retention-days: 90
