@@ -5,116 +5,169 @@
   "upstream_organization_id": "python",
   "domain_id": "programming_languages_and_runtimes",
   "challenge_type": "temporal_update_conflict",
-  "selection_status": "candidate_discovery_in_progress_no_slots_assigned",
+  "selection_status": "discovery_screen_closed_four_eligible_ranked_and_selected",
   "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "eligible candidates ordered by canonical target subject, then newest required-source path, commit time, and SHA; first four fill tc-01..04",
+  "common_freeze_audit": {
+    "workflow_run_id": 31650008462,
+    "workflow_head_sha": "2c154fffcdaaa3e898c82890033fcadb3ab21b73",
+    "artifact_id": 9162196965,
+    "artifact_digest": "sha256:5b2123a8e4fb52177f2ba515d912d58b22964e71efc06bfe37da764ea3780ac9",
+    "source_count": 16,
+    "unique_source_sha256_count": 16,
+    "science_diff_guard_passed": true,
+    "git_blob_verification_passed": true,
+    "treatment_execution": false,
+    "evaluator_execution": false,
+    "confirmatory_outcomes_observed": false
+  },
   "treatment_execution": false,
   "evaluator_execution": false,
   "confirmatory_outcomes_observed": false,
-  "candidates": [
+  "eligible_candidates": [
+    {
+      "candidate_id": "cpython-tc-gzip-compress-defaults",
+      "canonical_target_subject": "gzip.compress defaults",
+      "selected_case_id": "plr-cpython-tc-01",
+      "temporal_gap_days": 674.6351041666667,
+      "question": "For current CPython gzip.compress defaults, give four values in order: the default mtime; the Python 3.13 default mtime; the default compression level; and the Python 3.13 default compression level.",
+      "canonical_answer": "0; None; 6; 9",
+      "ordered_required_slots": [["0"], ["None", "none"], ["6"], ["9"]],
+      "acquisition_plan_sha256": "b48b8d249ca71ffed2a9b3ad949f81f68829844f1b926831b10a4da567abe46e",
+      "source_integrity": [
+        {"source_id":"cpython-gzip-docs-313","git_blob_sha":"6b6e158f6eba2cf5fa5c085b7de2e400cb7e9421","sha256":"3878f855f0611005361b1d597af4730e9050174f90ebac7e5201d6fa2e013688","bytes":10971,"evidence_observed_at":"2024-10-07T05:02:14Z"},
+        {"source_id":"cpython-gzip-code-313","git_blob_sha":"ba753ce3050dd84982332faba369ac14ee4f45e9","sha256":"d9db047fb48aa966762b81eb1ed107da1b44d30191b85ff1537fbea0ca6d07b1","bytes":24090,"evidence_observed_at":"2024-10-07T05:02:14Z"},
+        {"source_id":"cpython-gzip-docs-current","git_blob_sha":"9211e5f18c6b6e69a5dafc0753d04bec97292206","sha256":"8ad4151554b58a7b7acd100ad6428a002c7b90ef3933b292e0942ed6d1038587","bytes":12522,"evidence_observed_at":"2026-08-12T20:16:47Z"},
+        {"source_id":"cpython-gzip-code-current","git_blob_sha":"247efc01527bb142831090fb34d49a80cec4405a","sha256":"fac436e30b8d02b25e413708ab8b5e278ddb541eba98271176321e27ec0e8a35","bytes":26579,"evidence_observed_at":"2026-08-12T20:16:47Z"}
+      ],
+      "producer_allocation": [
+        ["producer-cpython-gzip-stale-docs", ["cpython-gzip-docs-313"]],
+        ["producer-cpython-gzip-stale-code", ["cpython-gzip-code-313"]],
+        ["producer-cpython-gzip-current-docs", ["cpython-gzip-docs-current"]],
+        ["producer-cpython-gzip-current-code", ["cpython-gzip-code-current"]]
+      ],
+      "required_source_ids": ["cpython-gzip-docs-313","cpython-gzip-docs-current","cpython-gzip-code-current"],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1
+    },
     {
       "candidate_id": "cpython-tc-multiprocessing-start-method",
       "canonical_target_subject": "multiprocessing start method",
-      "eligibility": "eligible_unranked_source_bytes_frozen",
+      "selected_case_id": "plr-cpython-tc-02",
       "temporal_gap_days": 674.6351041666667,
-      "question_draft": "For current CPython multiprocessing defaults, give four values in order: the default start method on POSIX systems that support forkserver and are not macOS; the default start method on macOS; the POSIX default that Python 3.14 replaced; and the implementation capability flag that gates use of forkserver.",
-      "canonical_answer_draft": "forkserver; spawn; fork; reduction.HAVE_SEND_HANDLE",
-      "ordered_required_slots_draft": [
-        ["forkserver"],
-        ["spawn"],
-        ["fork"],
-        ["reduction.HAVE_SEND_HANDLE", "HAVE_SEND_HANDLE"]
+      "question": "For current CPython multiprocessing defaults, give four values in order: the default start method on POSIX systems that support forkserver and are not macOS; the default start method on macOS; the POSIX default that Python 3.14 replaced; and the implementation capability flag that gates use of forkserver.",
+      "canonical_answer": "forkserver; spawn; fork; reduction.HAVE_SEND_HANDLE",
+      "ordered_required_slots": [["forkserver"], ["spawn"], ["fork"], ["reduction.HAVE_SEND_HANDLE", "HAVE_SEND_HANDLE"]],
+      "acquisition_plan_sha256": "2dc577815acc766389d546e12f36118782ea9b9aab0bc71828be2ed384b011af",
+      "source_integrity": [
+        {"source_id":"cpython-multiprocessing-docs-313","git_blob_sha":"80d6e4dae24463bcc5e9fda39b7020f91b881a78","sha256":"8b1499ffc14c92c3c76730a40d330e4deb1508c5235a18e5dff5118695ccf6ee","bytes":114718,"evidence_observed_at":"2024-10-07T05:02:14Z"},
+        {"source_id":"cpython-multiprocessing-docs-current","git_blob_sha":"bedea46cb16d60d58a797d16743c914617571f98","sha256":"b693971bcbc774dabed58b11ab8d6941c7852a9e0d976bc630bf96aae4de92b1","bytes":124421,"evidence_observed_at":"2026-08-12T20:16:47Z"},
+        {"source_id":"cpython-multiprocessing-context-current","git_blob_sha":"45c393798deaca2449f6b27d6d21bd0918b49217","sha256":"6f293b2f2ce6d5f95bbd67c60062cd69d54e714a865167555135eb0220fe3f6e","bytes":12445,"evidence_observed_at":"2026-08-12T20:16:47Z"},
+        {"source_id":"cpython-whatsnew-314-current","git_blob_sha":"64c6888d99477022bdbb75bf514ea78326e37f6b","sha256":"19befc9293186034ceed535c6d580b469d4e6beeb4b26d7f4801807b42090b43","bytes":132509,"evidence_observed_at":"2026-08-12T20:16:47Z"}
       ],
-      "minimum_events_per_producer": 1,
-      "minimum_conflict_keys": 1,
-      "minimum_temporal_conflict_keys": 1,
-      "required_source_count": 3,
-      "producer_count": 4,
-      "freeze_audit": {
-        "workflow_run_id": 31648892469,
-        "workflow_head_sha": "803475f8baa3c435daa564ff432818f7b20320d3",
-        "artifact_id": 9161808192,
-        "artifact_digest": "sha256:36f52bf0510cbb59401af799dbd5b4faac16613c46a6135b32819e1e23b8dc6a",
-        "acquisition_plan_sha256": "2dc577815acc766389d546e12f36118782ea9b9aab0bc71828be2ed384b011af",
-        "source_count": 4,
-        "science_diff_guard_passed": true,
-        "git_blob_verification_passed": true,
-        "treatment_execution": false,
-        "evaluator_execution": false,
-        "confirmatory_outcomes_observed": false
-      },
-      "sources": [
-        {
-          "source_id_draft": "cpython-multiprocessing-docs-313",
-          "role": "required_stale",
-          "repository": "python/cpython",
-          "commit_sha": "60403a5409ff2c3f3b07dd2ca91a7a3e096839c7",
-          "path": "Doc/library/multiprocessing.rst",
-          "git_blob_sha": "80d6e4dae24463bcc5e9fda39b7020f91b881a78",
-          "sha256": "8b1499ffc14c92c3c76730a40d330e4deb1508c5235a18e5dff5118695ccf6ee",
-          "bytes": 114718,
-          "evidence_observed_at": "2024-10-07T05:02:14Z",
-          "source_fact": "POSIX except macOS currently defaults to fork; macOS defaults to spawn; the default will change away from fork in Python 3.14."
-        },
-        {
-          "source_id_draft": "cpython-multiprocessing-docs-current",
-          "role": "required_current",
-          "repository": "python/cpython",
-          "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
-          "path": "Doc/library/multiprocessing.rst",
-          "git_blob_sha": "bedea46cb16d60d58a797d16743c914617571f98",
-          "sha256": "b693971bcbc774dabed58b11ab8d6941c7852a9e0d976bc630bf96aae4de92b1",
-          "bytes": 124421,
-          "evidence_observed_at": "2026-08-12T20:16:47Z",
-          "source_fact": "fork is no longer the default anywhere; forkserver is the POSIX default; spawn remains the macOS default."
-        },
-        {
-          "source_id_draft": "cpython-multiprocessing-context-current",
-          "role": "required_current_implementation",
-          "repository": "python/cpython",
-          "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
-          "path": "Lib/multiprocessing/context.py",
-          "git_blob_sha": "45c393798deaca2449f6b27d6d21bd0918b49217",
-          "sha256": "6f293b2f2ce6d5f95bbd67c60062cd69d54e714a865167555135eb0220fe3f6e",
-          "bytes": 12445,
-          "evidence_observed_at": "2026-08-12T20:16:47Z",
-          "source_fact": "The default context is forkserver when reduction.HAVE_SEND_HANDLE is true and sys.platform is not darwin; otherwise it is spawn."
-        },
-        {
-          "source_id_draft": "cpython-whatsnew-314-current",
-          "role": "context_current",
-          "repository": "python/cpython",
-          "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
-          "path": "Doc/whatsnew/3.14.rst",
-          "git_blob_sha": "64c6888d99477022bdbb75bf514ea78326e37f6b",
-          "sha256": "19befc9293186034ceed535c6d580b469d4e6beeb4b26d7f4801807b42090b43",
-          "bytes": 132509,
-          "evidence_observed_at": "2026-08-12T20:16:47Z",
-          "source_fact": "Python 3.14 changed Unix-other-than-macOS multiprocessing default from fork to forkserver; spawn remains default on macOS."
-        }
-      ],
-      "producer_allocation_draft": [
+      "producer_allocation": [
         ["producer-cpython-tc-stale-docs", ["cpython-multiprocessing-docs-313"]],
         ["producer-cpython-tc-current-docs", ["cpython-multiprocessing-docs-current"]],
         ["producer-cpython-tc-current-code", ["cpython-multiprocessing-context-current"]],
         ["producer-cpython-tc-whatsnew", ["cpython-whatsnew-314-current"]]
       ],
-      "required_source_ids_draft": [
-        "cpython-multiprocessing-docs-313",
-        "cpython-multiprocessing-docs-current",
-        "cpython-multiprocessing-context-current"
+      "required_source_ids": ["cpython-multiprocessing-docs-313","cpython-multiprocessing-docs-current","cpython-multiprocessing-context-current"],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1
+    },
+    {
+      "candidate_id": "cpython-tc-tarfile-extraction-filter",
+      "canonical_target_subject": "tarfile extraction filter default",
+      "selected_case_id": "plr-cpython-tc-03",
+      "temporal_gap_days": 674.6351041666667,
+      "question": "For current CPython tarfile extraction behavior when neither an extract-call filter nor TarFile.extraction_filter is set, give four values in order: the current strategy name; the pre-3.14 fallback strategy name; the class attribute controlling the default; and the current fallback filter function.",
+      "canonical_answer": "data; fully_trusted; TarFile.extraction_filter; data_filter",
+      "ordered_required_slots": [["data"], ["fully_trusted", "fully trusted"], ["TarFile.extraction_filter", "extraction_filter"], ["data_filter"]],
+      "acquisition_plan_sha256": "47dd81417469b34450dcdfa55651d4b61807c0b393eb414b1145af8f78109bcb",
+      "source_integrity": [
+        {"source_id":"cpython-tarfile-docs-313","git_blob_sha":"08a2951bc42dae73c9d55028929004c20441e247","sha256":"2a5d77804c99adf74c86c6504e82cad8bd5fbad1961c43f08f640d3e02fbaad3","bytes":50271,"evidence_observed_at":"2024-10-07T05:02:14Z"},
+        {"source_id":"cpython-tarfile-code-313","git_blob_sha":"ea036193411771f5cd683fec5bc1f06dad002b0e","sha256":"801a7289a4ddbeceadaf61dcfdf47c2db36350e66fa7552c7e082f32702a26f4","bytes":110062,"evidence_observed_at":"2024-10-07T05:02:14Z"},
+        {"source_id":"cpython-tarfile-docs-current","git_blob_sha":"fc352e901f31dc784c4e5eff4f7cfa82a98a1a3d","sha256":"c876f9f871616af2c7e233d93014602a2632ce198141f8b903039ba710b576b4","bytes":54674,"evidence_observed_at":"2026-08-12T20:16:47Z"},
+        {"source_id":"cpython-tarfile-code-current","git_blob_sha":"dc5c3a59744cbc476f8c2cde028d6fdb8051e728","sha256":"85ffcb4b9047fb38a07b6369453f682aac3e96225ac05d43accc815e0c7812cd","bytes":120568,"evidence_observed_at":"2026-08-12T20:16:47Z"}
       ],
-      "design_checks": {
-        "source_count_4_to_6": true,
-        "producer_count_exactly_4": true,
-        "required_sources_at_least_3": true,
-        "required_evidence_spans_at_least_3_producers": true,
-        "ordered_answer_slots_2_to_4": true,
-        "explicit_stale_and_current_evidence_times": true,
-        "required_evidence_gap_at_least_180_days": true,
-        "same_literal_target_present_in_stale_and_current_sources": true,
-        "no_source_bytes_allocated_to_another_confirmatory_case_yet": true,
-        "no_model_execution_used_for_eligibility": true
-      }
+      "producer_allocation": [
+        ["producer-cpython-tarfile-stale-docs", ["cpython-tarfile-docs-313"]],
+        ["producer-cpython-tarfile-stale-code", ["cpython-tarfile-code-313"]],
+        ["producer-cpython-tarfile-current-docs", ["cpython-tarfile-docs-current"]],
+        ["producer-cpython-tarfile-current-code", ["cpython-tarfile-code-current"]]
+      ],
+      "required_source_ids": ["cpython-tarfile-docs-313","cpython-tarfile-docs-current","cpython-tarfile-code-current"],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1
+    },
+    {
+      "candidate_id": "cpython-tc-threadpoolexecutor-max-workers",
+      "canonical_target_subject": "threadpoolexecutor max_workers default",
+      "selected_case_id": "plr-cpython-tc-04",
+      "temporal_gap_days": 1045.3531597222222,
+      "question": "For current CPython ThreadPoolExecutor's implicit max_workers default, give four values in order: the current CPU-count function; the previous CPU-count function; the additive offset; and the hard cap.",
+      "canonical_answer": "os.process_cpu_count; os.cpu_count; 4; 32",
+      "ordered_required_slots": [["os.process_cpu_count", "process_cpu_count"], ["os.cpu_count", "cpu_count"], ["4"], ["32"]],
+      "acquisition_plan_sha256": "c3b18fc26a9f8521b18d52590be2d03f7756e28da54a63f48aeb3a0708fe75df",
+      "source_integrity": [
+        {"source_id":"cpython-threadpool-docs-312","git_blob_sha":"6503d1fcf70a32554904302aaedd2c1447e424d2","sha256":"669909adb902fdec7db713917c82b0f6ca74c9548ac43b25f2db5e06e45c5716","bytes":22912,"evidence_observed_at":"2023-10-02T11:48:14Z"},
+        {"source_id":"cpython-threadpool-code-312","git_blob_sha":"3b3a36a5093336cfd9491d3cf269d49fdac9dd63","sha256":"33f69dd18c908992bce91ad3aa6bd809a42684e2b66caaa09ad4934ca0a29f58","bytes":8884,"evidence_observed_at":"2023-10-02T11:48:14Z"},
+        {"source_id":"cpython-threadpool-docs-current","git_blob_sha":"1f34dc66228e30858035fbde7b648cdbcb36e419","sha256":"43c80b356554b44a23265fa477d3f809908580071a41e86e27feb6feaa4b56f7","bytes":30169,"evidence_observed_at":"2026-08-12T20:16:47Z"},
+        {"source_id":"cpython-threadpool-code-current","git_blob_sha":"909359b648709fe980db610c8834c34f2b2d2e76","sha256":"7f95079dda8064cd372c9c0ea60c7e172b34c8f2aa0c3d9213e85b8584aa033c","bytes":9833,"evidence_observed_at":"2026-08-12T20:16:47Z"}
+      ],
+      "producer_allocation": [
+        ["producer-cpython-threadpool-stale-docs", ["cpython-threadpool-docs-312"]],
+        ["producer-cpython-threadpool-stale-code", ["cpython-threadpool-code-312"]],
+        ["producer-cpython-threadpool-current-docs", ["cpython-threadpool-docs-current"]],
+        ["producer-cpython-threadpool-current-code", ["cpython-threadpool-code-current"]]
+      ],
+      "required_source_ids": ["cpython-threadpool-docs-312","cpython-threadpool-docs-current","cpython-threadpool-code-current"],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1
     }
-  ]
+  ],
+  "rejected_inspections": [
+    {
+      "candidate_id": "cpython-tc-processpoolexecutor-start-method",
+      "canonical_target_subject": "processpoolexecutor start method default",
+      "rejection_code": "answer_not_deterministically_scorable",
+      "reason": "The concurrent.futures documents state that the default changed away from fork but do not independently name the discrete current start-method value; a self-contained exact-value case would require importing the multiprocessing source set used by another candidate.",
+      "inspected_sources": [
+        {"commit_sha":"0fb18b02c8ad56299d6a2910be0bab8ad601ef24","path":"Doc/library/concurrent.futures.rst"},
+        {"commit_sha":"bc31217fe432b5ede1485bec2b62b2c67a48eee4","path":"Doc/library/concurrent.futures.rst"}
+      ],
+      "source_bytes_frozen": false
+    },
+    {
+      "candidate_id": "cpython-tc-traceback-colorization",
+      "canonical_target_subject": "traceback output color default",
+      "rejection_code": "no_exact_literal_conflict_target",
+      "reason": "Current documentation introduces colorized output as a default, but the older state is absence of the feature rather than an opposing old/new value for the same literal default target.",
+      "inspected_sources": [{"commit_sha":"bc31217fe432b5ede1485bec2b62b2c67a48eee4","path":"Doc/library/traceback.rst"}],
+      "source_bytes_frozen": false
+    },
+    {
+      "candidate_id": "cpython-tc-dbm-default-backend",
+      "canonical_target_subject": "dbm default backend",
+      "rejection_code": "no_exact_literal_conflict_target",
+      "reason": "The inspected recent dbm changes are feature/backend additions and API changes; no discrete historical-to-current default value on one literal target was identified.",
+      "inspected_sources": [{"commit_sha":"bc31217fe432b5ede1485bec2b62b2c67a48eee4","path":"Doc/library/dbm.rst"}],
+      "source_bytes_frozen": false
+    }
+  ],
+  "closure_checks": {
+    "eligible_candidate_count": 4,
+    "rejected_inspection_count": 3,
+    "selected_case_count": 4,
+    "selected_source_count": 16,
+    "selected_unique_source_sha256_count": 16,
+    "all_selected_sources_blob_verified": true,
+    "all_selected_sources_byte_hashed": true,
+    "no_selected_source_byte_reuse": true,
+    "no_confirmatory_model_execution": true
+  }
 }
