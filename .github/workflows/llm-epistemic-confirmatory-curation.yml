@@ -4,7 +4,7 @@ on:
   push:
     branches: [experiment/llm-epistemic-confirmatory-corpus]
     paths:
-      - "configs/corpora/llm-epistemic-142-145-confirmatory/**"
+      - "configs/corpora/llm-epistemic-142-145-confirmatory/acquisition-plans/**"
       - "tools/confirmatory_curation/**"
       - ".github/workflows/llm-epistemic-confirmatory-curation.yml"
   workflow_dispatch:
