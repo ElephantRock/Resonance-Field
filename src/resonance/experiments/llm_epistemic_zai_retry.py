@@ -1,4 +1,4 @@
-"""Bounded retry transport for transient Z.AI request-rate limits."""
+"""Bounded retry transport and model-identity enforcement for Z.AI."""
 
 from __future__ import annotations
 
@@ -87,8 +87,29 @@ class RetryingCompletions:
                 retries += 1
 
 
+class ModelIdentityEnforcingCompletions:
+    """Fail closed when a completion's provider-returned model identity drifts."""
+
+    def __init__(self, delegate: Any, *, expected_response_model: str) -> None:
+        identity = expected_response_model.strip()
+        if not identity:
+            raise ValueError("expected_response_model must be non-empty")
+        self._delegate = delegate
+        self._expected_response_model = identity
+
+    def create(self, **kwargs: Any) -> Any:
+        completion = self._delegate.create(**kwargs)
+        actual = str(getattr(completion, "model", "") or "").strip()
+        if actual != self._expected_response_model:
+            raise RuntimeError(
+                "provider-returned model identity mismatch: "
+                f"expected={self._expected_response_model!r}; actual={actual!r}"
+            )
+        return completion
+
+
 class RetryingZAIClient:
-    """Minimal OpenAI-compatible client surface with explicit Z.AI retry policy."""
+    """Minimal OpenAI-compatible client with explicit retry and identity policy."""
 
     def __init__(
         self,
@@ -96,6 +117,7 @@ class RetryingZAIClient:
         api_key: str | None = None,
         base_url: str,
         max_retries: int = 5,
+        expected_response_model: str | None = None,
     ) -> None:
         try:
             from openai import OpenAI
@@ -105,12 +127,17 @@ class RetryingZAIClient:
         if not key:
             raise RuntimeError("ZAI_API_KEY is required to use the Z.AI instrumentation provider")
         raw = OpenAI(api_key=key, base_url=base_url.rstrip("/") + "/", max_retries=0)
-        self.chat = SimpleNamespace(
-            completions=RetryingCompletions(raw.chat.completions, max_retries=max_retries)
-        )
+        completions: Any = RetryingCompletions(raw.chat.completions, max_retries=max_retries)
+        if expected_response_model is not None:
+            completions = ModelIdentityEnforcingCompletions(
+                completions,
+                expected_response_model=expected_response_model,
+            )
+        self.chat = SimpleNamespace(completions=completions)
 
 
 __all__ = [
+    "ModelIdentityEnforcingCompletions",
     "RetryingCompletions",
     "RetryingZAIClient",
     "TRANSIENT_ZAI_RATE_CODES",
