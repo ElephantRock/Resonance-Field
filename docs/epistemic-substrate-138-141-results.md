@@ -12,7 +12,7 @@ These results are from the first outcome-bearing execution of confirmatory seeds
 
 - Branch: `experiment/epistemic-substrate`
 - Pull request: #72
-- Confirmatory workflow run: `31596674999`
+- **Decision-bearing confirmatory workflow run: `31596674999`**
 - Branch-head commit that opened the confirmatory workflow: `024361d59262bc02eeb144c9e3284446abcc70d1`
 - GitHub pull-request merge-ref SHA recorded inside the runner: `c2c289dfe30d04c016c959611c438eeacbb904b4`
 - Confirmatory artifact: `epistemic-substrate-138-141-confirmatory`
@@ -22,6 +22,14 @@ These results are from the first outcome-bearing execution of confirmatory seeds
 - Arms per world: Pile (138), Shared Memory (139), Provenance Graph (140), Resonance Field (141)
 
 The sealed artifact contains `confirmatory.json`, the matching non-inferential `instrumentation.json`, `github-sha.txt`, and `seal-manifest.sha256`.
+
+### Post-result workflow audit note
+
+After the decision-bearing run had completed and its results were recorded, adding this results document caused the pull-request workflow to execute the deterministic confirmatory cohort a second time as workflow run `31596952625`. The intended path filter did not prevent the repeat because the confirmatory workflow file itself remained part of the pull request's changed-file set.
+
+This second execution is **not** used for the preregistered decision. It used the same frozen canonical configuration hash (`9ef9b64a…`) and produced exactly the same `analysis` object and exactly the same per-world scientific `results` as run `31596674999`. Its artifact digest was `sha256:5a80f3c75063cb825b35f33221e3be01293f7319cb263dac1ee6845b7f471b01`; packaging and PR merge-ref metadata differed.
+
+Immediately afterward, the confirmatory workflow was changed from automatic `pull_request` execution to guarded `workflow_dispatch`. Any future duplicate execution now requires explicitly supplying the literal confirmatory seal. No scientific configuration, treatment code, benchmark code, evaluator, or inferential parameter was changed after outcomes were observed.
 
 ## Primary arm means
 
