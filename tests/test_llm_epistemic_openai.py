@@ -19,6 +19,7 @@ from resonance.experiments.llm_epistemic_openai import (
 from resonance.experiments.llm_epistemic_replay import make_replayed_substrate, replay_event_log
 
 PARENT_CONFIG = Path("configs/experiments/epistemic-substrate-138-141.json")
+OBSERVED_AT = "2026-08-12T00:00:00Z"
 
 
 class FakeResponses:
@@ -53,7 +54,7 @@ def _response(
     )
 
 
-def test_openai_producer_canonicalizes_source_hash_and_event_id() -> None:
+def test_openai_producer_canonicalizes_source_hash_event_id_and_time() -> None:
     payload = {
         "events": [
             {
@@ -62,7 +63,6 @@ def test_openai_producer_canonicalizes_source_hash_and_event_id() -> None:
                 "predicate": "produces",
                 "object": "component-y",
                 "confidence": 0.9,
-                "observed_at": "2026-08-12T00:00:00Z",
                 "source_locator": "section 2",
                 "uncertainty": None,
             }
@@ -73,13 +73,21 @@ def test_openai_producer_canonicalizes_source_hash_and_event_id() -> None:
     task = ProducerTask(
         case_id="case-1",
         producer_id="producer-a",
-        sources=(FrozenSource("source-a", "a" * 64, "Supplier X produces component Y."),),
+        sources=(
+            FrozenSource(
+                "source-a",
+                "a" * 64,
+                "Supplier X produces component Y.",
+                OBSERVED_AT,
+            ),
+        ),
     )
 
     events = client.produce(task)
 
     assert events[0].event_id == "case-1:producer-a:0001"
     assert events[0].source_sha256 == "a" * 64
+    assert events[0].observed_at == OBSERVED_AT
     assert fake.responses.calls[0]["store"] is False
 
 
@@ -99,7 +107,7 @@ def test_openai_evaluator_runs_bounded_retrieval_loop_and_accounts_usage() -> No
                 predicate="produces",
                 object="component-y",
                 confidence=0.9,
-                observed_at="2026-08-12T00:00:00Z",
+                observed_at=OBSERVED_AT,
             ),
         ),
     )
