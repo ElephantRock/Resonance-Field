@@ -106,7 +106,10 @@ class ConfirmatoryDesign:
         )
         if observed_counts != expected_counts:
             raise ValueError("confirmatory design counts changed")
-        if len(self.domains) * len(self.challenge_rules) * self.cases_per_cell != self.confirmatory_case_count:
+        if (
+            len(self.domains) * len(self.challenge_rules) * self.cases_per_cell
+            != self.confirmatory_case_count
+        ):
             raise ValueError("domain/challenge grid does not multiply to confirmatory case count")
         if len(self.challenge_rules) * self.cases_per_cell != self.cases_per_domain:
             raise ValueError("cases_per_domain is inconsistent with challenge grid")
