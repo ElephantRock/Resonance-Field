@@ -6,7 +6,7 @@ Date: 2026-08-12
 
 Calibration 008 closes **outcome-bearing treatment/scoring/resource tuning** for the stochastic Epistemic Substrate replication.
 
-This is not the confirmatory seal. The 96 confirmatory cases remain uncreated, unobserved, and inaccessible. The purpose of this record is to prevent subsequent instrumentation outcomes from being used to reshape the experiment toward a favorable arm comparison.
+This is not the confirmatory seal. Following Protocol Revision 001, the **512 planned confirmatory cases** remain uncreated, unobserved, and inaccessible. The purpose of this record is to prevent subsequent instrumentation outcomes from being used to reshape the experiment toward a favorable arm comparison.
 
 ## Evidence at the stopping boundary
 
@@ -45,6 +45,18 @@ From this record forward, before confirmatory unsealing:
 
 Mechanical corrections remain allowed before the confirmatory seal only when they are outcome-blind, documented, regression-tested, and do not alter treatment capability or selectively benefit an arm. If a correction could affect scientific interpretation, it requires a protocol revision record before any confirmatory material is accessed.
 
+## Pre-confirmatory decisions already resolved after this stop
+
+Two design issues have now been prospectively resolved without confirmatory access:
+
+1. **Confirmatory estimator:** nested evaluator draws are reduced to one arm mean per independent case; bootstrap resampling operates on cases; paired randomization swaps arm labels within case; four contrast p-values receive Holm adjustment. Implementation: `src/resonance/experiments/llm_epistemic_confirmatory_analysis.py`.
+2. **Confirmatory sample size:** Protocol Revision 001 preserves the 3-pp R−G target and increases the confirmatory cohort from the original 96-case scaffold to **512 independent cases**. The revision is based on variance/precision, not on the observed mean R−G effect.
+
+Records:
+
+- `docs/llm-epistemic-substrate-142-145-confirmatory-design-adequacy.md`;
+- `docs/llm-epistemic-substrate-142-145-protocol-revision-001-sample-size.md`.
+
 ## Remaining pre-confirmatory work
 
 The following choices still require prospective freezing:
@@ -53,9 +65,8 @@ The following choices still require prospective freezing:
 2. **Provider and generation policy** — exact endpoint, prompts, reasoning/generation parameters, structured-output schemas, retry policy, and state-retention policy.
 3. **Case construction policy** — domain strata, evidence-source eligibility, stale/current/contradiction quotas, producer allocation constraints, and rules for source timestamps.
 4. **Scoring policy** — final accepted-answer/ordered-slot conventions, forbidden-term use, provenance diagnostics, and treatment of empty/resource-boundary answers.
-5. **Statistical estimator** — finalize whether the preregistered paired case analysis is sufficient or whether a hierarchical estimator for nested evaluator draws will be used.
-6. **Stopping/sample policy** — define whether any further instrumentation is permitted solely for mechanical feasibility/variance estimation and, if so, its fixed scope before execution.
-7. **Confirmatory manifest and seal procedure** — create the 96 cases without outcome access, hash source/case manifests, freeze code/config/prompt/model identities, and record an immutable seal before execution.
+5. **Power/evaluable-case rule** — run the deterministic pre-seal power simulation for the 512-case design and freeze the minimum evaluable-case rule for arm-independent gate failures.
+6. **Confirmatory manifest and seal procedure** — create the 512 cases only after all preceding choices are frozen, hash source/case manifests, freeze code/config/prompt/model identities, and record an immutable seal before execution.
 
 ## Permitted further instrumentation
 
@@ -71,11 +82,13 @@ Its purpose, case count, domain selection rule, and decision rule must be record
 
 ## Confirmatory boundary
 
-At this stop record:
+At the current pre-confirmatory boundary:
 
 - `inferential: false`
 - `confirmatory_access: false`
 - `confirmatory_cases_evaluated: false`
+- planned confirmatory cases: `512`
 - confirmatory cases sealed: false
+- confirmatory cases created: false
 
-The next scientific milestone is a **pre-confirmatory protocol freeze**, followed by creation and cryptographic sealing of the held-out 96-case corpus. No confirmatory outcome may be generated before that seal.
+The next scientific milestone is a **pre-confirmatory protocol freeze**, followed by creation and cryptographic sealing of the held-out 512-case corpus. No confirmatory outcome may be generated before that seal.
