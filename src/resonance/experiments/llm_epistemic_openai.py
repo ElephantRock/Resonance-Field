@@ -138,7 +138,6 @@ def _retrieved_event_mapping(event: RetrievedEvent) -> dict[str, object]:
 class OpenAIProducerClient:
     model: str = DEFAULT_INSTRUMENTATION_MODEL
     reasoning_effort: str = "medium"
-    temperature: float = 0.7
     max_output_tokens: int = 12000
     client: Any = None
 
@@ -157,7 +156,6 @@ class OpenAIProducerClient:
         response = self.client.responses.create(
             model=self.model,
             reasoning={"effort": self.reasoning_effort},
-            temperature=self.temperature,
             max_output_tokens=self.max_output_tokens,
             instructions=(
                 "You are an evidence extraction agent in a controlled experiment. "
@@ -206,7 +204,6 @@ class OpenAIProducerClient:
 class OpenAIEvaluatorClient:
     model: str = DEFAULT_INSTRUMENTATION_MODEL
     reasoning_effort: str = "medium"
-    temperature: float = 0.7
     max_output_tokens: int = 6000
     max_tool_rounds: int = 8
     per_call_retrieval_budget: int = 12
@@ -251,13 +248,14 @@ class OpenAIEvaluatorClient:
             "Use list_epistemic_subjects when you need the exact normalized subject vocabulary, then "
             "retrieve_epistemic_events with an exact subject and frozen predicate. Cite every event "
             "materially supporting the answer. If the deposited evidence is insufficient, return an "
-            "empty answer with low confidence."
+            "empty answer with low confidence. In the answer field, return only the requested value or "
+            "values in question order, separated by '; ' when there is more than one value. Do not add "
+            "labels, explanations, or surrounding prose to the answer field."
         )
         started = time.perf_counter()
         response = self.client.responses.create(
             model=self.model,
             reasoning={"effort": self.reasoning_effort},
-            temperature=self.temperature,
             max_output_tokens=self.max_output_tokens,
             instructions=instructions,
             input=f"Case {task.case_id}; question {task.question_id}: {task.question}",
@@ -301,7 +299,6 @@ class OpenAIEvaluatorClient:
             response = self.client.responses.create(
                 model=self.model,
                 reasoning={"effort": self.reasoning_effort},
-                temperature=self.temperature,
                 max_output_tokens=self.max_output_tokens,
                 instructions=instructions,
                 previous_response_id=response.id,
