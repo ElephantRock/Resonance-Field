@@ -9,6 +9,7 @@ on:
       - experiment/piano-agent-runtime-phase3-social
       - experiment/piano-agent-runtime-phase3-social-v2
       - experiment/piano-agent-runtime-phase4-authority
+      - experiment/piano-agent-runtime-phase4-authority-v2
   pull_request:
     paths:
       - src/resonance/experiments/piano_agent_runtime.py
