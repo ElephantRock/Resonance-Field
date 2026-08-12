@@ -1,15 +1,19 @@
 name: Epistemic Substrate 138-141 Confirmatory
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/epistemic-substrate-138-141-confirmatory.yml"
+  workflow_dispatch:
+    inputs:
+      confirmatory_seal:
+        description: "Explicit seal required for a deliberate duplicate execution"
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   confirmatory:
+    if: ${{ inputs.confirmatory_seal == 'OPEN-138-141-CONFIRMATORY' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -65,9 +69,11 @@ jobs:
           python -m resonance.experiments.epistemic_substrate_confirmatory_cli \
             --config "$CONFIG" \
             --instrumentation-evidence "$OUTPUT_DIR/instrumentation.json" \
-            --confirmatory-seal OPEN-138-141-CONFIRMATORY \
+            --confirmatory-seal "$CONFIRMATORY_SEAL" \
             --code-sha "$GITHUB_SHA" \
             --output "$OUTPUT_DIR/confirmatory.json"
+        env:
+          CONFIRMATORY_SEAL: ${{ inputs.confirmatory_seal }}
       - name: Upload sealed evidence
         uses: actions/upload-artifact@v4
         with:
