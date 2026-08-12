@@ -40,6 +40,15 @@ def _optional_positive_int(value: object, label: str) -> int | None:
     return value
 
 
+def _optional_nonempty_string(value: object, label: str) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        raise ValueError(f"{label} must be non-empty when provided")
+    return text
+
+
 @dataclass(frozen=True, slots=True)
 class SemanticAnswerRequirements:
     """Prospectively frozen deterministic semantic correctness contract."""
@@ -82,6 +91,8 @@ class SourceManifestEntry:
     local_path: str | None = None
     canonical_url: str | None = None
     evidence_observed_at: str | None = None
+    upstream_project_id: str | None = None
+    upstream_organization_id: str | None = None
 
     def validate(self) -> None:
         if not self.source_id or not self.title or not self.media_type or not self.acquired_at:
@@ -91,6 +102,10 @@ class SourceManifestEntry:
             raise ValueError("source must have a local_path or canonical_url")
         if self.evidence_observed_at is not None and not self.evidence_observed_at.strip():
             raise ValueError("evidence_observed_at must be non-empty when provided")
+        if self.upstream_project_id is not None and not self.upstream_project_id.strip():
+            raise ValueError("upstream_project_id must be non-empty when provided")
+        if self.upstream_organization_id is not None and not self.upstream_organization_id.strip():
+            raise ValueError("upstream_organization_id must be non-empty when provided")
 
     @property
     def controlled_evidence_time(self) -> str:
@@ -109,6 +124,10 @@ class SourceManifestEntry:
         }
         if self.evidence_observed_at is not None:
             value["evidence_observed_at"] = self.evidence_observed_at
+        if self.upstream_project_id is not None:
+            value["upstream_project_id"] = self.upstream_project_id
+        if self.upstream_organization_id is not None:
+            value["upstream_organization_id"] = self.upstream_organization_id
         return value
 
 
@@ -126,10 +145,16 @@ class ResearchCaseManifest:
     minimum_events_per_producer: int | None = None
     minimum_conflict_keys: int | None = None
     minimum_temporal_conflict_keys: int | None = None
+    domain_id: str | None = None
+    challenge_type: str | None = None
 
     def validate(self, known_sources: set[str]) -> None:
         if self.cohort not in ("instrumentation", "confirmatory"):
             raise ValueError("invalid cohort")
+        if self.domain_id is not None and not self.domain_id.strip():
+            raise ValueError("domain_id must be non-empty when provided")
+        if self.challenge_type is not None and not self.challenge_type.strip():
+            raise ValueError("challenge_type must be non-empty when provided")
         if len(self.source_ids) < 4:
             raise ValueError("each case requires at least four sources")
         if len(self.producer_source_allocations) < 4:
@@ -205,6 +230,10 @@ class ResearchCaseManifest:
             value["minimum_conflict_keys"] = self.minimum_conflict_keys
         if self.minimum_temporal_conflict_keys is not None:
             value["minimum_temporal_conflict_keys"] = self.minimum_temporal_conflict_keys
+        if self.domain_id is not None:
+            value["domain_id"] = self.domain_id
+        if self.challenge_type is not None:
+            value["challenge_type"] = self.challenge_type
         return value
 
 
@@ -316,6 +345,14 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                     if raw_source.get("evidence_observed_at") is not None
                     else None
                 ),
+                upstream_project_id=_optional_nonempty_string(
+                    raw_source.get("upstream_project_id"),
+                    "upstream_project_id",
+                ),
+                upstream_organization_id=_optional_nonempty_string(
+                    raw_source.get("upstream_organization_id"),
+                    "upstream_organization_id",
+                ),
             )
         )
 
@@ -365,6 +402,11 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 minimum_temporal_conflict_keys=_optional_positive_int(
                     raw_case.get("minimum_temporal_conflict_keys"),
                     "minimum_temporal_conflict_keys",
+                ),
+                domain_id=_optional_nonempty_string(raw_case.get("domain_id"), "domain_id"),
+                challenge_type=_optional_nonempty_string(
+                    raw_case.get("challenge_type"),
+                    "challenge_type",
                 ),
             )
         )
