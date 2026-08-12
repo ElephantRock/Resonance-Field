@@ -15,6 +15,7 @@ class FrozenSource:
     source_id: str
     sha256: str
     text: str
+    observed_at: str = "1970-01-01T00:00:00Z"
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,6 +23,7 @@ class ProducerTask:
     case_id: str
     producer_id: str
     sources: tuple[FrozenSource, ...]
+    research_goal: str = ""
 
 
 class ProducerClient(Protocol):
@@ -36,17 +38,23 @@ def run_producers(tasks: tuple[ProducerTask, ...], client: ProducerClient) -> Ep
         raise ValueError("producer tasks must belong to one case")
     all_events: list[EpistemicEvent] = []
     for task in tasks:
-        allowed = {source.source_id: source.sha256.lower() for source in task.sources}
+        allowed = {
+            source.source_id: (source.sha256.lower(), source.observed_at)
+            for source in task.sources
+        }
         events = client.produce(task)
         for event in events:
             event.validate()
             if event.case_id != task.case_id or event.producer_id != task.producer_id:
                 raise ValueError("producer emitted an event outside its assigned identity")
-            expected_hash = allowed.get(event.source_id)
-            if expected_hash is None:
+            source_control = allowed.get(event.source_id)
+            if source_control is None:
                 raise ValueError("producer cited an unassigned source")
+            expected_hash, expected_time = source_control
             if event.source_sha256.lower() != expected_hash:
                 raise ValueError("producer cited a source with the wrong content hash")
+            if event.observed_at != expected_time:
+                raise ValueError("producer changed the source-controlled evidence timestamp")
         all_events.extend(events)
     ordered = tuple(sorted(all_events, key=lambda event: (event.observed_at, event.event_id)))
     log = EpistemicEventLog(schema_version="1.0", case_id=tasks[0].case_id, events=ordered)
@@ -101,6 +109,10 @@ class SubstrateRetrievalTool:
         if selected is not None:
             chosen_event_id = self._evidence.index.claim_to_event_id[selected.claim_id]
         return RetrievalToolResult(events, chosen_event_id, retrieval.cost, retrieval.complete)
+
+    def subjects(self) -> tuple[str, ...]:
+        """Expose substrate-neutral subject vocabulary without revealing factual objects."""
+        return tuple(sorted(self._evidence.index.entity_to_id, key=str.casefold))
 
     def _event_for_claim(self, claim_id: int) -> RetrievedEvent:
         event_id = self._evidence.index.claim_to_event_id[claim_id]
