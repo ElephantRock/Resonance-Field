@@ -190,7 +190,7 @@ class ZAIChatCompletionsBackend:
                 "Authorization": f"Bearer {self._api_key}",
                 "Content-Type": "application/json",
                 "Accept-Language": "en-US,en",
-                "User-Agent": "resonance-field-piano-phase2-zai/0.2",
+                "User-Agent": "resonance-field-piano-phase2-zai/0.3",
             },
             method="POST",
         )
@@ -209,6 +209,10 @@ class ZAIChatCompletionsBackend:
                 retry_after = exc.headers.get("Retry-After")
                 delay = float(retry_after) if retry_after else min(8.0, 2.0 ** (attempt - 1))
                 time.sleep(delay)
+            except TimeoutError as exc:
+                if attempt == self.max_attempts:
+                    raise RuntimeError("Z.AI transport timeout") from exc
+                time.sleep(min(8.0, 2.0 ** (attempt - 1)))
             except URLError as exc:
                 if attempt == self.max_attempts:
                     raise RuntimeError(f"Z.AI transport error: {exc.reason}") from exc
