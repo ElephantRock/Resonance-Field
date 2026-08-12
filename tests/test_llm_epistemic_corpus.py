@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -33,6 +34,9 @@ def _case(cohort: str) -> ResearchCaseManifest:
             ("producer-4", ("source-4",)),
         ),
         held_out_question_id="question-1",
+        question="Which component follows from the distributed evidence?",
+        accepted_answers=("component-y",),
+        required_source_ids=("source-1", "source-2"),
     )
 
 
@@ -60,6 +64,30 @@ def test_instrumentation_guard_rejects_confirmatory_case() -> None:
         raise AssertionError("confirmatory case passed instrumentation guard")
 
 
+def test_case_rejects_single_producer_with_all_required_evidence() -> None:
+    case = ResearchCaseManifest(
+        case_id="case-invalid",
+        cohort="instrumentation",
+        source_ids=("source-1", "source-2", "source-3", "source-4"),
+        producer_source_allocations=(
+            ("producer-1", ("source-1", "source-2")),
+            ("producer-2", ("source-3",)),
+            ("producer-3", ("source-4",)),
+            ("producer-4", ()),
+        ),
+        held_out_question_id="question-invalid",
+        question="What is the answer?",
+        accepted_answers=("answer",),
+        required_source_ids=("source-1", "source-2"),
+    )
+    try:
+        case.validate({"source-1", "source-2", "source-3", "source-4"})
+    except ValueError as exc:
+        assert "one producer" in str(exc)
+    else:
+        raise AssertionError("single-producer complete evidence was accepted")
+
+
 def test_manifest_round_trip_loader_preserves_canonical_hash(tmp_path: Path) -> None:
     manifest = CorpusManifest(
         manifest_version="1.0",
@@ -79,8 +107,6 @@ def test_verify_source_file_checks_content_hash(tmp_path: Path) -> None:
     content = b"frozen source content\n"
     source_path = tmp_path / "source.txt"
     source_path.write_bytes(content)
-    import hashlib
-
     source = SourceManifestEntry(
         source_id="source-local",
         sha256=hashlib.sha256(content).hexdigest(),
@@ -120,6 +146,9 @@ def test_loader_rejects_invalid_cohort(tmp_path: Path) -> None:
                     ["producer-4", ["source-4"]],
                 ],
                 "held_out_question_id": "question-1",
+                "question": "What is the answer?",
+                "accepted_answers": ["answer"],
+                "required_source_ids": ["source-1", "source-2"],
             }
         ],
     }
