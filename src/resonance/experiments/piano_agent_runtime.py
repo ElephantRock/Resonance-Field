@@ -18,6 +18,7 @@ from uuid import UUID
 
 from resonance.agents import (
     ActionRequest,
+    ActionType,
     AgentObservation,
     AgentRuntime,
     DecisionContext,
@@ -33,11 +34,14 @@ from resonance.substrate.repository import TraceRepository
 
 @dataclass(frozen=True, slots=True)
 class PianoProposal:
-    """Raw high-level intention plus independent speech and action channels."""
+    """Raw proposal channels plus structured labels for mechanical scoring."""
 
     intention: str
     speech: str | None
     action: ActionRequest
+    intended_action: ActionType | None = None
+    speech_action: ActionType | None = None
+    speech_claims_success: bool = False
     expected_outcome_status: OutcomeStatus | None = None
     expected_effects: Mapping[str, object] = field(default_factory=dict)
 
@@ -46,6 +50,10 @@ class PianoProposal:
             raise ValueError("intention must not be empty")
         if self.speech is not None and not self.speech.strip():
             raise ValueError("speech must be None or a non-empty string")
+        if self.speech is None and self.speech_action is not None:
+            raise ValueError("speech_action requires observable speech")
+        if self.speech is None and self.speech_claims_success:
+            raise ValueError("speech_claims_success requires observable speech")
         object.__setattr__(self, "expected_effects", MappingProxyType(dict(self.expected_effects)))
 
 
@@ -94,6 +102,13 @@ class PianoStepResult:
             "occurred_at": self.step.event.occurred_at.isoformat(),
             "intention": self.proposal.intention,
             "speech": self.proposal.speech,
+            "intended_action": (
+                None if self.proposal.intended_action is None else self.proposal.intended_action.value
+            ),
+            "speech_action": (
+                None if self.proposal.speech_action is None else self.proposal.speech_action.value
+            ),
+            "speech_claims_success": self.proposal.speech_claims_success,
             "action": self.proposal.action.action.value,
             "action_payload": dict(self.step.event.action_payload),
             "expected_outcome_status": (
