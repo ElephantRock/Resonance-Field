@@ -11,6 +11,7 @@ from resonance.experiments.llm_epistemic_events import EpistemicEvent
 from resonance.experiments.llm_epistemic_replay import make_replayed_substrate, replay_event_log
 
 PARENT_CONFIG = Path("configs/experiments/epistemic-substrate-138-141.json")
+OBSERVED_AT = "2026-08-12T12:00:00Z"
 
 
 class FakeProducer:
@@ -27,7 +28,7 @@ class FakeProducer:
                 predicate="produces",
                 object="component-y",
                 confidence=0.9,
-                observed_at="2026-08-12T12:00:00Z",
+                observed_at=OBSERVED_AT,
             ),
         )
 
@@ -37,12 +38,12 @@ def test_producers_emit_one_validated_log_then_replay() -> None:
         ProducerTask(
             case_id="case-1",
             producer_id="producer-a",
-            sources=(FrozenSource("source-a", "a" * 64, "source A"),),
+            sources=(FrozenSource("source-a", "a" * 64, "source A", OBSERVED_AT),),
         ),
         ProducerTask(
             case_id="case-1",
             producer_id="producer-b",
-            sources=(FrozenSource("source-b", "b" * 64, "source B"),),
+            sources=(FrozenSource("source-b", "b" * 64, "source B", OBSERVED_AT),),
         ),
     )
     log = run_producers(tasks, FakeProducer())
@@ -56,3 +57,4 @@ def test_producers_emit_one_validated_log_then_replay() -> None:
     assert result.complete
     assert len(result.events) == 2
     assert result.chosen_event_id in {"event-producer-a", "event-producer-b"}
+    assert tool.subjects() == ("supplier-x",)
