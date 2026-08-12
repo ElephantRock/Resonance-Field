@@ -1,0 +1,2 @@
+Calibration 006 one-shot Z.AI trigger v1.
+Scientific inputs were frozen before this marker.
