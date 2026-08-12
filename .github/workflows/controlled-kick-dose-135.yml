@@ -1,0 +1,69 @@
+name: Controlled Kick-Dose Experiment 135
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "configs/experiments/controlled-kick-dose-135-137.json"
+      - "migrations/022_controlled_kick_dose_experiments.sql"
+      - "src/resonance/experiments/controlled_kick_dose_config.py"
+      - "src/resonance/experiments/controlled_kick_dose_campaign.py"
+      - "src/resonance/experiments/controlled_kick_dose_135_cli.py"
+      - "tests/test_controlled_kick_dose.py"
+      - "docs/controlled-kick-dose-135-137.md"
+      - ".github/workflows/controlled-kick-dose-135.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  experiment-135:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: resonance
+          POSTGRES_USER: resonance
+          POSTGRES_PASSWORD: resonance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U resonance -d resonance"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RESONANCE_TEST_DSN: postgresql://resonance:resonance@localhost:5432/resonance
+      OUTPUT_DIR: artifacts/controlled-kick-dose-135
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install package
+        run: pip install -e '.[dev]'
+      - name: Run frozen Experiment 135 instrumentation
+        run: |
+          python -m resonance.experiments.controlled_kick_dose_135_cli \
+            --config configs/experiments/controlled-kick-dose-135-137.json \
+            --code-sha "$GITHUB_SHA" \
+            --output-dir "$OUTPUT_DIR"
+      - name: Upload Experiment 135 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: controlled-kick-dose-experiment-135
+          path: ${{ env.OUTPUT_DIR }}/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish Experiment 135 instrumentation result
+        run: |
+          gh issue comment 64 \
+            --repo "$GITHUB_REPOSITORY" \
+            --body-file "$OUTPUT_DIR/experiment-135-report.md"
