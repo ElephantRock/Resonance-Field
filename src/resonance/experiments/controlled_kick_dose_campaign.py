@@ -29,7 +29,11 @@ from .auction_margin_campaign import (
 )
 from .auction_margin_config import AuctionMarginConfig
 from .controlled_kick_dose_config import InstrumentationCell, KickDoseConfig
-from .endogenous_demand_config import EndogenousDemandSpec, endogenous_environment, load_endogenous_demand_config
+from .endogenous_demand_config import (
+    EndogenousDemandSpec,
+    endogenous_environment,
+    load_endogenous_demand_config,
+)
 
 
 class _BurstMarginSignalProvider:
@@ -548,7 +552,10 @@ def write_experiment_135_outputs(result: Mapping[str, object], output_dir: str |
         f"- Valid pairs: **{result['valid_pair_count']}/{result['pair_count']}**",
         "- Scientific boundary: **instrumentation only; no dose-survival claim**",
         "",
-        "| Seed | K | Schedule | Pre-ID | Deviations | Preserve→cross | No post-39 adjustment | Hard invariants | Valid |",
+        (
+            "| Seed | K | Schedule | Pre-ID | Deviations | Preserve→cross | "
+            "No post-39 adjustment | Hard invariants | Valid |"
+        ),
         "|---:|---:|---|:---:|---:|:---:|:---:|:---:|:---:|",
     ]
     for pair in pairs:
@@ -563,7 +570,11 @@ def write_experiment_135_outputs(result: Mapping[str, object], output_dir: str |
     report.extend(
         [
             "",
-            "The untreated cycles 40–53 micro-distance/components are exported descriptively only and cannot enter or rescue the frozen mediation test. The K=4 zero within-arm timing-variance limitation remains accepted and unchanged.",
+            (
+                "The untreated cycles 40–53 micro-distance/components are exported descriptively only "
+                "and cannot enter or rescue the frozen mediation test. The K=4 zero within-arm "
+                "timing-variance limitation remains accepted and unchanged."
+            ),
         ]
     )
     (output / "experiment-135-report.md").write_text(
