@@ -27,6 +27,14 @@ from .llm_epistemic_scoring import score_case
 ARMS = ("pile", "shared_memory", "provenance_graph", "resonance_field")
 
 
+class InstrumentationGateError(ValueError):
+    """Pre-replay instrumentation gate failure with auditable producer evidence."""
+
+    def __init__(self, message: str, audit: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.audit = audit
+
+
 def _arm_order(case_id: str, draw_id: int) -> tuple[str, ...]:
     digest = hashlib.sha256(f"{case_id}:{draw_id}".encode()).digest()
     seed = int.from_bytes(digest[:8], "big")
@@ -98,30 +106,6 @@ def _producer_event_counts(
     }
 
 
-def _enforce_minimum_producer_deposits(
-    case: ResearchCaseManifest,
-    event_log: Any,
-) -> dict[str, int]:
-    counts = _producer_event_counts(case, event_log)
-    minimum = case.minimum_events_per_producer
-    if minimum is None:
-        return counts
-    shortfalls = {
-        producer_id: count
-        for producer_id, count in counts.items()
-        if count < minimum
-    }
-    if shortfalls:
-        details = ", ".join(
-            f"{producer_id}={count}" for producer_id, count in sorted(shortfalls.items())
-        )
-        raise ValueError(
-            "producer deposit floor not met before substrate replay: "
-            f"minimum={minimum}; {details}"
-        )
-    return counts
-
-
 def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
     grouped: dict[tuple[str, str], list[Any]] = defaultdict(list)
     for event in event_log.events:
@@ -147,16 +131,99 @@ def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
     return tuple(conflicts)
 
 
+def _gate_audit(
+    case: ResearchCaseManifest,
+    event_log: Any,
+    producer_event_counts: dict[str, int],
+    *,
+    gate: str,
+    message: str,
+    temporal_conflict_keys: tuple[dict[str, Any], ...] | None = None,
+) -> dict[str, Any]:
+    return {
+        "case_id": case.case_id,
+        "cohort": "instrumentation",
+        "inferential": False,
+        "confirmatory_access": False,
+        "confirmatory_cases_evaluated": False,
+        "stage": "pre_replay_gate_failure",
+        "gate": gate,
+        "error": message,
+        "replay_attempted": False,
+        "evaluator_execution_attempted": False,
+        "event_log_sha256": event_log.sha256(),
+        "event_count": len(event_log.events),
+        "event_log": _event_log_mapping(event_log),
+        "producer_ids": list(event_log.producer_ids()),
+        "producer_event_counts": producer_event_counts,
+        "temporal_conflict_key_count": (
+            None if temporal_conflict_keys is None else len(temporal_conflict_keys)
+        ),
+        "temporal_conflict_keys": (
+            None if temporal_conflict_keys is None else list(temporal_conflict_keys)
+        ),
+        "observed_producer_models": _observed_producer_models(event_log),
+        "observed_evaluator_models": [],
+        "draws": [],
+    }
+
+
+def _enforce_minimum_producer_deposits(
+    case: ResearchCaseManifest,
+    event_log: Any,
+) -> dict[str, int]:
+    counts = _producer_event_counts(case, event_log)
+    minimum = case.minimum_events_per_producer
+    if minimum is None:
+        return counts
+    shortfalls = {
+        producer_id: count
+        for producer_id, count in counts.items()
+        if count < minimum
+    }
+    if shortfalls:
+        details = ", ".join(
+            f"{producer_id}={count}" for producer_id, count in sorted(shortfalls.items())
+        )
+        message = (
+            "producer deposit floor not met before substrate replay: "
+            f"minimum={minimum}; {details}"
+        )
+        raise InstrumentationGateError(
+            message,
+            _gate_audit(
+                case,
+                event_log,
+                counts,
+                gate="minimum_events_per_producer",
+                message=message,
+            ),
+        )
+    return counts
+
+
 def _enforce_temporal_conflict_floor(
     case: ResearchCaseManifest,
     event_log: Any,
+    producer_event_counts: dict[str, int],
 ) -> tuple[dict[str, Any], ...]:
     conflicts = _temporal_conflict_keys(event_log)
     minimum = case.minimum_temporal_conflict_keys
     if minimum is not None and len(conflicts) < minimum:
-        raise ValueError(
+        message = (
             "temporal conflict-key floor not met before substrate replay: "
             f"minimum={minimum}; observed={len(conflicts)}"
+        )
+        raise InstrumentationGateError(
+            message,
+            _gate_audit(
+                case,
+                event_log,
+                producer_event_counts,
+                gate="minimum_temporal_conflict_keys",
+                message=message,
+                temporal_conflict_keys=conflicts,
+            ),
         )
     return conflicts
 
@@ -175,7 +242,11 @@ def run_instrumentation_case(
     sources = _frozen_sources(manifest, corpus_root)
     event_log = run_producers(_producer_tasks(case, sources), producer_client)
     producer_event_counts = _enforce_minimum_producer_deposits(case, event_log)
-    temporal_conflict_keys = _enforce_temporal_conflict_floor(case, event_log)
+    temporal_conflict_keys = _enforce_temporal_conflict_floor(
+        case,
+        event_log,
+        producer_event_counts,
+    )
     evidence = replay_event_log(event_log, substrate_config)
     event_log_sha256 = event_log.sha256()
     draws: list[dict[str, Any]] = []
@@ -263,4 +334,9 @@ def run_instrumentation(
     }
 
 
-__all__ = ["ARMS", "run_instrumentation", "run_instrumentation_case"]
+__all__ = [
+    "ARMS",
+    "InstrumentationGateError",
+    "run_instrumentation",
+    "run_instrumentation_case",
+]
