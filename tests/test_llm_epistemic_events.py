@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from resonance.experiments.llm_epistemic_events import EpistemicEvent, EpistemicEventLog
-
+from resonance.experiments.llm_epistemic_events import (
+    EpistemicEvent,
+    EpistemicEventLog,
+)
 
 SOURCE_HASH = "a" * 64
 
