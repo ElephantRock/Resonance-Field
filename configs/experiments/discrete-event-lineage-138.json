@@ -1,0 +1,40 @@
+{
+  "name": "discrete-causal-event-lineage-138-v0.1",
+  "schema_version": "v1",
+  "canonical_endogenous_config": "configs/experiments/endogenous-demand-105-110.json",
+  "canonical_auction_margin_config": "configs/experiments/auction-margin-129-134.json",
+  "feedback_strength": 0.5,
+  "target_radius": 0.01,
+  "probe_epsilon": 0.1,
+  "environment": {
+    "cycles": 90,
+    "shift_period": 18,
+    "candidate_count": 7,
+    "activation_cycle": 36,
+    "primary_window": [36, 53]
+  },
+  "calibration_seeds": [3101, 3102, 3103, 3104, 3105, 3106],
+  "validation_seeds": [3107, 3108, 3109, 3110, 3111, 3112],
+  "event_classes": [
+    "auction_award",
+    "settlement_transfer",
+    "success_outcome",
+    "practice_update",
+    "trace_evidence_gate",
+    "trace_retrieval_selection",
+    "feedback_domain_choice",
+    "public_knowledge_write"
+  ],
+  "gates": {
+    "attribution_threshold": 0.9,
+    "single_parent_threshold": 0.75,
+    "maximum_corrective_revisions": 2,
+    "aggregation": "pooled_event_micro_average_with_per_seed_root_path_guard",
+    "calibration_exhaustion": "stop_before_heldout_and_report_lineage_capture_not_calibration_ready"
+  },
+  "future_channel_qualification": {
+    "edge_share_threshold": 0.25,
+    "minimum_pair_prevalence": 4,
+    "rationale": "edge share requires materially large direct transmission; 4-of-6 recurrence prevents one event-dense pair from qualifying a channel"
+  }
+}
