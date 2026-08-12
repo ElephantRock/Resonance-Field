@@ -71,8 +71,8 @@ def test_evaluable_gate_accepts_496_when_every_cell_retains_at_least_15() -> Non
     design = load_confirmatory_design(DESIGN_PATH)
     strata = _case_strata()
     removed: set[str] = set()
-    for domain_index, domain in enumerate(design.domains[:4]):
-        for challenge_index, challenge in enumerate(design.challenges):
+    for domain_index, _domain in enumerate(design.domains[:4]):
+        for challenge_index, _challenge in enumerate(design.challenges):
             prefix = f"case-{domain_index:02d}-{challenge_index:02d}-"
             case_id = next(case_id for case_id in strata if case_id.startswith(prefix))
             removed.add(case_id)
