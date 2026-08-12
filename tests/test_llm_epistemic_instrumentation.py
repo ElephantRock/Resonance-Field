@@ -7,7 +7,6 @@ from resonance.experiments.epistemic_substrate_config import load_epistemic_subs
 from resonance.experiments.llm_epistemic_agents import (
     EvaluatorAnswer,
     EvaluatorTask,
-    FrozenSource,
     ProducerTask,
     SubstrateRetrievalTool,
 )
