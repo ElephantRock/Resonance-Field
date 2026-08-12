@@ -1,6 +1,7 @@
 {
   "name": "llm-epistemic-substrate-142-145-v0.1",
   "stage": "instrumentation_scaffold",
+  "protocol_revision": "001-confirmatory-sample-size-512",
   "parent_campaign": "epistemic-substrate-138-141-v0.1",
   "experiments": {
     "142": "pile",
@@ -20,7 +21,7 @@
   "corpus": {
     "mode": "frozen_naturalistic_documents",
     "instrumentation_case_count": 24,
-    "confirmatory_case_count": 96,
+    "confirmatory_case_count": 512,
     "confirmatory_cases_sealed": false,
     "content_sha256_required": true,
     "source_manifest_sha256_required": true,
