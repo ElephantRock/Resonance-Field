@@ -46,6 +46,7 @@ jobs:
             src/resonance/experiments/llm_epistemic_replay.py \
             src/resonance/experiments/llm_epistemic_agents.py \
             src/resonance/experiments/llm_epistemic_openai.py \
+            src/resonance/experiments/llm_epistemic_zai.py \
             src/resonance/experiments/llm_epistemic_scoring.py \
             src/resonance/experiments/llm_epistemic_instrumentation.py \
             src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
@@ -55,6 +56,7 @@ jobs:
             tests/test_llm_epistemic_replay.py \
             tests/test_llm_epistemic_agents.py \
             tests/test_llm_epistemic_openai.py \
+            tests/test_llm_epistemic_zai.py \
             tests/test_llm_epistemic_scoring.py \
             tests/test_llm_epistemic_instrumentation.py
       - name: Test replication mechanics and provider contract
