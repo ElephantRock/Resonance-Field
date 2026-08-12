@@ -10,17 +10,29 @@
     "mode": "deterministic_relational_world",
     "entity_count": 96,
     "relation_count": 192,
+    "relation_count_semantics": "observation_claims",
+    "relation_type_count": 4,
     "source_packet_count": 64,
     "agent_count": 32,
     "observations_per_agent": 6,
     "discovery_query_count": 24,
     "transfer_query_count": 32,
     "transfer_path_hops": [2, 3, 4],
+    "final_epoch": 40,
+    "evidence_regimes": {
+      "fast_change": 8,
+      "slow_change": 8,
+      "recent_rumor": 8,
+      "stable_confirmation": 24
+    },
     "producer_memory_destroyed_before_transfer": true
   },
   "budget": {
     "max_substrate_writes_per_agent": 6,
     "max_retrieval_items_per_query": 12,
+    "pile_claim_cost": 3,
+    "shared_claim_cost": 1,
+    "graph_claim_cost": 1,
     "max_graph_hops_per_query": 4,
     "max_reasoning_steps_per_query": 8
   },
@@ -60,7 +72,8 @@
     "independent_confirmation_gain": 0.25,
     "contradiction_gain": 0.10,
     "bridge_gain": 0.20,
-    "maximum_activation": 3.0
+    "maximum_activation": 3.0,
+    "contradiction_override_margin": 0.60
   },
   "primary_endpoints": [
     "transfer_accuracy",
@@ -105,6 +118,7 @@
   "accepted_limitations": {
     "primary_benchmark_is_synthetic": true,
     "no_live_llm_or_web_calls_in_confirmatory_campaign": true,
+    "instrumentation_tuning_completed_before_confirmatory_execution": true,
     "interpretation": "Experiments 138-141 identify the causal contribution of substrate structure under deterministic agent capabilities. External validity to stochastic LLM swarms requires a separately preregistered replication and cannot rescue a null result here."
   }
 }
