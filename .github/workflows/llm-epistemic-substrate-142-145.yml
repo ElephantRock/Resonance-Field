@@ -1,0 +1,87 @@
+name: LLM Epistemic Substrate 142-145 Instrumentation
+
+on:
+  pull_request:
+    paths:
+      - "configs/experiments/llm-epistemic-substrate-142-145.json"
+      - "docs/llm-epistemic-substrate-142-145.md"
+      - "src/resonance/experiments/llm_epistemic_*.py"
+      - "tests/test_llm_epistemic_*.py"
+      - ".github/workflows/llm-epistemic-substrate-142-145.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  instrumentation-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145
+      CONFIG: configs/experiments/llm-epistemic-substrate-142-145.json
+      PARENT_CONFIG: configs/experiments/epistemic-substrate-138-141.json
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install package
+        run: pip install -e '.[dev]'
+      - name: Lint replication layer
+        run: |
+          ruff check --output-format=github \
+            src/resonance/experiments/llm_epistemic_config.py \
+            src/resonance/experiments/llm_epistemic_corpus.py \
+            src/resonance/experiments/llm_epistemic_events.py \
+            src/resonance/experiments/llm_epistemic_replay.py \
+            src/resonance/experiments/llm_epistemic_agents.py \
+            tests/test_llm_epistemic_config.py \
+            tests/test_llm_epistemic_corpus.py \
+            tests/test_llm_epistemic_events.py \
+            tests/test_llm_epistemic_replay.py \
+            tests/test_llm_epistemic_agents.py
+      - name: Test replication mechanics
+        run: pytest tests/test_llm_epistemic_*.py
+      - name: Enforce instrumentation-only boundary
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          config_path = Path("configs/experiments/llm-epistemic-substrate-142-145.json")
+          value = json.loads(config_path.read_text())
+          if value["stage"] != "instrumentation_scaffold":
+              raise SystemExit("142-145 workflow may only run the instrumentation scaffold")
+          if value["corpus"]["confirmatory_cases_sealed"]:
+              raise SystemExit("confirmatory corpus must remain inaccessible in instrumentation workflow")
+          forbidden = list(Path("configs").glob("**/*142-145*confirmatory*"))
+          if forbidden:
+              raise SystemExit(f"confirmatory corpus material present in instrumentation tree: {forbidden}")
+
+          output = Path("artifacts/llm-epistemic-substrate-142-145")
+          output.mkdir(parents=True, exist_ok=True)
+          contract = {
+              "campaign": value["name"],
+              "stage": value["stage"],
+              "confirmatory_access": False,
+              "confirmatory_cases_evaluated": False,
+              "config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
+              "parent_config_sha256": hashlib.sha256(
+                  Path("configs/experiments/epistemic-substrate-138-141.json").read_bytes()
+              ).hexdigest(),
+          }
+          (output / "instrumentation-contract.json").write_text(
+              json.dumps(contract, indent=2, sort_keys=True) + "\n"
+          )
+          PY
+      - name: Upload instrumentation contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-epistemic-substrate-142-145-instrumentation-contract
+          path: ${{ env.OUTPUT_DIR }}/instrumentation-contract.json
+          if-no-files-found: error
+          retention-days: 90
