@@ -1,0 +1,54 @@
+name: Z.AI Coding Endpoint Probe
+
+on:
+  push:
+    branches:
+      - experiment/piano-agent-runtime
+    paths:
+      - ".github/workflows/zai-coding-endpoint-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require Z.AI credential
+        run: |
+          if [ -z "$ZAI_API_KEY" ]; then
+            echo "::error::ZAI_API_KEY is not available to Resonance-Field Actions"
+            exit 2
+          fi
+      - name: Probe Coding Plan chat completions endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          body='{"model":"glm-4-32b-0414-128k","messages":[{"role":"user","content":"Reply with exactly OK."}],"temperature":0,"max_tokens":8,"stream":false}'
+          status=$(curl --silent --show-error \
+            --output /tmp/zai-coding-probe.json \
+            --write-out '%{http_code}' \
+            --request POST \
+            'https://api.z.ai/api/coding/paas/v4/chat/completions' \
+            --header "Authorization: Bearer $ZAI_API_KEY" \
+            --header 'Accept-Language: en-US,en' \
+            --header 'Content-Type: application/json' \
+            --data "$body")
+          echo "HTTP_STATUS=$status"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('/tmp/zai-coding-probe.json').read_text())
+          safe = {
+              'model': value.get('model'),
+              'choices': value.get('choices'),
+              'usage': value.get('usage'),
+              'error': value.get('error'),
+          }
+          print(json.dumps(safe, indent=2, sort_keys=True))
+          PY
+          test "$status" -ge 200 -a "$status" -lt 300
