@@ -6,6 +6,7 @@ from pathlib import Path
 from resonance.experiments.llm_epistemic_corpus import (
     CorpusManifest,
     ResearchCaseManifest,
+    SemanticAnswerRequirements,
     SourceManifestEntry,
     load_corpus_manifest,
     verify_source_file,
@@ -120,6 +121,63 @@ def test_producer_deposit_floor_is_prospective_and_round_trips(tmp_path: Path) -
     loaded = load_corpus_manifest(path)
 
     assert loaded.cases[0].minimum_events_per_producer == 1
+    assert loaded.sha256() == manifest.sha256()
+
+
+def test_temporal_conflict_floor_is_prospective_and_requires_deposit_floor(tmp_path: Path) -> None:
+    legacy = _case("instrumentation")
+    assert "minimum_temporal_conflict_keys" not in legacy.canonical_mapping()
+
+    invalid = replace(legacy, minimum_temporal_conflict_keys=1)
+    try:
+        invalid.validate({"source-1", "source-2", "source-3", "source-4"})
+    except ValueError as exc:
+        assert "requires minimum_events_per_producer" in str(exc)
+    else:
+        raise AssertionError("temporal conflict floor accepted without producer floor")
+
+    guarded = replace(
+        legacy,
+        minimum_events_per_producer=1,
+        minimum_temporal_conflict_keys=1,
+    )
+    manifest = CorpusManifest(
+        manifest_version="1.0",
+        sources=tuple(_source(index) for index in range(1, 5)),
+        cases=(guarded,),
+    )
+    path = tmp_path / "temporal-guard.json"
+    path.write_text(manifest.canonical_bytes().decode())
+    loaded = load_corpus_manifest(path)
+    assert loaded.cases[0].minimum_temporal_conflict_keys == 1
+    assert loaded.sha256() == manifest.sha256()
+
+
+def test_semantic_slots_round_trip_without_changing_group_contract(tmp_path: Path) -> None:
+    slots = SemanticAnswerRequirements(
+        required_slots=(("v1.25", "1.25"), ("No", "non-mutating")),
+        forbidden_terms=("legacy",),
+    )
+    slot_case = replace(_case("instrumentation"), semantic_answer_requirements=slots)
+    mapping = slot_case.canonical_mapping()["semantic_answer_requirements"]
+    assert "required_slots" in mapping
+    assert "required_groups" not in mapping
+
+    groups = SemanticAnswerRequirements(required_groups=(("alpha",), ("beta",)))
+    group_case = replace(_case("instrumentation"), semantic_answer_requirements=groups)
+    group_mapping = group_case.canonical_mapping()["semantic_answer_requirements"]
+    assert "required_groups" in group_mapping
+    assert "required_slots" not in group_mapping
+
+    manifest = CorpusManifest(
+        manifest_version="1.0",
+        sources=tuple(_source(index) for index in range(1, 5)),
+        cases=(slot_case,),
+    )
+    path = tmp_path / "slots.json"
+    path.write_text(manifest.canonical_bytes().decode())
+    loaded = load_corpus_manifest(path)
+    assert loaded.cases[0].semantic_answer_requirements == slots
     assert loaded.sha256() == manifest.sha256()
 
 
