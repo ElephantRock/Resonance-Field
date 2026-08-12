@@ -24,11 +24,11 @@ jobs:
             echo "::error::ZAI_API_KEY is not available to Resonance-Field Actions"
             exit 2
           fi
-      - name: Probe Coding Plan chat completions endpoint
+      - name: Probe GLM-5.2 on Coding Plan chat completions endpoint
         shell: bash
         run: |
           set -euo pipefail
-          body='{"model":"glm-4-32b-0414-128k","messages":[{"role":"user","content":"Reply with exactly OK."}],"temperature":0,"max_tokens":8,"stream":false}'
+          body='{"model":"glm-5.2","messages":[{"role":"user","content":"Reply with exactly OK."}],"temperature":0,"max_tokens":8,"stream":false}'
           status=$(curl --silent --show-error \
             --output /tmp/zai-coding-probe.json \
             --write-out '%{http_code}' \
