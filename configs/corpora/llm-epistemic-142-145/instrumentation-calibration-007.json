@@ -1,0 +1,89 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "openjdk-keystore-default-8",
+      "repository": "openjdk/jdk8u",
+      "commit_sha": "e3d58354fd5930a8330620701212a8b0c0ffdb60",
+      "path": "jdk/src/share/lib/security/java.security-linux",
+      "git_blob_sha": "d31a1e37005a0fb8f56709a9718d56162504faec",
+      "media_type": "text/plain",
+      "title": "OpenJDK 8 GA Linux security properties",
+      "acquired_at": "2026-08-12T20:05:00Z",
+      "evidence_observed_at": "2014-03-18T18:55:18Z"
+    },
+    {
+      "source_id": "openjdk-security-current",
+      "repository": "openjdk/jdk",
+      "commit_sha": "910c71ce2f09f8895bd893a68c4813037197733a",
+      "path": "src/java.base/share/conf/security/java.security",
+      "git_blob_sha": "74797ed663b0fb97f2ead33aa2320ee6f94b6e43",
+      "media_type": "text/plain",
+      "title": "Current OpenJDK security properties",
+      "acquired_at": "2026-08-12T20:05:00Z",
+      "evidence_observed_at": "2026-08-12T16:49:58Z"
+    },
+    {
+      "source_id": "openjdk-keystore-api-current",
+      "repository": "openjdk/jdk",
+      "commit_sha": "910c71ce2f09f8895bd893a68c4813037197733a",
+      "path": "src/java.base/share/classes/java/security/KeyStore.java",
+      "git_blob_sha": "f7adfcbcd6263fc4c317aac8397a4c78b100fc93",
+      "media_type": "text/x-java-source",
+      "title": "Current OpenJDK KeyStore API implementation documentation",
+      "acquired_at": "2026-08-12T20:05:00Z",
+      "evidence_observed_at": "2026-08-12T16:49:58Z"
+    },
+    {
+      "source_id": "openjdk-keytool-current",
+      "repository": "openjdk/jdk",
+      "commit_sha": "910c71ce2f09f8895bd893a68c4813037197733a",
+      "path": "src/java.base/share/man/keytool.md",
+      "git_blob_sha": "faa2ff563a177bb4c8e1bf1ac1ae419804e81930",
+      "media_type": "text/markdown",
+      "title": "Current OpenJDK keytool manual",
+      "acquired_at": "2026-08-12T20:05:00Z",
+      "evidence_observed_at": "2026-08-12T16:49:58Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-openjdk-keystore-007",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "openjdk-keystore-default-8",
+        "openjdk-security-current",
+        "openjdk-keystore-api-current",
+        "openjdk-keytool-current"
+      ],
+      "producer_source_allocations": [
+        ["producer-openjdk-stale", ["openjdk-keystore-default-8"]],
+        ["producer-openjdk-security", ["openjdk-security-current"]],
+        ["producer-openjdk-api", ["openjdk-keystore-api-current"]],
+        ["producer-openjdk-keytool", ["openjdk-keytool-current"]]
+      ],
+      "held_out_question_id": "question-openjdk-keystore-007",
+      "question": "For current OpenJDK KeyStore/keytool behavior, give four values in order: the default keystore type; the boolean value of keystore.type.compat; the security property name used to obtain the default keystore type; and the default keystore filename keytool uses when -keystore is omitted.",
+      "accepted_answers": [
+        "pkcs12; true; keystore.type; .keystore"
+      ],
+      "required_source_ids": [
+        "openjdk-security-current",
+        "openjdk-keystore-api-current",
+        "openjdk-keytool-current"
+      ],
+      "semantic_answer_requirements": {
+        "required_slots": [
+          ["pkcs12", "PKCS12"],
+          ["true"],
+          ["keystore.type"],
+          [".keystore"]
+        ],
+        "forbidden_terms": []
+      },
+      "minimum_events_per_producer": 1,
+      "minimum_temporal_conflict_keys": 1
+    }
+  ]
+}

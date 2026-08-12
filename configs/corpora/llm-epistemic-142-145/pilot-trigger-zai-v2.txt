@@ -1,0 +1,3 @@
+Instrumentation-only rerun trigger for instr-python-packaging-001 after transport-level schema validation repair.
+The v1 outcome-bearing attempt failed before event-log creation because Z.AI emitted non-numeric confidence.
+This v2 marker changes no corpus, task, accepted answer, model, scoring, or P/S/G/R treatment mechanics.

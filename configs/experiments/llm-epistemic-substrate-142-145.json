@@ -1,0 +1,169 @@
+{
+  "name": "llm-epistemic-substrate-142-145-v0.1",
+  "stage": "instrumentation_scaffold",
+  "protocol_revision": "004-confirmatory-design-and-seal-freeze",
+  "protocol_revision_history": [
+    "001-confirmatory-sample-size-512",
+    "002-success-rule-and-power-semantics",
+    "003-provider-identity-freeze",
+    "004-confirmatory-design-and-seal-freeze"
+  ],
+  "parent_campaign": "epistemic-substrate-138-141-v0.1",
+  "experiments": {
+    "142": "pile",
+    "143": "shared_memory",
+    "144": "provenance_graph",
+    "145": "resonance_field"
+  },
+  "causal_unit": "canonical_epistemic_event_log",
+  "provider": {
+    "name": "zai",
+    "protocol": "openai_compatible_chat_completions",
+    "base_url": "https://api.z.ai/api/coding/paas/v4",
+    "requested_model": "glm-5.1",
+    "expected_response_model": "glm-5.2",
+    "openai_sdk_version": "2.54.0",
+    "identity_probe_run_id": 31642753502,
+    "identity_probe_artifact_id": 9159514128,
+    "identity_probe_artifact_digest": "sha256:c56a57e94a57657054195960bb0bd556aadd504b7d6d2ba9e53a19babba4757a",
+    "identity_probe_json_sha256": "835bc51a029517d6d3f5271c5f0f0d98e286df79b486d64742517742c81d7581",
+    "request_contract_sha256": "739fba6b309308d0798003f7c1c6a5d9b859b8ad2c4d94fc3bdcd75a8f246acd",
+    "temperature": 1.0,
+    "thinking_enabled": true,
+    "clear_thinking": false,
+    "sdk_internal_retries": 0,
+    "transient_retry_business_codes": ["1302", "1305"],
+    "maximum_transient_retries": 5,
+    "fail_closed_on_response_model_mismatch": true
+  },
+  "producer_phase": {
+    "run_once_per_case": true,
+    "replay_identical_event_log_across_arms": true,
+    "producer_local_state_destroyed_before_substrate_evaluation": true,
+    "live_web_allowed": false,
+    "source_access": "frozen_corpus_only",
+    "structured_event_output_required": true
+  },
+  "corpus": {
+    "mode": "frozen_naturalistic_documents",
+    "instrumentation_case_count": 24,
+    "confirmatory_case_count": 512,
+    "minimum_evaluable_confirmatory_cases": 496,
+    "minimum_evaluable_cases_per_domain_challenge_cell": 15,
+    "confirmatory_design_path": "configs/experiments/llm-epistemic-substrate-142-145-confirmatory-design.json",
+    "confirmatory_cases_sealed": false,
+    "content_sha256_required": true,
+    "source_manifest_sha256_required": true,
+    "minimum_sources_per_case": 4,
+    "minimum_producers_per_case": 4,
+    "require_collective_evidence": true,
+    "allow_stale_evidence": true,
+    "allow_contradictory_evidence": true,
+    "allow_duplicate_evidence": true,
+    "allow_recent_incorrect_evidence": true,
+    "post_seal_case_replacement_allowed": false
+  },
+  "agents": {
+    "producer_model_identity_frozen_at_confirmatory_seal": true,
+    "evaluator_model_identity_frozen_at_confirmatory_seal": true,
+    "producer_prompt_sha256_required": true,
+    "evaluator_prompt_sha256_required": true,
+    "identical_generation_parameters_across_arms": true,
+    "independent_evaluator_draws_per_case_arm": 5,
+    "arm_order_randomized": true,
+    "scoring_blinded_to_arm": true,
+    "per_call_retrieval_operation_budget": 12,
+    "total_retrieval_operation_budget_per_answer": 24,
+    "maximum_retrieval_tool_rounds_per_answer": 8
+  },
+  "event_schema": {
+    "schema_version": "1.0",
+    "required_fields": [
+      "event_id",
+      "case_id",
+      "producer_id",
+      "source_id",
+      "source_sha256",
+      "subject",
+      "predicate",
+      "object",
+      "confidence",
+      "observed_at"
+    ],
+    "optional_fields": [
+      "source_locator",
+      "support_event_ids",
+      "contradict_event_ids",
+      "uncertainty",
+      "metadata"
+    ]
+  },
+  "primary_endpoint": "post_agent_task_accuracy",
+  "secondary_endpoints": [
+    "evidence_path_f1",
+    "provenance_precision",
+    "provenance_recall",
+    "contradiction_resolution_accuracy",
+    "unsupported_synthesis_rate",
+    "bridge_recovery",
+    "calibration_brier",
+    "retrieval_operation_units",
+    "evaluator_input_tokens",
+    "evaluator_output_tokens",
+    "wall_clock_latency_ms"
+  ],
+  "planned_contrasts": [
+    ["shared_memory", "pile"],
+    ["provenance_graph", "shared_memory"],
+    ["resonance_field", "provenance_graph"],
+    ["resonance_field", "pile"]
+  ],
+  "confirmatory_priority": [
+    ["resonance_field", "provenance_graph"],
+    ["resonance_field", "pile"]
+  ],
+  "analysis": {
+    "paired_by_case": true,
+    "evaluator_draws_nested_within_case": true,
+    "familywise_alpha": 0.05,
+    "multiple_testing": "holm",
+    "multiple_testing_family": "all_four_planned_primary_contrasts",
+    "confidence_interval": 0.95,
+    "bootstrap_resamples": 10000,
+    "randomization_resamples": 100000,
+    "minimum_total_effect_r_minus_p": 0.08,
+    "minimum_incremental_effect_r_minus_g": 0.03,
+    "minimum_effects_are_hard_observed_effect_gates": true,
+    "campaign_success_requires_all_priority_contrasts": true,
+    "success_requires_holm_adjusted_p_below_alpha": true,
+    "success_requires_ci_lower_above_zero": true,
+    "power_detection_target": 0.80,
+    "power_planning_paired_sd_ceiling_r_minus_g": 0.20,
+    "power_reporting": "detection_and_hard_gate_pass_probability_separately"
+  },
+  "quality_gates": {
+    "identical_event_log_across_arms": true,
+    "identical_evaluator_model_prompt_and_budget_across_arms": true,
+    "no_producer_state_available_to_evaluator": true,
+    "no_live_web_during_evaluation": true,
+    "no_cross_arm_state_leakage": true,
+    "maximum_unsupported_synthesis_rate": 0.05,
+    "minimum_event_provenance_completeness": 0.99,
+    "confirmatory_protocol_changes_after_unseal": false
+  },
+  "seal": {
+    "schema_version": "1.0",
+    "scientific_file_sha256_required": true,
+    "source_bytes_reverified_at_seal": true,
+    "treatment_execution_during_seal": false,
+    "evaluator_execution_during_seal": false,
+    "confirmatory_outcomes_observed_during_seal": false
+  },
+  "interpretation": {
+    "campaign_pass": "both R-G and R-P priority contrasts clear their hard observed-effect gates, Holm-adjusted zero-effect tests, and positive bootstrap lower bounds",
+    "positive_subthreshold_priority_effect": "priority contrast is statistically positive but does not clear its frozen observed-effect magnitude gate",
+    "positive_r_minus_g": "field dynamics add capability beyond a static provenance graph under stochastic LLM reasoning",
+    "null_r_minus_g_positive_g_minus_p": "structured relational memory transfers, but resonance dynamics do not add validated external capability",
+    "null_all": "the deterministic 138-141 effect does not externally replicate under this frozen LLM/corpus regime"
+  }
+}

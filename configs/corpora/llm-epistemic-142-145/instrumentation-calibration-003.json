@@ -1,0 +1,77 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "rust-edition-migration-current",
+      "repository": "rust-lang/edition-guide",
+      "commit_sha": "f9e4d77fa7a0c7cb289e1da53a11160394bb31af",
+      "path": "src/editions/transitioning-an-existing-project-to-a-new-edition.md",
+      "git_blob_sha": "67615af396ed204e399b0de08fe26f84c75dcd33",
+      "media_type": "text/markdown",
+      "title": "Rust Edition Guide — Transitioning an existing project to a new edition",
+      "acquired_at": "2026-08-12T16:45:00Z"
+    },
+    {
+      "source_id": "rust-2024-gen-keyword",
+      "repository": "rust-lang/edition-guide",
+      "commit_sha": "f9e4d77fa7a0c7cb289e1da53a11160394bb31af",
+      "path": "src/rust-2024/gen-keyword.md",
+      "git_blob_sha": "55537dd0dada8def7dd80221673d802cc8186a82",
+      "media_type": "text/markdown",
+      "title": "Rust 2024 Edition Guide — gen keyword",
+      "acquired_at": "2026-08-12T16:45:00Z"
+    },
+    {
+      "source_id": "rust-2024-newly-unsafe-functions",
+      "repository": "rust-lang/edition-guide",
+      "commit_sha": "f9e4d77fa7a0c7cb289e1da53a11160394bb31af",
+      "path": "src/rust-2024/newly-unsafe-functions.md",
+      "git_blob_sha": "a45e6545e3f5cef8079cb97e504e054702bad614",
+      "media_type": "text/markdown",
+      "title": "Rust 2024 Edition Guide — newly unsafe functions",
+      "acquired_at": "2026-08-12T16:45:00Z"
+    },
+    {
+      "source_id": "rust-2021-reserved-syntax",
+      "repository": "rust-lang/edition-guide",
+      "commit_sha": "f9e4d77fa7a0c7cb289e1da53a11160394bb31af",
+      "path": "src/rust-2021/reserved-syntax.md",
+      "git_blob_sha": "c8df77c0f9f7d0b4e565d4368fe6dc885da93d71",
+      "media_type": "text/markdown",
+      "title": "Rust 2021 Edition Guide — reserved syntax",
+      "acquired_at": "2026-08-12T16:45:00Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-rust-edition-003",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "rust-edition-migration-current",
+        "rust-2024-gen-keyword",
+        "rust-2024-newly-unsafe-functions",
+        "rust-2021-reserved-syntax"
+      ],
+      "producer_source_allocations": [
+        ["producer-1", ["rust-edition-migration-current"]],
+        ["producer-2", ["rust-2024-gen-keyword"]],
+        ["producer-3", ["rust-2024-newly-unsafe-functions"]],
+        ["producer-4", ["rust-2021-reserved-syntax"]]
+      ],
+      "held_out_question_id": "instr-rust-edition-003-q1",
+      "question": "When migrating an existing project to Rust 2024 Edition according to the frozen Edition Guide, which Cargo command should be run to apply edition compatibility fixes, which keyword is newly reserved, and which two std::env functions are newly unsafe in the 2024 Edition?",
+      "accepted_answers": [
+        "cargo fix --edition; gen; std::env::set_var and std::env::remove_var",
+        "cargo fix --edition; gen; set_var and remove_var",
+        "cargo fix --edition; gen; std::env::set_var, std::env::remove_var",
+        "cargo fix --edition; gen; set_var, remove_var"
+      ],
+      "required_source_ids": [
+        "rust-edition-migration-current",
+        "rust-2024-gen-keyword",
+        "rust-2024-newly-unsafe-functions"
+      ]
+    }
+  ]
+}

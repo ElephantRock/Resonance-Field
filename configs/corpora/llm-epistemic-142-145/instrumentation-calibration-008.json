@@ -1,0 +1,89 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "postgres-wal-config-95",
+      "repository": "postgres/postgres",
+      "commit_sha": "cdd4ed5449bf317cc71b45a8deee0173822e7592",
+      "path": "src/backend/utils/misc/postgresql.conf.sample",
+      "git_blob_sha": "18c433b919da6d5b6e002d9bed63e0cff08bd33c",
+      "media_type": "text/plain",
+      "title": "PostgreSQL 9.5.0 sample WAL configuration",
+      "acquired_at": "2026-08-12T20:30:00Z",
+      "evidence_observed_at": "2016-01-04T21:29:34Z"
+    },
+    {
+      "source_id": "postgres-wal-config-current",
+      "repository": "postgres/postgres",
+      "commit_sha": "bdaad789c843f57b1fc66c5ede7abaff8a915c3b",
+      "path": "src/backend/utils/misc/postgresql.conf.sample",
+      "git_blob_sha": "e759f06b50f0670674b2c295624e5d333778045d",
+      "media_type": "text/plain",
+      "title": "Current PostgreSQL sample WAL configuration",
+      "acquired_at": "2026-08-12T20:30:00Z",
+      "evidence_observed_at": "2026-08-12T17:15:48Z"
+    },
+    {
+      "source_id": "postgres-wal-docs-current",
+      "repository": "postgres/postgres",
+      "commit_sha": "bdaad789c843f57b1fc66c5ede7abaff8a915c3b",
+      "path": "doc/src/sgml/config.sgml",
+      "git_blob_sha": "b9b6e6b29fcd0674d773a48b992800316d06d4b1",
+      "media_type": "text/plain",
+      "title": "Current PostgreSQL WAL configuration documentation",
+      "acquired_at": "2026-08-12T20:30:00Z",
+      "evidence_observed_at": "2026-08-12T17:15:48Z"
+    },
+    {
+      "source_id": "postgres-guc-tables-current",
+      "repository": "postgres/postgres",
+      "commit_sha": "bdaad789c843f57b1fc66c5ede7abaff8a915c3b",
+      "path": "src/backend/utils/misc/guc_tables.c",
+      "git_blob_sha": "c6d9b2a6f89ad55211a4ecca432255ea88e10a06",
+      "media_type": "text/x-c",
+      "title": "Current PostgreSQL GUC tables implementation",
+      "acquired_at": "2026-08-12T20:30:00Z",
+      "evidence_observed_at": "2026-08-12T17:15:48Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-postgres-wal-level-008",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "postgres-wal-config-95",
+        "postgres-wal-config-current",
+        "postgres-wal-docs-current",
+        "postgres-guc-tables-current"
+      ],
+      "producer_source_allocations": [
+        ["producer-postgres-wal-stale", ["postgres-wal-config-95"]],
+        ["producer-postgres-wal-config", ["postgres-wal-config-current"]],
+        ["producer-postgres-wal-docs", ["postgres-wal-docs-current"]],
+        ["producer-postgres-wal-code", ["postgres-guc-tables-current"]]
+      ],
+      "held_out_question_id": "question-postgres-wal-level-008",
+      "question": "For current PostgreSQL WAL behavior, give four values in order: the default wal_level; the C constant used to initialize effective_wal_level; the minimum wal_level needed for continuous archiving; and the effective WAL level when wal_level is replica and at least one logical replication slot exists.",
+      "accepted_answers": [
+        "replica; WAL_LEVEL_REPLICA; replica; logical"
+      ],
+      "required_source_ids": [
+        "postgres-wal-config-current",
+        "postgres-wal-docs-current",
+        "postgres-guc-tables-current"
+      ],
+      "semantic_answer_requirements": {
+        "required_slots": [
+          ["replica"],
+          ["WAL_LEVEL_REPLICA"],
+          ["replica"],
+          ["logical"]
+        ],
+        "forbidden_terms": []
+      },
+      "minimum_events_per_producer": 1,
+      "minimum_temporal_conflict_keys": 1
+    }
+  ]
+}

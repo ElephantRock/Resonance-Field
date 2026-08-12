@@ -1,0 +1,77 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "py-pep-563-current",
+      "repository": "python/peps",
+      "commit_sha": "bcf35f18de8483ed60bf525d593a45302080e931",
+      "path": "peps/pep-0563.rst",
+      "git_blob_sha": "0bdb7f2a9caa38e10ac37aeb0c795fbeea7d86a7",
+      "media_type": "text/x-rst",
+      "title": "PEP 563 — Postponed Evaluation of Annotations (Superseded)",
+      "acquired_at": "2026-08-12T16:05:00Z"
+    },
+    {
+      "source_id": "py-pep-649-current",
+      "repository": "python/peps",
+      "commit_sha": "bcf35f18de8483ed60bf525d593a45302080e931",
+      "path": "peps/pep-0649.rst",
+      "git_blob_sha": "d4c8e792468e2b50fb207da481d4f82bbff80c6c",
+      "media_type": "text/x-rst",
+      "title": "PEP 649 — Deferred Evaluation Of Annotations Using Descriptors",
+      "acquired_at": "2026-08-12T16:05:00Z"
+    },
+    {
+      "source_id": "py-pep-749-current",
+      "repository": "python/peps",
+      "commit_sha": "bcf35f18de8483ed60bf525d593a45302080e931",
+      "path": "peps/pep-0749.rst",
+      "git_blob_sha": "78b07ba9032d29e708fac3d0814c6e7823e46918",
+      "media_type": "text/x-rst",
+      "title": "PEP 749 — Implementing PEP 649",
+      "acquired_at": "2026-08-12T16:05:00Z"
+    },
+    {
+      "source_id": "cpython-annotationlib-current",
+      "repository": "python/cpython",
+      "commit_sha": "b11e749f7590e9a0907db908fa3e7e76c772c28f",
+      "path": "Doc/library/annotationlib.rst",
+      "git_blob_sha": "a90754620b59fdf937883b121d09113e4369def5",
+      "media_type": "text/x-rst",
+      "title": "Python annotationlib documentation",
+      "acquired_at": "2026-08-12T16:05:00Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-python-annotations-002",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "py-pep-563-current",
+        "py-pep-649-current",
+        "py-pep-749-current",
+        "cpython-annotationlib-current"
+      ],
+      "producer_source_allocations": [
+        ["producer-1", ["py-pep-563-current"]],
+        ["producer-2", ["py-pep-649-current"]],
+        ["producer-3", ["py-pep-749-current"]],
+        ["producer-4", ["cpython-annotationlib-current"]]
+      ],
+      "held_out_question_id": "instr-python-annotations-002-q1",
+      "question": "Under Python 3.14's current annotation semantics in the frozen sources, which PEP defines the deferred-evaluation model, which standard-library module provides the annotation introspection tooling introduced for its implementation, and which Format enum member returns annotation expressions as strings?",
+      "accepted_answers": [
+        "PEP 649; annotationlib; Format.STRING",
+        "649; annotationlib; Format.STRING",
+        "PEP 649; annotationlib; STRING",
+        "649; annotationlib; STRING"
+      ],
+      "required_source_ids": [
+        "py-pep-649-current",
+        "py-pep-749-current",
+        "cpython-annotationlib-current"
+      ]
+    }
+  ]
+}

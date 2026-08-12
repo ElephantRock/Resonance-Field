@@ -1,0 +1,4 @@
+One-shot retry for instrumentation case instr-python-annotations-002 through Z.AI after the mechanical budget-finalization repair.
+Unchanged from v1: four commit-pinned sources, question, accepted answers, 5 draws x 4 arms, and 24 total retrieval-operation units per evaluator answer.
+The repair only forces tool-free final JSON after the frozen retrieval budget reaches zero.
+This marker must not be edited or reused for another outcome-bearing run.

@@ -1,0 +1,85 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "go-env-defaults-current",
+      "repository": "golang/go",
+      "commit_sha": "4b6ec2e0c834dbf7cdf880da379bdd65737eae6a",
+      "path": "go.env",
+      "git_blob_sha": "6ff2b921d464bc64266c9d84a67a33fb5505d216",
+      "media_type": "text/plain",
+      "title": "Go distribution environment defaults",
+      "acquired_at": "2026-08-12T17:25:00Z"
+    },
+    {
+      "source_id": "go-toolchain-select-current",
+      "repository": "golang/go",
+      "commit_sha": "4b6ec2e0c834dbf7cdf880da379bdd65737eae6a",
+      "path": "src/cmd/go/internal/toolchain/select.go",
+      "git_blob_sha": "afcafbdaeef469214c2268d805516ba8ecc18e4e",
+      "media_type": "text/x-go",
+      "title": "Go toolchain selection implementation",
+      "acquired_at": "2026-08-12T17:25:00Z"
+    },
+    {
+      "source_id": "go-toolchain-trace-current",
+      "repository": "golang/go",
+      "commit_sha": "4b6ec2e0c834dbf7cdf880da379bdd65737eae6a",
+      "path": "src/cmd/go/testdata/script/gotoolchain_godebug_trace.txt",
+      "git_blob_sha": "d98f62d165404482e70f09993b3b0053ce9ee2d9",
+      "media_type": "text/plain",
+      "title": "Go toolchain GODEBUG tracing test",
+      "acquired_at": "2026-08-12T17:25:00Z"
+    },
+    {
+      "source_id": "go-godebug-general-current",
+      "repository": "golang/go",
+      "commit_sha": "4b6ec2e0c834dbf7cdf880da379bdd65737eae6a",
+      "path": "doc/godebug.md",
+      "git_blob_sha": "144332729493c7dcbc7061a1e1b2cae3abb4ed15",
+      "media_type": "text/markdown",
+      "title": "Go GODEBUG compatibility documentation",
+      "acquired_at": "2026-08-12T17:25:00Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-go-toolchain-004",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "go-env-defaults-current",
+        "go-toolchain-select-current",
+        "go-toolchain-trace-current",
+        "go-godebug-general-current"
+      ],
+      "producer_source_allocations": [
+        ["producer-1", ["go-env-defaults-current"]],
+        ["producer-2", ["go-toolchain-select-current"]],
+        ["producer-3", ["go-toolchain-trace-current"]],
+        ["producer-4", ["go-godebug-general-current"]]
+      ],
+      "held_out_question_id": "instr-go-toolchain-004-q1",
+      "question": "For the current Go toolchain-selection controls in the frozen sources, what full GOTOOLCHAIN assignment is shipped as the distribution default, which two suffixes are the only valid suffixes on a versioned minimum-toolchain setting, and what full GODEBUG assignment enables toolchain-selection tracing?",
+      "accepted_answers": [
+        "GOTOOLCHAIN=auto; +auto and +path; GODEBUG=toolchaintrace=1"
+      ],
+      "required_source_ids": [
+        "go-env-defaults-current",
+        "go-toolchain-select-current",
+        "go-toolchain-trace-current"
+      ],
+      "semantic_answer_requirements": {
+        "required_groups": [
+          ["GOTOOLCHAIN=auto"],
+          ["+auto"],
+          ["+path"],
+          ["GODEBUG=toolchaintrace=1", "toolchaintrace=1"]
+        ],
+        "forbidden_terms": [
+          "GOTOOLCHAIN=local"
+        ]
+      }
+    }
+  ]
+}
