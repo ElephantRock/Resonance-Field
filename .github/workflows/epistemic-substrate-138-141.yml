@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   instrumentation:
@@ -25,34 +25,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
           cache: pip
       - name: Install package
         run: pip install -e '.[dev]'
-      - name: Apply safe Ruff fixes
-        run: |
-          ruff check --fix \
-            src/resonance/experiments/epistemic_substrate_config.py \
-            src/resonance/experiments/epistemic_substrate_campaign.py \
-            src/resonance/experiments/epistemic_substrate_cli.py \
-            tests/test_epistemic_substrate_config.py \
-            tests/test_epistemic_substrate_campaign.py
-          if ! git diff --quiet; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add \
-              src/resonance/experiments/epistemic_substrate_config.py \
-              src/resonance/experiments/epistemic_substrate_campaign.py \
-              src/resonance/experiments/epistemic_substrate_cli.py \
-              tests/test_epistemic_substrate_config.py \
-              tests/test_epistemic_substrate_campaign.py
-            git commit -m "Apply Ruff safe fixes to Epistemic Substrate campaign"
-            git push
-          fi
       - name: Lint campaign
         run: |
           ruff check --output-format=github \
