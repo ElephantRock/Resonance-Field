@@ -1,0 +1,54 @@
+{
+  "name": "controlled-kick-dose-recovery-135-137-v0.1",
+  "canonical_endogenous_config": "configs/experiments/endogenous-demand-105-110.json",
+  "canonical_auction_margin_config": "configs/experiments/auction-margin-129-134.json",
+  "feedback_strength": 0.5,
+  "target_radius": 0.01,
+  "probe_epsilon": 0.1,
+  "environment": {
+    "cycles": 234,
+    "shift_period": 18,
+    "candidate_count": 7,
+    "activation_cycle": 36,
+    "burst_cycles": [36, 37, 38, 39],
+    "landmark_cycle": 54,
+    "gap_cycles": [40, 53],
+    "mediator_cycles": [54, 71]
+  },
+  "recovery": {
+    "macro_threshold": 0.05,
+    "persistent_hits": 3,
+    "persistent_window": 5,
+    "censor_duration": 180
+  },
+  "quality_gates": {
+    "maximum_success_loss": 0.015,
+    "maximum_knowledge_loss": 0.10
+  },
+  "mediation": {
+    "minimum_attenuation": 0.20,
+    "alpha": 0.05,
+    "primary": "early_micro_peak",
+    "sensitivity": "early_micro_auc"
+  },
+  "doses": [1, 2, 4],
+  "instrumentation": [
+    {"seed": 2891, "dose": 1, "kick_cycles": [36]},
+    {"seed": 2892, "dose": 2, "kick_cycles": [36, 39]},
+    {"seed": 2893, "dose": 4, "kick_cycles": [36, 37, 38, 39]},
+    {"seed": 2894, "dose": 1, "kick_cycles": [39]},
+    {"seed": 2895, "dose": 2, "kick_cycles": [37, 38]},
+    {"seed": 2896, "dose": 4, "kick_cycles": [36, 37, 38, 39]}
+  ],
+  "discovery_seeds": [2901, 2902, 2903, 2904, 2905, 2906, 2907, 2908, 2909, 2910, 2911, 2912, 2913, 2914, 2915, 2916, 2917, 2918, 2919, 2920, 2921, 2922, 2923, 2924, 2925, 2926, 2927, 2928, 2929, 2930, 2931, 2932, 2933, 2934, 2935, 2936],
+  "replication_seeds": [3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, 3013, 3014, 3015, 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029, 3030, 3031, 3032, 3033, 3034, 3035, 3036],
+  "timing_sequences": {
+    "1": [[36], [37], [38], [39]],
+    "2": [[36, 37], [36, 38], [36, 39], [37, 38], [37, 39], [38, 39]],
+    "4": [[36, 37, 38, 39]]
+  },
+  "accepted_limitations": {
+    "k4_zero_within_arm_timing_variance": true,
+    "interpretation": "Mean kick timing is balanced at 37.5, but K=4 necessarily has one timing pattern. A qualitative K=4 departure cannot be separated from this structural schedule-variance asymmetry within this campaign."
+  }
+}
