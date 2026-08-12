@@ -26,6 +26,36 @@ def _string_tuple(value: object, label: str) -> tuple[str, ...]:
     return tuple(value)
 
 
+def _string_groups(value: object, label: str) -> tuple[tuple[str, ...], ...]:
+    if not isinstance(value, list):
+        raise ValueError(f"{label} must be an array of string arrays")
+    return tuple(_string_tuple(group, f"{label} group") for group in value)
+
+
+@dataclass(frozen=True, slots=True)
+class SemanticAnswerRequirements:
+    """Prospectively frozen deterministic semantic correctness contract."""
+
+    required_groups: tuple[tuple[str, ...], ...]
+    forbidden_terms: tuple[str, ...] = ()
+
+    def validate(self) -> None:
+        if not self.required_groups:
+            raise ValueError("semantic answer requirements need at least one required group")
+        for group in self.required_groups:
+            if not group or any(not term.strip() for term in group):
+                raise ValueError("semantic answer requirement groups need non-empty alternatives")
+        if any(not term.strip() for term in self.forbidden_terms):
+            raise ValueError("semantic forbidden terms must be non-empty")
+
+    def canonical_mapping(self) -> dict[str, object]:
+        self.validate()
+        return {
+            "required_groups": [list(group) for group in self.required_groups],
+            "forbidden_terms": list(self.forbidden_terms),
+        }
+
+
 @dataclass(frozen=True, slots=True)
 class SourceManifestEntry:
     source_id: str
@@ -54,6 +84,7 @@ class ResearchCaseManifest:
     question: str
     accepted_answers: tuple[str, ...]
     required_source_ids: tuple[str, ...]
+    semantic_answer_requirements: SemanticAnswerRequirements | None = None
 
     def validate(self, known_sources: set[str]) -> None:
         if self.cohort not in ("instrumentation", "confirmatory"):
@@ -74,6 +105,8 @@ class ResearchCaseManifest:
             raise ValueError("held-out question id and text must be non-empty")
         if not self.accepted_answers or any(not answer.strip() for answer in self.accepted_answers):
             raise ValueError("accepted_answers must contain non-empty answers")
+        if self.semantic_answer_requirements is not None:
+            self.semantic_answer_requirements.validate()
         required = set(self.required_source_ids)
         if len(required) < 2 or not required <= source_set:
             raise ValueError("collective evidence must require at least two case sources")
@@ -87,6 +120,26 @@ class ResearchCaseManifest:
         }
         if len(covering_producers) < 2:
             raise ValueError("required evidence must span at least two producers")
+
+    def canonical_mapping(self) -> dict[str, object]:
+        value: dict[str, object] = {
+            "case_id": self.case_id,
+            "cohort": self.cohort,
+            "source_ids": list(self.source_ids),
+            "producer_source_allocations": [
+                [producer_id, list(source_ids)]
+                for producer_id, source_ids in self.producer_source_allocations
+            ],
+            "held_out_question_id": self.held_out_question_id,
+            "question": self.question,
+            "accepted_answers": list(self.accepted_answers),
+            "required_source_ids": list(self.required_source_ids),
+        }
+        if self.semantic_answer_requirements is not None:
+            value["semantic_answer_requirements"] = (
+                self.semantic_answer_requirements.canonical_mapping()
+            )
+        return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -131,22 +184,7 @@ class CorpusManifest:
                 }
                 for source in self.sources
             ],
-            "cases": [
-                {
-                    "case_id": case.case_id,
-                    "cohort": case.cohort,
-                    "source_ids": list(case.source_ids),
-                    "producer_source_allocations": [
-                        [producer_id, list(source_ids)]
-                        for producer_id, source_ids in case.producer_source_allocations
-                    ],
-                    "held_out_question_id": case.held_out_question_id,
-                    "question": case.question,
-                    "accepted_answers": list(case.accepted_answers),
-                    "required_source_ids": list(case.required_source_ids),
-                }
-                for case in self.cases
-            ],
+            "cases": [case.canonical_mapping() for case in self.cases],
         }
         return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
 
@@ -159,6 +197,22 @@ class CorpusManifest:
         if len(selected) != len(self.cases):
             raise PermissionError("instrumentation manifest contains confirmatory cases")
         return selected
+
+
+def _parse_semantic_answer_requirements(value: object) -> SemanticAnswerRequirements | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise ValueError("semantic_answer_requirements must be an object")
+    requirements = SemanticAnswerRequirements(
+        required_groups=_string_groups(value.get("required_groups"), "semantic required groups"),
+        forbidden_terms=_string_tuple(
+            value.get("forbidden_terms", []),
+            "semantic forbidden terms",
+        ),
+    )
+    requirements.validate()
+    return requirements
 
 
 def load_corpus_manifest(path: str | Path) -> CorpusManifest:
@@ -226,6 +280,9 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 required_source_ids=_string_tuple(
                     raw_case["required_source_ids"], "required source ids"
                 ),
+                semantic_answer_requirements=_parse_semantic_answer_requirements(
+                    raw_case.get("semantic_answer_requirements")
+                ),
             )
         )
 
@@ -251,6 +308,7 @@ def verify_source_file(source: SourceManifestEntry, root: str | Path = ".") -> N
 __all__ = [
     "CorpusManifest",
     "ResearchCaseManifest",
+    "SemanticAnswerRequirements",
     "SourceManifestEntry",
     "load_corpus_manifest",
     "verify_source_file",
