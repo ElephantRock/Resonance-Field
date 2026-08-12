@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .epistemic_substrate_config import EpistemicSubstrateConfig, load_epistemic_substrate_config
 from .llm_epistemic_agents import (
@@ -228,7 +229,17 @@ def run_confirmatory_case(
     if case.cohort != "confirmatory":
         raise ConfirmatoryProtocolError("confirmatory runner received a non-confirmatory case")
     sources = _case_frozen_sources(case, manifest, corpus_root)
-    event_log = run_producers(_producer_tasks(case, sources), producer_client)
+    try:
+        event_log = run_producers(_producer_tasks(case, sources), producer_client)
+    except Exception as exc:
+        raise ConfirmatoryProtocolError(
+            "producer/provider failure invalidates confirmatory execution",
+            audit={
+                "case_id": case.case_id,
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+            },
+        ) from exc
     _assert_producer_identity(event_log, campaign)
 
     try:
@@ -399,7 +410,9 @@ def aggregate_confirmatory_results(
     result_values = tuple(results)
     case_ids = [str(result.get("case_id", "")) for result in result_values]
     if len(case_ids) != len(set(case_ids)):
-        raise ConfirmatoryProtocolError("duplicate confirmatory case result detected; rerun selection forbidden")
+        raise ConfirmatoryProtocolError(
+            "duplicate confirmatory case result detected; rerun selection forbidden"
+        )
 
     expected_cases = {case.case_id: case for case in manifest.cases}
     observed_ids = set(case_ids)
@@ -433,7 +446,9 @@ def aggregate_confirmatory_results(
             "campaign_success": None,
             "analysis": None,
             "reason": "mechanical_protocol_or_seal_failure_present",
-            "invalid_case_ids": sorted(str(result.get("case_id", "")) for result in invalid_results),
+            "invalid_case_ids": sorted(
+                str(result.get("case_id", "")) for result in invalid_results
+            ),
         }
 
     evaluable = tuple(result for result in result_values if result["status"] == "evaluable")
