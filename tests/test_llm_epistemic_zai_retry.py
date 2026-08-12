@@ -4,7 +4,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from resonance.experiments.llm_epistemic_zai_retry import RetryingCompletions
+from resonance.experiments.llm_epistemic_zai_retry import (
+    ModelIdentityEnforcingCompletions,
+    RetryingCompletions,
+)
 
 
 class FakeZAIError(Exception):
@@ -67,3 +70,39 @@ def test_does_not_retry_non_429_error() -> None:
         retrying.create(model="glm-5.1")
 
     assert delegate.calls == 1
+
+
+def test_model_identity_enforcer_accepts_exact_served_identity() -> None:
+    completion = SimpleNamespace(model="glm-5.2")
+    delegate = FakeDelegate([completion])
+    enforcing = ModelIdentityEnforcingCompletions(
+        delegate,
+        expected_response_model="glm-5.2",
+    )
+
+    assert enforcing.create(model="glm-5.1") is completion
+    assert delegate.calls == 1
+
+
+def test_model_identity_enforcer_fails_closed_on_drift() -> None:
+    delegate = FakeDelegate([SimpleNamespace(model="glm-5.3")])
+    enforcing = ModelIdentityEnforcingCompletions(
+        delegate,
+        expected_response_model="glm-5.2",
+    )
+
+    with pytest.raises(RuntimeError, match="provider-returned model identity mismatch"):
+        enforcing.create(model="glm-5.1")
+
+    assert delegate.calls == 1
+
+
+def test_model_identity_enforcer_rejects_missing_identity() -> None:
+    delegate = FakeDelegate([SimpleNamespace()])
+    enforcing = ModelIdentityEnforcingCompletions(
+        delegate,
+        expected_response_model="glm-5.2",
+    )
+
+    with pytest.raises(RuntimeError, match="actual=''" ):
+        enforcing.create(model="glm-5.1")
