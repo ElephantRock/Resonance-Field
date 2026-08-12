@@ -1,0 +1,91 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "k8s-psp-current",
+      "repository": "kubernetes/website",
+      "commit_sha": "22cc5093581b4dc74394bdce60753d5caf13ddf0",
+      "path": "content/en/docs/concepts/security/pod-security-policy.md",
+      "git_blob_sha": "6bdce08bc974f4df18db68cd348d43f05757d35d",
+      "media_type": "text/markdown",
+      "title": "Kubernetes Pod Security Policies — removed feature",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2026-08-12T19:00:00Z"
+    },
+    {
+      "source_id": "k8s-psa-current",
+      "repository": "kubernetes/website",
+      "commit_sha": "22cc5093581b4dc74394bdce60753d5caf13ddf0",
+      "path": "content/en/docs/concepts/security/pod-security-admission.md",
+      "git_blob_sha": "c4caa6905d38dc3cc5ccbd33adf1fa8157105b9e",
+      "media_type": "text/markdown",
+      "title": "Kubernetes Pod Security Admission",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2026-08-12T19:00:00Z"
+    },
+    {
+      "source_id": "k8s-psp-migration-current",
+      "repository": "kubernetes/website",
+      "commit_sha": "22cc5093581b4dc74394bdce60753d5caf13ddf0",
+      "path": "content/en/docs/tasks/configure-pod-container/migrate-from-psp.md",
+      "git_blob_sha": "d8511ac66d768c0de626db41b9270c52c15a99ef",
+      "media_type": "text/markdown",
+      "title": "Migrate from PodSecurityPolicy to the Built-In PodSecurity Admission Controller",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2026-08-12T19:00:00Z"
+    },
+    {
+      "source_id": "k8s-admission-guide-2019",
+      "repository": "kubernetes/website",
+      "commit_sha": "22cc5093581b4dc74394bdce60753d5caf13ddf0",
+      "path": "content/en/blog/_posts/2019/a-guide-to-kubernetes-admission-controllers.md",
+      "git_blob_sha": "56e0d76a13be6d885af294fae9cad2df9ac2a7cf",
+      "media_type": "text/markdown",
+      "title": "A Guide to Kubernetes Admission Controllers (2019)",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2019-03-21T00:00:00Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-kubernetes-psp-005",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "k8s-psp-current",
+        "k8s-psa-current",
+        "k8s-psp-migration-current",
+        "k8s-admission-guide-2019"
+      ],
+      "producer_source_allocations": [
+        ["producer-k8s-removal", ["k8s-psp-current"]],
+        ["producer-k8s-admission", ["k8s-psa-current"]],
+        ["producer-k8s-migration", ["k8s-psp-migration-current"]],
+        ["producer-k8s-stale", ["k8s-admission-guide-2019"]]
+      ],
+      "held_out_question_id": "question-k8s-psp-005",
+      "question": "For a current Kubernetes cluster migrating away from PodSecurityPolicy, give four values in order: the Kubernetes release that removed PodSecurityPolicy; the built-in replacement admission controller; whether that replacement mutates Pods before validation; and the namespace label key used to enforce the selected Pod Security level.",
+      "accepted_answers": [
+        "v1.25; Pod Security Admission; non-mutating; pod-security.kubernetes.io/enforce"
+      ],
+      "required_source_ids": [
+        "k8s-psp-current",
+        "k8s-psa-current",
+        "k8s-psp-migration-current"
+      ],
+      "semantic_answer_requirements": {
+        "required_groups": [
+          ["v1.25", "1.25"],
+          ["Pod Security Admission", "PodSecurity Admission", "Pod Security admission controller"],
+          ["non-mutating", "nonmutating", "does not mutate", "doesn't mutate", "won't modify pods"],
+          ["pod-security.kubernetes.io/enforce"]
+        ],
+        "forbidden_terms": [
+          "PodSecurityPolicy",
+          "Pod Security Policy"
+        ]
+      },
+      "minimum_events_per_producer": 1
+    }
+  ]
+}
