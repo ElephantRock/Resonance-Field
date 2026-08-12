@@ -7,7 +7,7 @@ import unicodedata
 from dataclasses import dataclass
 
 from .llm_epistemic_agents import EvaluatorAnswer
-from .llm_epistemic_corpus import ResearchCaseManifest
+from .llm_epistemic_corpus import ResearchCaseManifest, SemanticAnswerRequirements
 from .llm_epistemic_events import EpistemicEventLog
 
 _WHITESPACE = re.compile(r"\s+")
@@ -16,6 +16,29 @@ _WHITESPACE = re.compile(r"\s+")
 def normalize_answer(value: str) -> str:
     normalized = unicodedata.normalize("NFKC", value).strip().casefold()
     return _WHITESPACE.sub(" ", normalized)
+
+
+def _contains_term(normalized_answer: str, term: str) -> bool:
+    normalized_term = normalize_answer(term)
+    if not normalized_term:
+        return False
+    pattern = re.compile(rf"(?<!\w){re.escape(normalized_term)}(?!\w)")
+    return bool(pattern.search(normalized_answer))
+
+
+def _semantic_correct(
+    observed: str,
+    requirements: SemanticAnswerRequirements,
+) -> bool:
+    requirements.validate()
+    if not observed:
+        return False
+    required_ok = all(
+        any(_contains_term(observed, alternative) for alternative in group)
+        for group in requirements.required_groups
+    )
+    forbidden_hit = any(_contains_term(observed, term) for term in requirements.forbidden_terms)
+    return required_ok and not forbidden_hit
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,7 +61,10 @@ def score_case(
     event_log.validate()
     accepted = {normalize_answer(value) for value in case.accepted_answers}
     observed = normalize_answer(answer.answer)
-    correct = float(observed in accepted)
+    if case.semantic_answer_requirements is None:
+        correct = float(observed in accepted)
+    else:
+        correct = float(_semantic_correct(observed, case.semantic_answer_requirements))
 
     events = {event.event_id: event for event in event_log.events}
     cited_ids = tuple(dict.fromkeys(answer.cited_event_ids))
