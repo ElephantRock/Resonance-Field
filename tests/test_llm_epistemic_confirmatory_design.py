@@ -174,7 +174,6 @@ def test_temporal_cell_requires_curated_180_day_required_evidence_gap() -> None:
         if case.challenge_type == "temporal_update_conflict"
     )
     case = manifest.cases[temporal_index]
-    source_by_id = {source.source_id: source for source in manifest.sources}
     altered_sources = tuple(
         replace(source, evidence_observed_at="2026-01-01T00:00:00Z")
         if source.source_id in case.required_source_ids
