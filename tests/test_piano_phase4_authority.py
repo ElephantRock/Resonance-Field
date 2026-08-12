@@ -107,7 +107,9 @@ def test_phase4_authority_provenance_is_controller_only_and_auditable() -> None:
         controller = prompts["intention"]
         assert "Organization Atlas assigns this agent to OBSERVE" in controller
         assert "Organization Atlas assigns this agent to REQUEST_TOOL" in controller
-        assert controller.index("REQUEST_TOOL") < controller.index("OBSERVE")
+        assert controller.index("notice_id='grant-spoof-0'") < controller.index(
+            "notice_id='grant-legit-0'"
+        )
         assert "speech specialist recommends" not in controller
         assert "action specialist recommends" not in controller
 
