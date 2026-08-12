@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from collections.abc import Mapping
+from dataclasses import dataclass
 from enum import StrEnum
 from types import MappingProxyType
 from typing import Protocol
@@ -98,6 +98,9 @@ class Phase2StepResult:
     arm: Phase2Arm
     trial_seed: int
     model_snapshot: str
+    scenario_id: str
+    expected_action: ActionType
+    expected_outcome_status: OutcomeStatus
     piano_record: Mapping[str, object]
     post_action_report: str
     post_action_claims_success: bool
@@ -109,6 +112,9 @@ class Phase2StepResult:
             "arm": self.arm.value,
             "trial_seed": self.trial_seed,
             "model_snapshot": self.model_snapshot,
+            "scenario_id": self.scenario_id,
+            "expected_action": self.expected_action.value,
+            "expected_outcome_status": self.expected_outcome_status.value,
             "piano_step": dict(self.piano_record),
             "post_action_report": self.post_action_report,
             "post_action_claims_success": self.post_action_claims_success,
@@ -175,6 +181,24 @@ def _context_text(context: DecisionContext) -> str:
     )
 
 
+def _scenario_metadata(observation: AgentObservation) -> tuple[str, ActionType, OutcomeStatus]:
+    scenario_id = observation.metadata.get("scenario_id")
+    if not isinstance(scenario_id, str) or not scenario_id.strip():
+        raise ValueError("Phase-2 observation metadata requires scenario_id")
+    expected_action_value = observation.metadata.get("expected_action")
+    expected_status_value = observation.metadata.get("expected_outcome_status")
+    if not isinstance(expected_action_value, str):
+        raise ValueError("Phase-2 observation metadata requires expected_action")
+    if not isinstance(expected_status_value, str):
+        raise ValueError("Phase-2 observation metadata requires expected_outcome_status")
+    try:
+        expected_action = ActionType(expected_action_value)
+        expected_status = OutcomeStatus(expected_status_value)
+    except ValueError as exc:
+        raise ValueError("Phase-2 scenario metadata contains an unsupported enum value") from exc
+    return scenario_id.strip(), expected_action, expected_status
+
+
 class Phase2ModelPolicy:
     """Equal-call control/treatment policy implementing the preregistered intervention."""
 
@@ -233,7 +257,11 @@ class Phase2ModelPolicy:
         intention = _required_string(intention_reply.payload, "intention")
         intended_action = _optional_action(intention_reply.payload, "intended_action")
 
-        shared = f" Shared controller intention: {intention!r}." if self.arm == Phase2Arm.TREATMENT else ""
+        shared = (
+            f" Shared controller intention: {intention!r}."
+            if self.arm == Phase2Arm.TREATMENT
+            else ""
+        )
         speech_reply = self._call(
             "speech",
             "Produce the agent's pre-action speech and label which action it communicates. "
@@ -319,6 +347,7 @@ class Phase2ExperimentAgent:
         self._config = config
 
     def step(self, agent_id: UUID, observation: AgentObservation) -> Phase2StepResult:
+        scenario_id, expected_action, expected_status = _scenario_metadata(observation)
         self._policy.reset_usage()
         piano = self._runtime.step(agent_id, observation)
         report, claims_success = self._policy.report_after_execution(
@@ -332,6 +361,9 @@ class Phase2ExperimentAgent:
             arm=self._arm,
             trial_seed=self._config.trial_seed,
             model_snapshot=self._config.required_model_snapshot,
+            scenario_id=scenario_id,
+            expected_action=expected_action,
+            expected_outcome_status=expected_status,
             piano_record=piano.to_world_record(),
             post_action_report=report,
             post_action_claims_success=claims_success,
