@@ -1,11 +1,12 @@
 {
   "name": "llm-epistemic-substrate-142-145-v0.1",
   "stage": "instrumentation_scaffold",
-  "protocol_revision": "003-provider-identity-freeze",
+  "protocol_revision": "004-confirmatory-design-and-seal-freeze",
   "protocol_revision_history": [
     "001-confirmatory-sample-size-512",
     "002-success-rule-and-power-semantics",
-    "003-provider-identity-freeze"
+    "003-provider-identity-freeze",
+    "004-confirmatory-design-and-seal-freeze"
   ],
   "parent_campaign": "epistemic-substrate-138-141-v0.1",
   "experiments": {
@@ -21,6 +22,7 @@
     "base_url": "https://api.z.ai/api/coding/paas/v4",
     "requested_model": "glm-5.1",
     "expected_response_model": "glm-5.2",
+    "openai_sdk_version": "2.54.0",
     "identity_probe_run_id": 31642753502,
     "identity_probe_artifact_id": 9159514128,
     "identity_probe_artifact_digest": "sha256:c56a57e94a57657054195960bb0bd556aadd504b7d6d2ba9e53a19babba4757a",
@@ -47,6 +49,8 @@
     "instrumentation_case_count": 24,
     "confirmatory_case_count": 512,
     "minimum_evaluable_confirmatory_cases": 496,
+    "minimum_evaluable_cases_per_domain_challenge_cell": 15,
+    "confirmatory_design_path": "configs/experiments/llm-epistemic-substrate-142-145-confirmatory-design.json",
     "confirmatory_cases_sealed": false,
     "content_sha256_required": true,
     "source_manifest_sha256_required": true,
@@ -145,6 +149,14 @@
     "maximum_unsupported_synthesis_rate": 0.05,
     "minimum_event_provenance_completeness": 0.99,
     "confirmatory_protocol_changes_after_unseal": false
+  },
+  "seal": {
+    "schema_version": "1.0",
+    "scientific_file_sha256_required": true,
+    "source_bytes_reverified_at_seal": true,
+    "treatment_execution_during_seal": false,
+    "evaluator_execution_during_seal": false,
+    "confirmatory_outcomes_observed_during_seal": false
   },
   "interpretation": {
     "campaign_pass": "both R-G and R-P priority contrasts clear their hard observed-effect gates, Holm-adjusted zero-effect tests, and positive bootstrap lower bounds",
