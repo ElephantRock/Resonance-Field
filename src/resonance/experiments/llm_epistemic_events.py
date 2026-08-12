@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
+from .llm_epistemic_ontology import validate_relation
+
 
 def _require_sha256(value: str, label: str) -> None:
     if len(value) != 64 or any(ch not in "0123456789abcdef" for ch in value.lower()):
@@ -49,6 +51,7 @@ class EpistemicEvent:
             ("observed_at", self.observed_at),
         ):
             _require_nonempty(value, label)
+        validate_relation(self.predicate)
         _require_sha256(self.source_sha256, "source_sha256")
         if not 0.0 <= self.confidence <= 1.0:
             raise ValueError("confidence must be in [0, 1]")
