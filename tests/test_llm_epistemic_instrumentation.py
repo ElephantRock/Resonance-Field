@@ -64,7 +64,7 @@ class SparseProducer(FakeProducer):
         return super().produce(task)
 
 
-class TemporalConflictProducer(FakeProducer):
+class ConflictProducer(FakeProducer):
     def produce(self, task: ProducerTask) -> tuple[EpistemicEvent, ...]:
         source = task.sources[0]
         base = super().produce(task)[0]
@@ -105,6 +105,7 @@ def _manifest(
     tmp_path: Path,
     *,
     minimum_events_per_producer: int | None = None,
+    minimum_conflict_keys: int | None = None,
     minimum_temporal_conflict_keys: int | None = None,
     temporal_sources: bool = False,
 ) -> CorpusManifest:
@@ -139,6 +140,7 @@ def _manifest(
         accepted_answers=("component-y",),
         required_source_ids=("source-1", "source-2"),
         minimum_events_per_producer=minimum_events_per_producer,
+        minimum_conflict_keys=minimum_conflict_keys,
         minimum_temporal_conflict_keys=minimum_temporal_conflict_keys,
     )
     return CorpusManifest(manifest_version="1.0", sources=tuple(sources), cases=(case,))
@@ -188,6 +190,7 @@ def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -
         "producer-3": 1,
         "producer-4": 1,
     }
+    assert case["conflict_key_count"] == 0
     assert case["temporal_conflict_key_count"] == 0
     assert case["observed_producer_models"] == ["actual-producer-model"]
     assert case["observed_evaluator_models"] == ["actual-evaluator-model"]
@@ -228,11 +231,74 @@ def test_runner_retains_declared_producer_deposit_shortfall_before_replay(
         assert audit["evaluator_execution_attempted"] is False
         assert audit["event_count"] == 3
         assert audit["producer_event_counts"]["producer-4"] == 0
+        assert audit["conflict_key_count"] is None
         assert audit["temporal_conflict_key_count"] is None
         assert audit["draws"] == []
         _assert_audit_hash(audit)
     else:
         raise AssertionError("producer deposit shortfall reached substrate replay")
+
+
+def test_runner_retains_missing_generic_conflict_before_replay(tmp_path: Path) -> None:
+    campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
+    parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
+    manifest = _manifest(
+        tmp_path,
+        minimum_events_per_producer=1,
+        minimum_conflict_keys=1,
+    )
+
+    try:
+        run_instrumentation(
+            manifest,
+            tmp_path,
+            campaign,
+            parent,
+            FakeProducer(),
+            FakeEvaluator(),
+        )
+    except InstrumentationGateError as exc:
+        assert "conflict-key floor" in str(exc)
+        audit = exc.audit
+        assert audit["gate"] == "minimum_conflict_keys"
+        assert audit["replay_attempted"] is False
+        assert audit["evaluator_execution_attempted"] is False
+        assert audit["conflict_key_count"] == 0
+        assert audit["conflict_keys"] == []
+        assert audit["temporal_conflict_key_count"] is None
+        _assert_audit_hash(audit)
+    else:
+        raise AssertionError("missing generic conflict reached substrate replay")
+
+
+def test_runner_records_same_time_opposing_claim_key_without_temporal_conflict(
+    tmp_path: Path,
+) -> None:
+    campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
+    parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
+    manifest = _manifest(
+        tmp_path,
+        minimum_events_per_producer=1,
+        minimum_conflict_keys=1,
+    )
+
+    result = run_instrumentation(
+        manifest,
+        tmp_path,
+        campaign,
+        parent,
+        ConflictProducer(),
+        FakeEvaluator(),
+    )
+
+    case = result["cases"][0]
+    assert case["conflict_key_count"] == 1
+    assert case["temporal_conflict_key_count"] == 0
+    conflict = case["conflict_keys"][0]
+    assert conflict["subject"] == "feature-x"
+    assert conflict["predicate"] == "default_is"
+    assert conflict["objects"] == ["current", "legacy"]
+    assert conflict["observed_at"] == [OBSERVED_AT]
 
 
 def test_runner_retains_missing_temporal_conflict_before_replay(tmp_path: Path) -> None:
@@ -267,6 +333,8 @@ def test_runner_retains_missing_temporal_conflict_before_replay(tmp_path: Path) 
             "producer-3": 1,
             "producer-4": 1,
         }
+        assert audit["conflict_key_count"] == 0
+        assert audit["conflict_keys"] == []
         assert audit["temporal_conflict_key_count"] == 0
         assert audit["temporal_conflict_keys"] == []
         assert audit["draws"] == []
@@ -292,6 +360,7 @@ def test_runner_records_cross_time_opposing_claim_key(tmp_path: Path) -> None:
     manifest = _manifest(
         tmp_path,
         minimum_events_per_producer=1,
+        minimum_conflict_keys=1,
         minimum_temporal_conflict_keys=1,
         temporal_sources=True,
     )
@@ -301,11 +370,12 @@ def test_runner_records_cross_time_opposing_claim_key(tmp_path: Path) -> None:
         tmp_path,
         campaign,
         parent,
-        TemporalConflictProducer(),
+        ConflictProducer(),
         FakeEvaluator(),
     )
 
     case = result["cases"][0]
+    assert case["conflict_key_count"] == 1
     assert case["temporal_conflict_key_count"] == 1
     conflict = case["temporal_conflict_keys"][0]
     assert conflict["subject"] == "feature-x"
