@@ -11,7 +11,6 @@ from resonance.experiments.epistemic_substrate_config import (
     load_epistemic_substrate_config,
 )
 
-
 CONFIG_PATH = Path("configs/experiments/epistemic-substrate-138-141.json")
 
 
