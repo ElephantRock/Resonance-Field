@@ -1,7 +1,11 @@
 {
   "name": "llm-epistemic-substrate-142-145-v0.1",
   "stage": "instrumentation_scaffold",
-  "protocol_revision": "001-confirmatory-sample-size-512",
+  "protocol_revision": "002-success-rule-and-power-semantics",
+  "protocol_revision_history": [
+    "001-confirmatory-sample-size-512",
+    "002-success-rule-and-power-semantics"
+  ],
   "parent_campaign": "epistemic-substrate-138-141-v0.1",
   "experiments": {
     "142": "pile",
@@ -22,6 +26,7 @@
     "mode": "frozen_naturalistic_documents",
     "instrumentation_case_count": 24,
     "confirmatory_case_count": 512,
+    "minimum_evaluable_confirmatory_cases": 496,
     "confirmatory_cases_sealed": false,
     "content_sha256_required": true,
     "source_manifest_sha256_required": true,
@@ -31,7 +36,8 @@
     "allow_stale_evidence": true,
     "allow_contradictory_evidence": true,
     "allow_duplicate_evidence": true,
-    "allow_recent_incorrect_evidence": true
+    "allow_recent_incorrect_evidence": true,
+    "post_seal_case_replacement_allowed": false
   },
   "agents": {
     "producer_model_identity_frozen_at_confirmatory_seal": true,
@@ -96,11 +102,19 @@
     "evaluator_draws_nested_within_case": true,
     "familywise_alpha": 0.05,
     "multiple_testing": "holm",
+    "multiple_testing_family": "all_four_planned_primary_contrasts",
     "confidence_interval": 0.95,
     "bootstrap_resamples": 10000,
     "randomization_resamples": 100000,
     "minimum_total_effect_r_minus_p": 0.08,
-    "minimum_incremental_effect_r_minus_g": 0.03
+    "minimum_incremental_effect_r_minus_g": 0.03,
+    "minimum_effects_are_hard_observed_effect_gates": true,
+    "campaign_success_requires_all_priority_contrasts": true,
+    "success_requires_holm_adjusted_p_below_alpha": true,
+    "success_requires_ci_lower_above_zero": true,
+    "power_detection_target": 0.80,
+    "power_planning_paired_sd_ceiling_r_minus_g": 0.20,
+    "power_reporting": "detection_and_hard_gate_pass_probability_separately"
   },
   "quality_gates": {
     "identical_event_log_across_arms": true,
@@ -113,6 +127,8 @@
     "confirmatory_protocol_changes_after_unseal": false
   },
   "interpretation": {
+    "campaign_pass": "both R-G and R-P priority contrasts clear their hard observed-effect gates, Holm-adjusted zero-effect tests, and positive bootstrap lower bounds",
+    "positive_subthreshold_priority_effect": "priority contrast is statistically positive but does not clear its frozen observed-effect magnitude gate",
     "positive_r_minus_g": "field dynamics add capability beyond a static provenance graph under stochastic LLM reasoning",
     "null_r_minus_g_positive_g_minus_p": "structured relational memory transfers, but resonance dynamics do not add validated external capability",
     "null_all": "the deterministic 138-141 effect does not externally replicate under this frozen LLM/corpus regime"
