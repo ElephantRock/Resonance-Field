@@ -24,6 +24,8 @@ jobs:
       OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145
       CONFIG: configs/experiments/llm-epistemic-substrate-142-145.json
       PARENT_CONFIG: configs/experiments/epistemic-substrate-138-141.json
+      PILOT_PLAN: configs/corpora/llm-epistemic-142-145/instrumentation-pilot.json
+      PILOT_DIR: artifacts/llm-epistemic-substrate-142-145/pilot-corpus
 
     steps:
       - uses: actions/checkout@v4
@@ -87,10 +89,19 @@ jobs:
               json.dumps(contract, indent=2, sort_keys=True) + "\n"
           )
           PY
-      - name: Upload instrumentation contract
+      - name: Freeze immutable pilot sources
+        run: |
+          python scripts/freeze_llm_epistemic_sources.py \
+            --plan "$PILOT_PLAN" \
+            --output-dir "$PILOT_DIR"
+      - name: Upload instrumentation contract and frozen pilot corpus
         uses: actions/upload-artifact@v4
         with:
           name: llm-epistemic-substrate-142-145-instrumentation-contract
-          path: ${{ env.OUTPUT_DIR }}/instrumentation-contract.json
+          path: |
+            ${{ env.OUTPUT_DIR }}/instrumentation-contract.json
+            ${{ env.PILOT_DIR }}/freeze-record.json
+            ${{ env.PILOT_DIR }}/manifest.json
+            ${{ env.PILOT_DIR }}/sources/
           if-no-files-found: error
           retention-days: 90
