@@ -1,0 +1,99 @@
+{
+  "ledger_version": "1.0",
+  "project": "python/cpython",
+  "upstream_project_id": "python/cpython",
+  "upstream_organization_id": "python",
+  "domain_id": "programming_languages_and_runtimes",
+  "challenge_type": "temporal_update_conflict",
+  "selection_status": "candidate_discovery_in_progress_no_slots_assigned",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "candidates": [
+    {
+      "candidate_id": "cpython-tc-multiprocessing-start-method",
+      "canonical_target_subject": "multiprocessing start method",
+      "eligibility": "eligible_unranked",
+      "temporal_gap_days": 674.6351041666667,
+      "question_draft": "For current CPython multiprocessing defaults, give four values in order: the default start method on POSIX systems that support forkserver and are not macOS; the default start method on macOS; the POSIX default that Python 3.14 replaced; and the implementation capability flag that gates use of forkserver.",
+      "canonical_answer_draft": "forkserver; spawn; fork; reduction.HAVE_SEND_HANDLE",
+      "ordered_required_slots_draft": [
+        ["forkserver"],
+        ["spawn"],
+        ["fork"],
+        ["reduction.HAVE_SEND_HANDLE", "HAVE_SEND_HANDLE"]
+      ],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "required_source_count": 3,
+      "producer_count": 4,
+      "sources": [
+        {
+          "source_id_draft": "cpython-multiprocessing-docs-313",
+          "role": "required_stale",
+          "repository": "python/cpython",
+          "commit_sha": "60403a5409ff2c3f3b07dd2ca91a7a3e096839c7",
+          "path": "Doc/library/multiprocessing.rst",
+          "git_blob_sha": "80d6e4dae24463bcc5e9fda39b7020f91b881a78",
+          "evidence_observed_at": "2024-10-07T05:02:14Z",
+          "source_fact": "POSIX except macOS currently defaults to fork; macOS defaults to spawn; the default will change away from fork in Python 3.14."
+        },
+        {
+          "source_id_draft": "cpython-multiprocessing-docs-current",
+          "role": "required_current",
+          "repository": "python/cpython",
+          "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
+          "path": "Doc/library/multiprocessing.rst",
+          "git_blob_sha": "bedea46cb16d60d58a797d16743c914617571f98",
+          "evidence_observed_at": "2026-08-12T20:16:47Z",
+          "source_fact": "fork is no longer the default anywhere; forkserver is the POSIX default; spawn remains the macOS default."
+        },
+        {
+          "source_id_draft": "cpython-multiprocessing-context-current",
+          "role": "required_current_implementation",
+          "repository": "python/cpython",
+          "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
+          "path": "Lib/multiprocessing/context.py",
+          "git_blob_sha": "45c393798deaca2449f6b27d6d21bd0918b49217",
+          "evidence_observed_at": "2026-08-12T20:16:47Z",
+          "source_fact": "The default context is forkserver when reduction.HAVE_SEND_HANDLE is true and sys.platform is not darwin; otherwise it is spawn."
+        },
+        {
+          "source_id_draft": "cpython-whatsnew-314-current",
+          "role": "context_current",
+          "repository": "python/cpython",
+          "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
+          "path": "Doc/whatsnew/3.14.rst",
+          "git_blob_sha": "64c6888d99477022bdbb75bf514ea78326e37f6b",
+          "evidence_observed_at": "2026-08-12T20:16:47Z",
+          "source_fact": "Python 3.14 changed Unix-other-than-macOS multiprocessing default from fork to forkserver; spawn remains default on macOS."
+        }
+      ],
+      "producer_allocation_draft": [
+        ["producer-cpython-tc-stale-docs", ["cpython-multiprocessing-docs-313"]],
+        ["producer-cpython-tc-current-docs", ["cpython-multiprocessing-docs-current"]],
+        ["producer-cpython-tc-current-code", ["cpython-multiprocessing-context-current"]],
+        ["producer-cpython-tc-whatsnew", ["cpython-whatsnew-314-current"]]
+      ],
+      "required_source_ids_draft": [
+        "cpython-multiprocessing-docs-313",
+        "cpython-multiprocessing-docs-current",
+        "cpython-multiprocessing-context-current"
+      ],
+      "design_checks": {
+        "source_count_4_to_6": true,
+        "producer_count_exactly_4": true,
+        "required_sources_at_least_3": true,
+        "required_evidence_spans_at_least_3_producers": true,
+        "ordered_answer_slots_2_to_4": true,
+        "explicit_stale_and_current_evidence_times": true,
+        "required_evidence_gap_at_least_180_days": true,
+        "same_literal_target_present_in_stale_and_current_sources": true,
+        "no_source_bytes_allocated_to_another_confirmatory_case_yet": true,
+        "no_model_execution_used_for_eligibility": true
+      }
+    }
+  ]
+}
