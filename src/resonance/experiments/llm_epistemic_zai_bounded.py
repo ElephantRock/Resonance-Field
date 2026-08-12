@@ -1,4 +1,4 @@
-"""Budget-finalizing Z.AI evaluator for Experiments 142–145 instrumentation."""
+"""Resource-finalizing Z.AI evaluator for Experiments 142–145 instrumentation."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from .llm_epistemic_zai import (
 
 
 class ZAIBudgetFinalizingEvaluatorClient(ZAIEvaluatorClient):
-    """Force final JSON generation after the frozen retrieval budget is exhausted."""
+    """Force final JSON generation when frozen retrieval resources are exhausted."""
 
     def evaluate(self, task: EvaluatorTask, tool: SubstrateRetrievalTool) -> EvaluatorAnswer:
         tools = self._tools()
@@ -36,7 +36,7 @@ class ZAIBudgetFinalizingEvaluatorClient(ZAIEvaluatorClient):
         schema_retries = 0
 
         while True:
-            tools_enabled = tool.remaining_budget > 0
+            tools_enabled = tool.remaining_budget > 0 and tool_rounds < self.max_tool_rounds
             completion = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
@@ -86,9 +86,7 @@ class ZAIBudgetFinalizingEvaluatorClient(ZAIEvaluatorClient):
                 )
 
             if not tools_enabled:
-                raise RuntimeError("provider emitted tool calls after retrieval budget exhaustion")
-            if tool_rounds >= self.max_tool_rounds:
-                raise RuntimeError("evaluator exceeded maximum retrieval rounds")
+                raise RuntimeError("provider emitted tool calls when evaluator tools were disabled")
             tool_rounds += 1
             messages.append(_assistant_tool_message(message))
             for call in calls:
@@ -96,6 +94,8 @@ class ZAIBudgetFinalizingEvaluatorClient(ZAIEvaluatorClient):
                 operation_cost += cost
                 output["retrieval_budget_remaining"] = tool.remaining_budget
                 output["retrieval_budget_exhausted"] = tool.remaining_budget == 0
+                output["retrieval_rounds_used"] = tool_rounds
+                output["retrieval_round_limit_reached"] = tool_rounds >= self.max_tool_rounds
                 messages.append(
                     {
                         "role": "tool",
@@ -104,13 +104,18 @@ class ZAIBudgetFinalizingEvaluatorClient(ZAIEvaluatorClient):
                     }
                 )
 
-            if tool.remaining_budget == 0:
+            if tool.remaining_budget == 0 or tool_rounds >= self.max_tool_rounds:
+                reasons: list[str] = []
+                if tool.remaining_budget == 0:
+                    reasons.append("the frozen retrieval-operation budget is exhausted")
+                if tool_rounds >= self.max_tool_rounds:
+                    reasons.append("the frozen retrieval-round ceiling is reached")
                 messages.append(
                     {
                         "role": "user",
                         "content": (
-                            "The frozen retrieval-operation budget is exhausted. "
-                            "Do not call any more tools. Using only evidence already returned, "
+                            " and ".join(reasons).capitalize()
+                            + ". Do not call any more tools. Using only evidence already returned, "
                             "emit the required final JSON now; if evidence is insufficient, "
                             "return an empty answer with low confidence."
                         ),
