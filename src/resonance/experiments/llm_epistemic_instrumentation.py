@@ -68,6 +68,24 @@ def _producer_tasks(
     return tuple(tasks)
 
 
+def _event_log_mapping(event_log: Any) -> dict[str, Any]:
+    """Return the exact canonical event-log payload used for hashing and replay."""
+    return {
+        "schema_version": event_log.schema_version,
+        "case_id": event_log.case_id,
+        "events": [event.canonical_mapping() for event in event_log.events],
+    }
+
+
+def _observed_producer_models(event_log: Any) -> list[str]:
+    values = {
+        str(event.metadata["response_model"])
+        for event in event_log.events
+        if event.metadata.get("response_model")
+    }
+    return sorted(values)
+
+
 def run_instrumentation_case(
     case: ResearchCaseManifest,
     manifest: CorpusManifest,
@@ -84,6 +102,7 @@ def run_instrumentation_case(
     evidence = replay_event_log(event_log, substrate_config)
     event_log_sha256 = event_log.sha256()
     draws: list[dict[str, Any]] = []
+    evaluator_models: set[str] = set()
 
     for draw_id in range(1, campaign_config.evaluator_draws + 1):
         order = _arm_order(case.case_id, draw_id)
@@ -100,6 +119,7 @@ def run_instrumentation_case(
                 ),
                 tool,
             )
+            evaluator_models.add(answer.model)
             score = score_case(case, answer, event_log)
             arm_results[arm] = {
                 "answer": asdict(answer),
@@ -120,7 +140,10 @@ def run_instrumentation_case(
         "inferential": False,
         "event_log_sha256": event_log_sha256,
         "event_count": len(event_log.events),
+        "event_log": _event_log_mapping(event_log),
         "producer_ids": list(event_log.producer_ids()),
+        "observed_producer_models": _observed_producer_models(event_log),
+        "observed_evaluator_models": sorted(evaluator_models),
         "draws": draws,
     }
 
