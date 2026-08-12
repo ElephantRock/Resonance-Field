@@ -33,7 +33,7 @@ jobs:
         run: pip install -e '.[dev]'
       - name: Lint campaign
         run: |
-          ruff check \
+          ruff check --output-format=github \
             src/resonance/experiments/epistemic_substrate_config.py \
             src/resonance/experiments/epistemic_substrate_campaign.py \
             src/resonance/experiments/epistemic_substrate_cli.py \
