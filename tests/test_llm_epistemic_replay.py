@@ -1,9 +1,13 @@
 from pathlib import Path
 
-from resonance.experiments.epistemic_substrate_config import load_epistemic_substrate_config
+from resonance.experiments.epistemic_substrate_config import (
+    load_epistemic_substrate_config,
+)
 from resonance.experiments.llm_epistemic_events import EpistemicEvent, EpistemicEventLog
-from resonance.experiments.llm_epistemic_replay import make_replayed_substrate, replay_event_log
-
+from resonance.experiments.llm_epistemic_replay import (
+    make_replayed_substrate,
+    replay_event_log,
+)
 
 PARENT_CONFIG = Path("configs/experiments/epistemic-substrate-138-141.json")
 
