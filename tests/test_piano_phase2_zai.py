@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+import resonance.experiments.piano_phase2_zai as zai_module
 from resonance.experiments.piano_phase2 import ModelRequest
 from resonance.experiments.piano_phase2_zai import ZAIChatCompletionsBackend
 
@@ -48,6 +49,57 @@ def _response(content: dict[str, object], *, model: str = MODEL) -> bytes:
             "usage": {"prompt_tokens": 12, "completion_tokens": 7},
         }
     ).encode()
+
+
+class _FakeResponse:
+    def __init__(self, body: bytes) -> None:
+        self._body = body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, traceback) -> bool:
+        del exc_type, exc, traceback
+        return False
+
+    def read(self) -> bytes:
+        return self._body
+
+
+def test_zai_retries_socket_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls = 0
+
+    def fake_urlopen(request, *, timeout):
+        del request, timeout
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise TimeoutError("simulated read timeout")
+        return _FakeResponse(
+            _response({"report": "The action completed.", "claims_success": True})
+        )
+
+    monkeypatch.setattr(zai_module, "urlopen", fake_urlopen)
+    monkeypatch.setattr(zai_module.time, "sleep", lambda delay: None)
+    backend = ZAIChatCompletionsBackend(
+        api_key="test-key",
+        model_snapshot=MODEL,
+        allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
+        temperature=0.0,
+        max_attempts=2,
+    )
+
+    reply = backend.complete(
+        ModelRequest(
+            stage="post_action_report",
+            prompt="Report the observed outcome.",
+            seed=1001,
+            max_output_tokens=128,
+        )
+    )
+
+    assert calls == 2
+    assert reply.payload["claims_success"] is True
 
 
 def test_zai_local_stage_validation_accepts_exact_action_contract() -> None:
