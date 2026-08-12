@@ -4,6 +4,11 @@ Evaluator draws are nested repeated measurements. The independent unit is the
 research case, so each arm is first reduced to one mean accuracy per case.
 Bootstrap resampling and paired randomization then operate on cases, never on
 individual evaluator draws.
+
+The campaign-level PASS rule preserves the hard-effect-gate semantics used by
+the parent Experiments 138–141 campaign: each priority contrast must clear its
+frozen observed-effect threshold, its Holm-adjusted zero-effect test, and a
+positive paired-bootstrap lower confidence bound.
 """
 
 from __future__ import annotations
@@ -12,6 +17,7 @@ import hashlib
 import random
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from types import MappingProxyType
 
 ARMS = ("pile", "shared_memory", "provenance_graph", "resonance_field")
 PLANNED_CONTRASTS = (
@@ -19,6 +25,12 @@ PLANNED_CONTRASTS = (
     ("provenance_graph", "shared_memory"),
     ("resonance_field", "provenance_graph"),
     ("resonance_field", "pile"),
+)
+FROZEN_MINIMUM_EFFECTS: Mapping[tuple[str, str], float] = MappingProxyType(
+    {
+        ("resonance_field", "provenance_graph"): 0.03,
+        ("resonance_field", "pile"): 0.08,
+    }
 )
 
 
@@ -61,8 +73,10 @@ class ContrastResult:
     randomization_p_raw: float
     randomization_p_holm: float
     holm_reject: bool
+    statistically_positive: bool
     minimum_effect: float | None
     meets_minimum_effect: bool | None
+    passes_success_rule: bool | None
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,6 +87,7 @@ class ConfirmatoryAnalysisResult:
     bootstrap_resamples: int
     randomization_resamples: int
     seed: int
+    campaign_success: bool | None
     contrasts: tuple[ContrastResult, ...]
 
 
@@ -173,7 +188,7 @@ def analyze_confirmatory_accuracy(
     cases: Iterable[CaseAccuracy],
     *,
     contrasts: Sequence[tuple[str, str]] = PLANNED_CONTRASTS,
-    minimum_effects: Mapping[tuple[str, str], float] | None = None,
+    minimum_effects: Mapping[tuple[str, str], float] | None = FROZEN_MINIMUM_EFFECTS,
     familywise_alpha: float = 0.05,
     confidence: float = 0.95,
     bootstrap_resamples: int = 10_000,
@@ -198,9 +213,16 @@ def analyze_confirmatory_accuracy(
         if treatment not in ARMS or control not in ARMS or treatment == control:
             raise ValueError(f"invalid contrast {treatment!r} - {control!r}")
 
+    effects = {} if minimum_effects is None else dict(minimum_effects)
+    unavailable_gates = set(effects).difference(requested)
+    if unavailable_gates:
+        raise ValueError(
+            "all hard minimum-effect gates must be present in the analyzed contrast family: "
+            f"{sorted(unavailable_gates)}"
+        )
+
     provisional: list[tuple[str, str, float, float, float, float, float | None]] = []
     raw_p_values: list[float] = []
-    effects = minimum_effects or {}
     for treatment, control in requested:
         differences = tuple(
             case.arm_mean(treatment) - case.arm_mean(control) for case in case_values
@@ -225,6 +247,11 @@ def analyze_confirmatory_accuracy(
     results: list[ContrastResult] = []
     for index, values in enumerate(provisional):
         treatment, control, effect, ci_low, ci_high, p_raw, minimum = values
+        statistically_positive = rejected[index] and ci_low > 0.0
+        meets_minimum = None if minimum is None else effect >= minimum
+        passes_success_rule = (
+            None if minimum is None else statistically_positive and bool(meets_minimum)
+        )
         results.append(
             ContrastResult(
                 treatment=treatment,
@@ -236,10 +263,15 @@ def analyze_confirmatory_accuracy(
                 randomization_p_raw=p_raw,
                 randomization_p_holm=adjusted[index],
                 holm_reject=rejected[index],
+                statistically_positive=statistically_positive,
                 minimum_effect=minimum,
-                meets_minimum_effect=None if minimum is None else effect >= minimum,
+                meets_minimum_effect=meets_minimum,
+                passes_success_rule=passes_success_rule,
             )
         )
+
+    gated = [result for result in results if result.minimum_effect is not None]
+    campaign_success = None if not gated else all(result.passes_success_rule is True for result in gated)
 
     return ConfirmatoryAnalysisResult(
         case_count=len(case_values),
@@ -248,12 +280,14 @@ def analyze_confirmatory_accuracy(
         bootstrap_resamples=bootstrap_resamples,
         randomization_resamples=randomization_resamples,
         seed=seed,
+        campaign_success=campaign_success,
         contrasts=tuple(results),
     )
 
 
 __all__ = [
     "ARMS",
+    "FROZEN_MINIMUM_EFFECTS",
     "PLANNED_CONTRASTS",
     "CaseAccuracy",
     "ConfirmatoryAnalysisResult",
