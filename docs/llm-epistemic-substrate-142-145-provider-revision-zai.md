@@ -52,20 +52,23 @@ The complete v2 pilot then succeeded in workflow run `31608304587`. Full results
 
 Although the v2 workflow requested `glm-5.1`, every evaluator completion in the successful artifact reported `glm-5.2` as the returned model identity.
 
-This record does not assume or claim that `glm-5.1` is a documented alias for `glm-5.2`. It records an observed requested/returned identity mismatch. Current instrumentation code now persists observed evaluator identities and is being hardened to persist the actual producer response identity as well.
+This record does not assume or claim that `glm-5.1` is a documented alias for `glm-5.2`. It records an observed requested/returned identity mismatch. Current instrumentation code persists observed evaluator identities and is being hardened to persist the actual producer response identity as well.
 
 A confirmatory model freeze is therefore impossible until the provider/model contract is explicit and the sealed workflow can reject unexpected returned model identities.
 
-## Coding Plan usage boundary
+## Coding Plan usage note
 
-Current Z.AI documentation and subscription terms restrict the Coding Plan endpoint to supported coding tools/scenarios and caution against using Coding Plan quota as unrestricted general-purpose API access.
+Provider documentation/terms concerning the Coding Plan endpoint remain recorded as an operational consideration. They are not encoded as an automatic shutdown rule for the experiment.
 
-Accordingly, no additional custom paid experiment calls should be launched through the Coding Plan endpoint unless the project has an authorized usage basis for this runner. The completed Python/PyPA pilot remains a valid instrumentation/audit record, but scaling should use an authorized provider route such as Z.AI's general API endpoint with appropriate billing/permissions or another provider whose terms permit the experiment.
+On 2026-08-12 the Z.AI workflow was briefly archived after a provider-scope review. That archive was reversed at the project owner's direction before any additional experiment execution. The sequence remains in Git history for auditability.
+
+The active instrumentation path is again the configured Z.AI Coding endpoint. Future decisions to disable, archive, replace, or materially restrict that provider path should be treated as project-level operational changes and consulted with the project owner unless immediate security containment is required.
 
 ## Current status
 
 - One complete stochastic instrumentation case exists.
 - It is non-inferential and ceiling-saturated on primary accuracy.
+- Z.AI provider integration and the stochastic pilot workflow are active.
+- `ZAI_API_KEY` remains the configured Actions credential path.
 - No confirmatory case has been opened or evaluated.
-- The provider/model identity must be resolved before confirmatory sealing.
-- Further paid Coding Plan calls are paused pending an authorized provider path.
+- The requested/returned provider model identity still must be resolved before confirmatory sealing.
