@@ -170,9 +170,17 @@ def _action_payload(payload: Mapping[str, object]) -> Mapping[str, object]:
     return dict(value)
 
 
+_PRIVATE_SCENARIO_KEYS = frozenset({"scenario_id", "expected_action", "expected_outcome_status"})
+
+
 def _context_text(context: DecisionContext) -> str:
+    visible_metadata = {
+        key: value
+        for key, value in context.observation.metadata.items()
+        if key not in _PRIVATE_SCENARIO_KEYS
+    }
     metadata = ", ".join(
-        f"{key}={value!r}" for key, value in sorted(context.observation.metadata.items())
+        f"{key}={value!r}" for key, value in sorted(visible_metadata.items())
     )
     return (
         f"trigger={context.observation.trigger!r}; "
