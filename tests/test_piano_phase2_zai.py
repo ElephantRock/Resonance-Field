@@ -102,6 +102,88 @@ def test_zai_retries_socket_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
     assert reply.payload["claims_success"] is True
 
 
+def test_zai_retries_invalid_structured_output_when_enabled(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = 0
+
+    def fake_urlopen(request, *, timeout):
+        del request, timeout
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return _FakeResponse(_response({"intention": "Inspect the role."}))
+        return _FakeResponse(
+            _response(
+                {
+                    "intention": "Inspect the role.",
+                    "intended_action": "OBSERVE",
+                }
+            )
+        )
+
+    monkeypatch.setattr(zai_module, "urlopen", fake_urlopen)
+    monkeypatch.setattr(zai_module.time, "sleep", lambda delay: None)
+    backend = ZAIChatCompletionsBackend(
+        api_key="test-key",
+        model_snapshot=MODEL,
+        allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
+        max_attempts=2,
+        retry_contract_errors=True,
+    )
+
+    reply = backend.complete(
+        ModelRequest(
+            stage="intention",
+            prompt="Choose the role action.",
+            seed=1001,
+            max_output_tokens=128,
+        )
+    )
+
+    assert calls == 2
+    assert reply.payload["intended_action"] == "OBSERVE"
+
+
+def test_zai_model_drift_is_not_retried_as_contract_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = 0
+
+    def fake_urlopen(request, *, timeout):
+        del request, timeout
+        nonlocal calls
+        calls += 1
+        return _FakeResponse(
+            _response(
+                {"report": "Observation succeeded.", "claims_success": True},
+                model="glm-moving-alias",
+            )
+        )
+
+    monkeypatch.setattr(zai_module, "urlopen", fake_urlopen)
+    monkeypatch.setattr(zai_module.time, "sleep", lambda delay: None)
+    backend = ZAIChatCompletionsBackend(
+        api_key="test-key",
+        model_snapshot=MODEL,
+        allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
+        max_attempts=3,
+        retry_contract_errors=True,
+    )
+
+    with pytest.raises(RuntimeError, match="model drift"):
+        backend.complete(
+            ModelRequest(
+                stage="post_action_report",
+                prompt="Report the observed outcome.",
+                seed=1001,
+                max_output_tokens=128,
+            )
+        )
+
+    assert calls == 1
+
+
 def test_zai_local_stage_validation_accepts_exact_action_contract() -> None:
     reply = _backend()._decode(
         _response({"action": "OBSERVE", "payload": {}, "confidence": 0.75}),
