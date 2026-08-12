@@ -35,6 +35,7 @@ def _producer_schema(source_ids: tuple[str, ...]) -> dict[str, Any]:
         "properties": {
             "events": {
                 "type": "array",
+                "maxItems": 48,
                 "items": {
                     "type": "object",
                     "properties": {
@@ -43,7 +44,6 @@ def _producer_schema(source_ids: tuple[str, ...]) -> dict[str, Any]:
                         "predicate": {"type": "string", "enum": list(RELATION_ONTOLOGY)},
                         "object": {"type": "string", "minLength": 1},
                         "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-                        "observed_at": {"type": "string", "minLength": 1},
                         "source_locator": {"type": ["string", "null"]},
                         "uncertainty": {"type": ["string", "null"]},
                     },
@@ -53,7 +53,6 @@ def _producer_schema(source_ids: tuple[str, ...]) -> dict[str, Any]:
                         "predicate",
                         "object",
                         "confidence",
-                        "observed_at",
                         "source_locator",
                         "uncertainty",
                     ],
@@ -95,11 +94,11 @@ def _producer_input(task: ProducerTask) -> str:
     parts = [
         f"Case: {task.case_id}",
         f"Producer: {task.producer_id}",
-        "Extract atomic factual claims only from the assigned frozen sources below.",
+        f"Research brief: {task.research_goal or 'extract task-relevant evidence'}",
+        "Extract up to 48 atomic factual claims only from the assigned frozen sources below.",
         "Use concise normalized entity names and only the frozen predicate vocabulary.",
         f"Allowed predicates: {relation_list}.",
-        "observed_at must be a timezone-aware ISO-8601 time supported by the source; "
-        "if a source gives only a date, use 00:00:00Z for that date.",
+        "The experiment assigns evidence timestamps separately; do not infer or output timestamps.",
         "Do not infer cross-source conclusions. Do not cite a source not assigned to you.",
     ]
     for source in task.sources:
@@ -151,7 +150,10 @@ class OpenAIProducerClient:
         source_ids = tuple(source.source_id for source in task.sources)
         if len(source_ids) != len(set(source_ids)):
             raise ValueError("producer task contains duplicate source ids")
-        source_hashes = {source.source_id: source.sha256.lower() for source in task.sources}
+        source_controls = {
+            source.source_id: (source.sha256.lower(), source.observed_at)
+            for source in task.sources
+        }
         response = self.client.responses.create(
             model=self.model,
             reasoning={"effort": self.reasoning_effort},
@@ -174,9 +176,10 @@ class OpenAIProducerClient:
             if not isinstance(raw, dict):
                 raise ValueError("producer event must be an object")
             source_id = str(raw["source_id"])
-            source_sha256 = source_hashes.get(source_id)
-            if source_sha256 is None:
+            source_control = source_controls.get(source_id)
+            if source_control is None:
                 raise ValueError("producer response cited an unassigned source")
+            source_sha256, observed_at = source_control
             event = EpistemicEvent(
                 event_id=f"{task.case_id}:{task.producer_id}:{index:04d}",
                 case_id=task.case_id,
@@ -187,7 +190,7 @@ class OpenAIProducerClient:
                 predicate=str(raw["predicate"]),
                 object=str(raw["object"]),
                 confidence=float(raw["confidence"]),
-                observed_at=str(raw["observed_at"]),
+                observed_at=observed_at,
                 source_locator=(
                     str(raw["source_locator"]) if raw.get("source_locator") is not None else None
                 ),
@@ -214,7 +217,7 @@ class OpenAIEvaluatorClient:
             self.client = build_openai_client()
 
     def evaluate(self, task: EvaluatorTask, tool: SubstrateRetrievalTool) -> EvaluatorAnswer:
-        function_tool = {
+        retrieve_tool = {
             "type": "function",
             "name": "retrieve_epistemic_events",
             "description": "Retrieve deposited evidence matching an exact subject and predicate.",
@@ -229,11 +232,26 @@ class OpenAIEvaluatorClient:
             },
             "strict": True,
         }
+        subjects_tool = {
+            "type": "function",
+            "name": "list_epistemic_subjects",
+            "description": "List subject names present in the deposited event log; reveals no objects.",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": False,
+            },
+            "strict": True,
+        }
+        tools = [retrieve_tool, subjects_tool]
         instructions = (
             "You are a blinded evaluator in a controlled experiment. Answer the held-out question "
-            "using only evidence returned by retrieve_epistemic_events. You cannot access the raw "
-            "source corpus or producer state. Cite every event materially supporting the answer. "
-            "If the deposited evidence is insufficient, return an empty answer with low confidence."
+            "using only deposited evidence. You cannot access the raw source corpus or producer state. "
+            "Use list_epistemic_subjects when you need the exact normalized subject vocabulary, then "
+            "retrieve_epistemic_events with an exact subject and frozen predicate. Cite every event "
+            "materially supporting the answer. If the deposited evidence is insufficient, return an "
+            "empty answer with low confidence."
         )
         started = time.perf_counter()
         response = self.client.responses.create(
@@ -243,7 +261,7 @@ class OpenAIEvaluatorClient:
             max_output_tokens=self.max_output_tokens,
             instructions=instructions,
             input=f"Case {task.case_id}; question {task.question_id}: {task.question}",
-            tools=[function_tool],
+            tools=tools,
             text=_text_format("evaluator_answer", _answer_schema()),
             store=False,
         )
@@ -255,30 +273,29 @@ class OpenAIEvaluatorClient:
                 break
             outputs: list[dict[str, str]] = []
             for call in calls:
-                if call.name != "retrieve_epistemic_events":
+                if call.name == "retrieve_epistemic_events":
+                    arguments = json.loads(call.arguments)
+                    retrieval = tool.retrieve(
+                        str(arguments["subject"]),
+                        str(arguments["predicate"]),
+                        self.per_call_retrieval_budget,
+                    )
+                    operation_cost += retrieval.operation_cost
+                    output = {
+                        "events": [_retrieved_event_mapping(event) for event in retrieval.events],
+                        "chosen_event_id": retrieval.chosen_event_id,
+                        "operation_cost": retrieval.operation_cost,
+                        "complete": retrieval.complete,
+                    }
+                elif call.name == "list_epistemic_subjects":
+                    output = {"subjects": list(tool.subjects())}
+                else:
                     raise ValueError(f"unexpected evaluator tool call: {call.name}")
-                arguments = json.loads(call.arguments)
-                retrieval = tool.retrieve(
-                    str(arguments["subject"]),
-                    str(arguments["predicate"]),
-                    self.per_call_retrieval_budget,
-                )
-                operation_cost += retrieval.operation_cost
                 outputs.append(
                     {
                         "type": "function_call_output",
                         "call_id": call.call_id,
-                        "output": json.dumps(
-                            {
-                                "events": [
-                                    _retrieved_event_mapping(event) for event in retrieval.events
-                                ],
-                                "chosen_event_id": retrieval.chosen_event_id,
-                                "operation_cost": retrieval.operation_cost,
-                                "complete": retrieval.complete,
-                            },
-                            sort_keys=True,
-                        ),
+                        "output": json.dumps(output, sort_keys=True),
                     }
                 )
             response = self.client.responses.create(
@@ -289,7 +306,7 @@ class OpenAIEvaluatorClient:
                 instructions=instructions,
                 previous_response_id=response.id,
                 input=outputs,
-                tools=[function_tool],
+                tools=tools,
                 text=_text_format("evaluator_answer", _answer_schema()),
                 store=False,
             )
