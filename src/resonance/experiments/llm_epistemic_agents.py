@@ -131,6 +131,11 @@ class EvaluatorAnswer:
     answer: str
     confidence: float
     cited_event_ids: tuple[str, ...]
+    retrieval_operation_units: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    latency_ms: int = 0
+    model: str = "unknown"
 
 
 class EvaluatorClient(Protocol):
