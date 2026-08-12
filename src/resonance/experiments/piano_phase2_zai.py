@@ -16,7 +16,7 @@ from urllib.request import Request, urlopen
 
 from .piano_phase2 import ModelReply, ModelRequest
 
-_CHAT_COMPLETIONS_URL = "https://api.z.ai/api/paas/v4/chat/completions"
+_CHAT_COMPLETIONS_URL = "https://api.z.ai/api/coding/paas/v4/chat/completions"
 
 
 def _require_exact_keys(payload: Mapping[str, object], expected: set[str], stage: str) -> None:
@@ -29,7 +29,7 @@ def _require_exact_keys(payload: Mapping[str, object], expected: set[str], stage
 
 
 class ZAIChatCompletionsBackend:
-    """JSON-mode backend bound to one dated Z.AI model identifier."""
+    """JSON-mode backend bound to one exact Z.AI model identifier."""
 
     def __init__(
         self,
@@ -96,6 +96,8 @@ class ZAIChatCompletionsBackend:
                 {"role": "system", "content": self._format_instruction(request.stage)},
                 {"role": "user", "content": request.prompt},
             ],
+            "thinking": {"type": "disabled"},
+            "do_sample": False,
             "temperature": self.temperature,
             "max_tokens": request.max_output_tokens,
             "stream": False,
@@ -188,7 +190,7 @@ class ZAIChatCompletionsBackend:
                 "Authorization": f"Bearer {self._api_key}",
                 "Content-Type": "application/json",
                 "Accept-Language": "en-US,en",
-                "User-Agent": "resonance-field-piano-phase2-zai/0.1",
+                "User-Agent": "resonance-field-piano-phase2-zai/0.2",
             },
             method="POST",
         )
