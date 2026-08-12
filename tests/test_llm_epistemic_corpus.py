@@ -123,6 +123,28 @@ def test_producer_deposit_floor_is_prospective_and_round_trips(tmp_path: Path) -
     assert loaded.sha256() == manifest.sha256()
 
 
+def test_evidence_observed_at_is_prospective_and_round_trips(tmp_path: Path) -> None:
+    legacy = _source(1)
+    assert "evidence_observed_at" not in legacy.canonical_mapping()
+    assert legacy.controlled_evidence_time == legacy.acquired_at
+
+    historical = replace(legacy, evidence_observed_at="2019-03-21T00:00:00Z")
+    manifest = CorpusManifest(
+        manifest_version="1.0",
+        sources=(historical,) + tuple(_source(index) for index in range(2, 5)),
+        cases=(_case("instrumentation"),),
+    )
+    path = tmp_path / "temporal.json"
+    path.write_text(manifest.canonical_bytes().decode())
+
+    loaded = load_corpus_manifest(path)
+
+    assert loaded.sources[0].acquired_at == "2026-08-12T12:00:00Z"
+    assert loaded.sources[0].evidence_observed_at == "2019-03-21T00:00:00Z"
+    assert loaded.sources[0].controlled_evidence_time == "2019-03-21T00:00:00Z"
+    assert loaded.sha256() == manifest.sha256()
+
+
 def test_verify_source_file_checks_content_hash(tmp_path: Path) -> None:
     content = b"frozen source content\n"
     source_path = tmp_path / "source.txt"
