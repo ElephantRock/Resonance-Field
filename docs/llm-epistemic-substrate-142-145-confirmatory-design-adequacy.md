@@ -4,17 +4,19 @@ Date: 2026-08-12
 
 ## Status
 
-Pre-confirmatory design analysis only. No confirmatory case has been created, opened, or evaluated.
+**Resolved by Protocol Revision 001.** No confirmatory case has been created, opened, or evaluated.
 
-This record identifies a blocking mismatch between the scaffolded confirmatory sample size (`96` cases), the provisional minimum incremental effect for R−G (`+0.03` absolute accuracy), and the planned family-wise multiplicity control.
+This record identified a mismatch between the original scaffolded confirmatory sample size (`96` cases), the provisional minimum incremental effect for R−G (`+0.03` absolute accuracy), and the planned family-wise multiplicity control.
 
-It does **not** change the primary endpoint, treatment definitions, minimum effects, or confirmatory case count. Those remain unchanged in the campaign config until a prospective protocol revision resolves this gate.
+Protocol Revision 001 resolves the mismatch by increasing the planned confirmatory cohort to **512 independent cases** while preserving the 3-pp R−G target, the primary endpoint, five nested evaluator draws, the treatment definitions, resource ceilings, and Holm family-wise control.
 
-## Why this check is necessary
+Revision record: `docs/llm-epistemic-substrate-142-145-protocol-revision-001-sample-size.md`.
 
-Cases are the independent experimental units. Five evaluator draws within a case are nested repeated measurements; they do not turn 96 cases into 480 independent cases.
+## Why this check was necessary
 
-The scaffold currently specifies:
+Cases are the independent experimental units. Five evaluator draws within a case are nested repeated measurements; they do not turn 96 cases into 480 independent cases or 512 cases into 2,560 independent cases.
+
+The original scaffold specified:
 
 - 96 confirmatory cases;
 - primary endpoint: post-agent task accuracy;
@@ -23,7 +25,7 @@ The scaffold currently specifies:
 - provisional minimum R−G effect: `0.03`;
 - provisional minimum R−P effect: `0.08`.
 
-A confirmatory design should have a defensible probability of resolving the minimum effect it claims to target. Sealing 96 cases without checking that relationship risks a formally correct but predictably underpowered experiment.
+A confirmatory design should have a defensible probability of resolving the minimum effect it claims to target. Sealing 96 cases without checking that relationship would risk a formally correct but predictably underpowered experiment.
 
 ## Planning quantity
 
@@ -38,11 +40,13 @@ where:
 - `z_power = 0.8416` for 80% power;
 - a conservative Holm first-step bound across four contrasts uses two-sided `alpha = 0.05 / 4 = 0.0125`, giving `z_alpha ≈ 2.4977`.
 
-This is a planning approximation, not the confirmatory estimator. The sealed confirmatory analysis remains paired bootstrap/randomization unless prospectively revised.
+This is a planning approximation, not the confirmatory estimator. The confirmatory implementation now explicitly reduces nested draws to case-level arm means, bootstraps cases, performs paired within-case arm-label randomization, and Holm-adjusts the four preregistered contrasts.
+
+Implementation: `src/resonance/experiments/llm_epistemic_confirmatory_analysis.py`.
 
 ## Instrumentation variance estimate
 
-Instrumentation is explicitly allowed to calibrate benchmark feasibility and variance before the confirmatory seal. To avoid contaminating this estimate with known primary-scoring defects, use only completed cases whose frozen primary scorer is not known to be mechanically invalid for the task:
+Instrumentation is explicitly allowed to calibrate benchmark feasibility and variance before the confirmatory seal. To avoid contaminating this estimate with known primary-scoring defects, only completed cases whose frozen primary scorer is not known to be mechanically invalid for the task were used:
 
 - Pilot 001: R−G = `0.00`;
 - Calibration 002: R−G = `0.00`;
@@ -50,16 +54,16 @@ Instrumentation is explicitly allowed to calibrate benchmark feasibility and var
 - Calibration 006: R−G = `+0.40`;
 - Calibration 008: R−G = `0.00`.
 
-Calibrations 003 and 005 are excluded from this variance estimate because their frozen primary scorers were later shown to misclassify semantically valid answers. Calibration 007 has no treatment outcome.
+Calibrations 003 and 005 are excluded because their frozen primary scorers were later shown to misclassify semantically valid answers. Calibration 007 has no treatment outcome.
 
-For the five eligible case-level differences above:
+For the five eligible case-level differences:
 
-- sample mean = `0.08` — **not used for planning the target effect**;
+- sample mean = `0.08` — **not used as the target alternative**;
 - sample standard deviation `sigma_D ≈ 0.1789` — used only as a variance estimate.
 
-The estimate is necessarily uncertain because it is based on five cases. The sensitivity analysis below therefore also includes larger planning SD values.
+The variance estimate is necessarily uncertain because it is based on five cases. Sensitivity therefore includes larger planning SD values.
 
-## What 96 cases can resolve
+## What the original 96 cases could resolve
 
 With `n = 96`, four-contrast Holm worst-case alpha, 80% nominal power, and `sigma_D = 0.1789`, the normal approximation gives a detectable paired effect of approximately:
 
@@ -67,7 +71,7 @@ With `n = 96`, four-contrast Holm worst-case alpha, 80% nominal power, and `sigm
 
 or **6.1 percentage points**.
 
-Thus the existing 96-case scaffold is approximately sized for a 6-pp R−G effect under the observed planning variance, not the provisional 3-pp effect.
+Thus the original 96-case scaffold was approximately sized for a 6-pp R−G effect under the observed planning variance, not the provisional 3-pp effect.
 
 ## Cases required for a 3-pp R−G target
 
@@ -82,53 +86,57 @@ Approximate required independent cases at 80% power and the same conservative fa
 | 0.225 | 628 |
 | 0.250 | 775 |
 
-The current five-case variance estimate lies near the 397-case row. A round target of **512 cases** would provide margin up to approximately `sigma_D = 0.20` under this planning approximation and preserve a clean power-of-two / balanced-strata design. This is the recommended high-rigor path if the scientific requirement remains sensitivity to a 3-pp R−G effect.
+The five-case variance estimate lies near the 397-case row. **512 cases** provide planning margin through approximately `sigma_D = 0.20` under this normal approximation and preserve the 3-pp scientific target.
 
-This recommendation is based on variance/precision, not on whether the observed instrumentation mean favored R.
+This sample-size choice is based on variance/precision, not on whether the observed instrumentation mean favored R.
 
-## Two admissible pre-seal resolutions
+## Resolution selected
 
-The campaign must choose one path **before confirmatory case construction**:
+The campaign selected the higher-rigor path:
 
-### A. Preserve the 3-pp R−G scientific target
+- preserve the 3-pp R−G target;
+- increase the confirmatory cohort to **512 independent cases**;
+- keep five evaluator draws nested within each case/arm;
+- retain the four-contrast Holm family;
+- implement the paired case-level confirmatory estimator before corpus construction.
 
-Increase the confirmatory case count and freeze a formal simulation-based power analysis under the final estimator. The current planning calculation recommends evaluating a design in the vicinity of **512 independent cases**, with domain/case-type strata specified prospectively.
+The alternative—retaining 96 cases and revising the minimum R−G effect upward to approximately 6–7 pp—was not selected.
 
-### B. Preserve the 96-case confirmatory budget
-
-Prospectively revise the minimum incremental R−G effect to a value the 96-case design can resolve, approximately **6–7 pp** under the current planning variance and multiplicity assumptions, then validate that threshold with simulation under the final estimator.
-
-Changing the minimum effect for this reason is a design-adequacy revision, not an outcome-driven attempt to rescue a specific observed arm result. It must nevertheless be explicitly versioned before any confirmatory content is created.
-
-## What is not admissible
+## What remains inadmissible
 
 Do not:
 
-- treat the five evaluator draws as independent cases to claim a larger effective `n`;
+- treat evaluator draws as independent cases;
 - reduce multiplicity correction after seeing confirmatory outcomes;
 - use the instrumentation mean R−G effect as the target alternative;
-- choose the final case count after inspecting confirmatory data;
-- create a 96-case corpus first and decide later whether it was large enough;
-- promote retrieval-operation efficiency to primary because accuracy requires a larger sample.
+- choose or change the case count after inspecting confirmatory data;
+- promote retrieval-operation efficiency to primary because accuracy requires a larger sample;
+- use post-seal gate failures to replenish or replace cases without a frozen rule.
 
-## Required next implementation
+## Remaining adequacy requirement
 
-Before the confirmatory seal, add a deterministic power/precision simulation tied to the final paired/hierarchical estimator and freeze:
+The 512-case revision resolves the first-order normal-theory blocker, but the normal approximation is not the final power proof.
+
+Before confirmatory sealing, add and freeze a deterministic simulation/precision check tied to the final case-level estimator and specify:
 
 1. target R−G and R−P minimum effects;
-2. confirmatory case count;
-3. number of evaluator draws per case/arm;
-4. multiplicity family and alpha allocation;
-5. assumed case-level heterogeneity / stochastic-draw model used for power;
-6. minimum evaluable-case rule if arm-independent pre-replay gates fail after sealing.
+2. 512 confirmatory cases;
+3. five evaluator draws per case/arm;
+4. the four-contrast Holm family and alpha 0.05;
+5. the assumed case-level heterogeneity / stochastic-draw model used for power;
+6. the minimum evaluable-case rule if arm-independent pre-replay gates fail after sealing.
 
-The protocol must then record a single sample-size decision and its rationale before any of the held-out source bundles are created.
+If the prospective simulation shows 512 is inadequate under the frozen planning assumptions, the protocol must fail before confirmatory content is created. No post-hoc expansion is allowed after corpus creation or unsealing.
 
 ## Current gate
 
-Until this adequacy issue is resolved:
+The sample-size mismatch is resolved, but confirmatory construction remains blocked until the remaining pre-confirmatory protocol choices and simulation are frozen.
 
-- campaign config remains at the instrumentation/pre-confirmatory boundary;
-- the existing `confirmatory_case_count: 96` and `minimum_incremental_effect_r_minus_g: 0.03` remain provisional scaffold values;
-- no confirmatory corpus may be created or sealed;
-- no additional outcome-bearing calibration may be used to tune the choice.
+Current planned values:
+
+- `confirmatory_case_count: 512`;
+- `minimum_incremental_effect_r_minus_g: 0.03`;
+- `minimum_total_effect_r_minus_p: 0.08`;
+- confirmatory cases sealed: false;
+- confirmatory cases created: false;
+- no additional outcome-bearing calibration may be used to tune these choices.
