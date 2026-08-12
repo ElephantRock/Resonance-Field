@@ -1,0 +1,130 @@
+name: LLM Epistemic Substrate 142-145 PostgreSQL Calibration 006
+
+on:
+  push:
+    branches: [experiment/llm-epistemic-substrate]
+    paths:
+      - "configs/corpora/llm-epistemic-142-145/calibration-006-trigger-zai-v*.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  calibration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CONFIG: configs/experiments/llm-epistemic-substrate-142-145.json
+      PARENT_CONFIG: configs/experiments/epistemic-substrate-138-141.json
+      CALIBRATION_PLAN: configs/corpora/llm-epistemic-142-145/instrumentation-calibration-006.json
+      CALIBRATION_DIR: artifacts/llm-epistemic-substrate-142-145/calibration-006-corpus
+      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145/calibration-006-zai
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
+      ZAI_MODEL: glm-5.1
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install frozen instrumentation stack
+        run: pip install -e '.[dev,llm]'
+      - name: Verify instrumentation implementation
+        run: |
+          ruff check \
+            scripts/freeze_llm_epistemic_sources.py \
+            src/resonance/experiments/llm_epistemic_agents.py \
+            src/resonance/experiments/llm_epistemic_corpus.py \
+            src/resonance/experiments/llm_epistemic_scoring.py \
+            src/resonance/experiments/llm_epistemic_zai.py \
+            src/resonance/experiments/llm_epistemic_zai_bounded.py \
+            src/resonance/experiments/llm_epistemic_zai_retry.py \
+            src/resonance/experiments/llm_epistemic_instrumentation.py \
+            src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
+            tests/test_llm_epistemic_retrieval_budget.py \
+            tests/test_llm_epistemic_scoring.py \
+            tests/test_llm_epistemic_zai.py \
+            tests/test_llm_epistemic_zai_bounded.py \
+            tests/test_llm_epistemic_zai_retry.py
+          pytest tests/test_llm_epistemic_*.py
+      - name: Prove confirmatory cohort remains sealed
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          value = json.loads(Path("configs/experiments/llm-epistemic-substrate-142-145.json").read_text())
+          if value["stage"] != "instrumentation_scaffold":
+              raise SystemExit("calibration requires instrumentation_scaffold stage")
+          if value["corpus"]["confirmatory_cases_sealed"]:
+              raise SystemExit("calibration refuses a sealed/unlocked confirmatory cohort")
+          if list(Path("configs").glob("**/*142-145*confirmatory*")):
+              raise SystemExit("confirmatory corpus material is present")
+          if value["agents"]["total_retrieval_operation_budget_per_answer"] != 24:
+              raise SystemExit("calibration requires the frozen 24-unit total retrieval ceiling")
+          PY
+      - name: Freeze immutable PostgreSQL calibration sources
+        run: |
+          python scripts/freeze_llm_epistemic_sources.py \
+            --plan "$CALIBRATION_PLAN" \
+            --output-dir "$CALIBRATION_DIR"
+      - name: Verify slot, deposit, and temporal-conflict contracts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("artifacts/llm-epistemic-substrate-142-145/calibration-006-corpus/manifest.json")
+          value = json.loads(path.read_text())
+          case = value["cases"][0]
+          requirements = case.get("semantic_answer_requirements")
+          if not isinstance(requirements, dict) or len(requirements.get("required_slots", [])) != 4:
+              raise SystemExit("calibration 006 requires four preregistered ordered semantic slots")
+          if case.get("minimum_events_per_producer") != 1:
+              raise SystemExit("calibration 006 requires a one-event minimum from every producer")
+          if case.get("minimum_temporal_conflict_keys") != 1:
+              raise SystemExit("calibration 006 requires at least one cross-time opposing exact claim key")
+          times = {source["source_id"]: source.get("evidence_observed_at") for source in value["sources"]}
+          if times.get("postgres-password-default-13") != "2020-09-21T19:14:05Z":
+              raise SystemExit("PostgreSQL 13 stale evidence time is not frozen")
+          current_ids = {
+              "postgres-password-default-current",
+              "postgres-client-auth-current",
+              "postgres-create-role-current",
+          }
+          if any(times.get(source_id) != "2026-08-12T19:00:00Z" for source_id in current_ids):
+              raise SystemExit("current PostgreSQL evidence timestamps are not frozen")
+          PY
+      - name: Require Z.AI credential
+        shell: bash
+        run: |
+          if [[ -z "$ZAI_API_KEY" ]]; then
+            echo "ZAI_API_KEY is required for calibration 006" >&2
+            exit 1
+          fi
+      - name: Run PostgreSQL stochastic P S G R calibration through Z.AI
+        run: |
+          mkdir -p "$OUTPUT_DIR"
+          python -m resonance.experiments.llm_epistemic_instrumentation_cli \
+            --config "$CONFIG" \
+            --parent-config "$PARENT_CONFIG" \
+            --manifest "$CALIBRATION_DIR/manifest.json" \
+            --corpus-root "$CALIBRATION_DIR" \
+            --provider zai \
+            --model "$ZAI_MODEL" \
+            --base-url "$ZAI_BASE_URL" \
+            --code-sha "$GITHUB_SHA" \
+            --output "$OUTPUT_DIR/calibration-result.json"
+      - name: Upload calibration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-epistemic-substrate-142-145-calibration-006-zai
+          path: |
+            ${{ env.OUTPUT_DIR }}/
+            ${{ env.CALIBRATION_DIR }}/freeze-record.json
+            ${{ env.CALIBRATION_DIR }}/manifest.json
+          if-no-files-found: error
+          retention-days: 90
