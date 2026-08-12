@@ -6,11 +6,12 @@ import argparse
 import json
 import os
 from pathlib import Path
+from typing import Any
 
 from .epistemic_substrate_config import load_epistemic_substrate_config
 from .llm_epistemic_config import load_llm_epistemic_config
-from .llm_epistemic_corpus import load_corpus_manifest
-from .llm_epistemic_instrumentation import run_instrumentation
+from .llm_epistemic_corpus import CorpusManifest, load_corpus_manifest
+from .llm_epistemic_instrumentation import InstrumentationGateError, run_instrumentation
 from .llm_epistemic_openai import (
     DEFAULT_INSTRUMENTATION_MODEL,
     OpenAIEvaluatorClient,
@@ -62,6 +63,32 @@ def _clients(args: argparse.Namespace):
     return OpenAIProducerClient(model=model), OpenAIEvaluatorClient(model=model), model, None
 
 
+def _gate_failure_result(
+    campaign_name: str,
+    manifest: CorpusManifest,
+    exc: InstrumentationGateError,
+) -> dict[str, Any]:
+    return {
+        "campaign": campaign_name,
+        "cohort": "instrumentation",
+        "inferential": False,
+        "confirmatory_access": False,
+        "confirmatory_cases_evaluated": False,
+        "status": "pre_replay_gate_failure",
+        "manifest_sha256": manifest.sha256(),
+        "case_count": 1,
+        "cases": [exc.audit],
+    }
+
+
+def _write_result(path: str | Path, result: dict[str, Any]) -> None:
+    output = Path(path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(result, indent=2, sort_keys=True) + "\n"
+    output.write_text(payload)
+    print(payload, end="")
+
+
 def main() -> int:
     args = build_parser().parse_args()
     campaign_config = load_llm_epistemic_config(args.config)
@@ -69,14 +96,19 @@ def main() -> int:
     manifest = load_corpus_manifest(args.manifest)
     manifest.cases_for_instrumentation()
     producer, evaluator, model, base_url = _clients(args)
-    result = run_instrumentation(
-        manifest,
-        args.corpus_root,
-        campaign_config,
-        parent_config,
-        producer,
-        evaluator,
-    )
+    exit_code = 0
+    try:
+        result = run_instrumentation(
+            manifest,
+            args.corpus_root,
+            campaign_config,
+            parent_config,
+            producer,
+            evaluator,
+        )
+    except InstrumentationGateError as exc:
+        result = _gate_failure_result(campaign_config.name, manifest, exc)
+        exit_code = 2
     result.update(
         {
             "requested_provider": args.provider,
@@ -86,11 +118,8 @@ def main() -> int:
             "parent_config_hash": parent_config_hash,
         }
     )
-    output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
-    print(json.dumps(result, indent=2, sort_keys=True))
-    return 0
+    _write_result(args.output, result)
+    return exit_code
 
 
 if __name__ == "__main__":
