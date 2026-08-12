@@ -51,6 +51,9 @@ class ResearchCaseManifest:
     source_ids: tuple[str, ...]
     producer_source_allocations: tuple[tuple[str, tuple[str, ...]], ...]
     held_out_question_id: str
+    question: str
+    accepted_answers: tuple[str, ...]
+    required_source_ids: tuple[str, ...]
 
     def validate(self, known_sources: set[str]) -> None:
         if self.cohort not in ("instrumentation", "confirmatory"):
@@ -59,13 +62,31 @@ class ResearchCaseManifest:
             raise ValueError("each case requires at least four sources")
         if len(self.producer_source_allocations) < 4:
             raise ValueError("each case requires at least four producers")
-        if not set(self.source_ids) <= known_sources:
+        source_set = set(self.source_ids)
+        if not source_set <= known_sources:
             raise ValueError("case references unknown sources")
         allocated = {source for _, sources in self.producer_source_allocations for source in sources}
-        if not allocated <= set(self.source_ids):
+        if not allocated <= source_set:
             raise ValueError("producer allocation references sources outside the case")
-        if not self.held_out_question_id:
-            raise ValueError("held_out_question_id must be non-empty")
+        if not source_set <= allocated:
+            raise ValueError("every case source must be allocated to at least one producer")
+        if not self.held_out_question_id or not self.question.strip():
+            raise ValueError("held-out question id and text must be non-empty")
+        if not self.accepted_answers or any(not answer.strip() for answer in self.accepted_answers):
+            raise ValueError("accepted_answers must contain non-empty answers")
+        required = set(self.required_source_ids)
+        if len(required) < 2 or not required <= source_set:
+            raise ValueError("collective evidence must require at least two case sources")
+        for _producer_id, producer_sources in self.producer_source_allocations:
+            if required <= set(producer_sources):
+                raise ValueError("one producer cannot receive every required evidence source")
+        covering_producers = {
+            producer_id
+            for producer_id, producer_sources in self.producer_source_allocations
+            if required & set(producer_sources)
+        }
+        if len(covering_producers) < 2:
+            raise ValueError("required evidence must span at least two producers")
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,11 +105,15 @@ class CorpusManifest:
                 raise ValueError("source_id values must be unique")
             source_ids.add(source.source_id)
         case_ids: set[str] = set()
+        question_ids: set[str] = set()
         for case in self.cases:
             case.validate(source_ids)
             if case.case_id in case_ids:
                 raise ValueError("case_id values must be unique")
+            if case.held_out_question_id in question_ids:
+                raise ValueError("held_out_question_id values must be unique")
             case_ids.add(case.case_id)
+            question_ids.add(case.held_out_question_id)
 
     def canonical_bytes(self) -> bytes:
         self.validate()
@@ -116,6 +141,9 @@ class CorpusManifest:
                         for producer_id, source_ids in case.producer_source_allocations
                     ],
                     "held_out_question_id": case.held_out_question_id,
+                    "question": case.question,
+                    "accepted_answers": list(case.accepted_answers),
+                    "required_source_ids": list(case.required_source_ids),
                 }
                 for case in self.cases
             ],
@@ -193,6 +221,11 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 source_ids=_string_tuple(raw_case["source_ids"], "case source ids"),
                 producer_source_allocations=tuple(allocations),
                 held_out_question_id=str(raw_case["held_out_question_id"]),
+                question=str(raw_case["question"]),
+                accepted_answers=_string_tuple(raw_case["accepted_answers"], "accepted answers"),
+                required_source_ids=_string_tuple(
+                    raw_case["required_source_ids"], "required source ids"
+                ),
             )
         )
 
