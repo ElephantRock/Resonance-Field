@@ -47,7 +47,7 @@ def _frozen_sources(manifest: CorpusManifest, corpus_root: str | Path) -> dict[s
             source_id=entry.source_id,
             sha256=entry.sha256,
             text=text,
-            observed_at=entry.acquired_at,
+            observed_at=entry.controlled_evidence_time,
         )
     return sources
 
