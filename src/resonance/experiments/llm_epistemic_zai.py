@@ -224,7 +224,13 @@ class ZAIProducerClient:
             )
             try:
                 payload = json.loads(_content(completion.choices[0].message))
-                return self._events_from_payload(task, payload, source_controls)
+                response_model = str(getattr(completion, "model", self.model))
+                return self._events_from_payload(
+                    task,
+                    payload,
+                    source_controls,
+                    response_model=response_model,
+                )
             except (KeyError, TypeError, json.JSONDecodeError, ValueError) as exc:
                 last_error = ValueError(f"producer structured output invalid: {exc}")
                 if attempt >= self.max_schema_retries:
@@ -236,6 +242,8 @@ class ZAIProducerClient:
         task: ProducerTask,
         payload: object,
         source_controls: dict[str, tuple[str, str]],
+        *,
+        response_model: str,
     ) -> tuple[EpistemicEvent, ...]:
         if not isinstance(payload, dict) or set(payload) != {"events"}:
             raise ValueError("producer response must contain exactly the events key")
@@ -295,6 +303,7 @@ class ZAIProducerClient:
                 metadata={
                     "provider": "zai",
                     "requested_model": self.model,
+                    "response_model": response_model,
                     "base_url": self.base_url,
                 },
             )
@@ -358,7 +367,9 @@ class ZAIEvaluatorClient:
                     if schema_retries >= self.max_schema_retries:
                         raise ValueError(f"evaluator structured output invalid: {exc}") from exc
                     schema_retries += 1
-                    messages.append({"role": "assistant", "content": getattr(message, "content", "") or ""})
+                    messages.append(
+                        {"role": "assistant", "content": getattr(message, "content", "") or ""}
+                    )
                     messages.append(
                         {
                             "role": "user",
@@ -397,7 +408,11 @@ class ZAIEvaluatorClient:
 
     @staticmethod
     def _parse_answer(payload: object) -> tuple[str, float, tuple[str, ...]]:
-        if not isinstance(payload, dict) or set(payload) != {"answer", "confidence", "cited_event_ids"}:
+        if not isinstance(payload, dict) or set(payload) != {
+            "answer",
+            "confidence",
+            "cited_event_ids",
+        }:
             raise ValueError("evaluator response keys do not match the frozen schema")
         answer = payload["answer"]
         citations = payload["cited_event_ids"]
