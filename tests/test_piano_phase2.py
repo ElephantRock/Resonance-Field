@@ -63,7 +63,11 @@ def _observation() -> AgentObservation:
         trigger="Inspect available evidence and report only grounded results.",
         observed_at=datetime(2026, 8, 12, 14, 0, tzinfo=UTC),
         query_embedding=_embedding(),
-        metadata={"scenario_id": "substrate-observe", "expected_action": "OBSERVE"},
+        metadata={
+            "scenario_id": "substrate-observe",
+            "expected_action": "OBSERVE",
+            "expected_outcome_status": "succeeded",
+        },
     )
 
 
@@ -126,6 +130,9 @@ def test_world_record_exposes_mechanical_phase2_observables() -> None:
     assert record["arm"] == "treatment"
     assert record["trial_seed"] == 1001
     assert record["model_snapshot"] == "model-snapshot-2026-08-12"
+    assert record["scenario_id"] == "substrate-observe"
+    assert record["expected_action"] == "OBSERVE"
+    assert record["expected_outcome_status"] == "succeeded"
     assert record["post_action_claims_success"] is True
     assert record["usage"]["calls"] == 4
     assert record["piano_step"]["action"] == "OBSERVE"
