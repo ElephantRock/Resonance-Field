@@ -15,6 +15,12 @@ from resonance.experiments.epistemic_substrate_config import (
 CONFIG_PATH = Path("configs/experiments/epistemic-substrate-138-141.json")
 
 
+def _mutated_config(tmp_path: Path, value: dict[str, object]) -> Path:
+    mutated = tmp_path / "mutated.json"
+    mutated.write_text(json.dumps(value))
+    return mutated
+
+
 def test_epistemic_substrate_config_is_frozen_and_loadable() -> None:
     config, digest = load_epistemic_substrate_config(CONFIG_PATH)
 
@@ -32,21 +38,33 @@ def test_epistemic_substrate_config_is_frozen_and_loadable() -> None:
 def test_epistemic_substrate_rejects_agent_population_change(tmp_path: Path) -> None:
     value = json.loads(CONFIG_PATH.read_text())
     value["benchmark"]["agent_count"] = 33
-    mutated = tmp_path / "mutated.json"
-    mutated.write_text(json.dumps(value))
 
     with pytest.raises(ValueError, match="population or evidence geometry"):
-        load_epistemic_substrate_config(mutated)
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
 
 
 def test_epistemic_substrate_rejects_treatment_relabeling(tmp_path: Path) -> None:
     value = json.loads(CONFIG_PATH.read_text())
     value["experiments"]["141"] = "provenance_graph"
-    mutated = tmp_path / "mutated.json"
-    mutated.write_text(json.dumps(value))
 
     with pytest.raises(ValueError, match="experiment-to-arm assignment"):
-        load_epistemic_substrate_config(mutated)
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
+
+
+def test_epistemic_substrate_rejects_arm_semantics_change(tmp_path: Path) -> None:
+    value = json.loads(CONFIG_PATH.read_text())
+    value["arms"]["pile"]["cross_agent_reads_during_discovery"] = True
+
+    with pytest.raises(ValueError, match="substrate arm semantics"):
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
+
+
+def test_epistemic_substrate_rejects_resonance_parameter_change(tmp_path: Path) -> None:
+    value = json.loads(CONFIG_PATH.read_text())
+    value["resonance"]["bridge_gain"] = 0.25
+
+    with pytest.raises(ValueError, match="resonance dynamics"):
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
 
 
 def test_epistemic_substrate_requires_producer_death_before_transfer(
@@ -54,8 +72,6 @@ def test_epistemic_substrate_requires_producer_death_before_transfer(
 ) -> None:
     value = json.loads(CONFIG_PATH.read_text())
     value["benchmark"]["producer_memory_destroyed_before_transfer"] = False
-    mutated = tmp_path / "mutated.json"
-    mutated.write_text(json.dumps(value))
 
     with pytest.raises(ValueError, match="producer memory must be destroyed"):
-        load_epistemic_substrate_config(mutated)
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
