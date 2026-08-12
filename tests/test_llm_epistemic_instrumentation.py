@@ -23,6 +23,7 @@ from resonance.experiments.llm_epistemic_instrumentation import run_instrumentat
 CAMPAIGN_CONFIG = Path("configs/experiments/llm-epistemic-substrate-142-145.json")
 PARENT_CONFIG = Path("configs/experiments/epistemic-substrate-138-141.json")
 OBSERVED_AT = "2026-08-12T12:00:00Z"
+STALE_AT = "2019-03-21T00:00:00Z"
 
 
 class FakeProducer:
@@ -56,6 +57,31 @@ class SparseProducer(FakeProducer):
         return super().produce(task)
 
 
+class TemporalConflictProducer(FakeProducer):
+    def produce(self, task: ProducerTask) -> tuple[EpistemicEvent, ...]:
+        source = task.sources[0]
+        base = super().produce(task)[0]
+        default_value = "legacy" if task.producer_id == "producer-1" else "current"
+        conflict = EpistemicEvent(
+            event_id=f"{task.case_id}:{task.producer_id}:conflict",
+            case_id=task.case_id,
+            producer_id=task.producer_id,
+            source_id=source.source_id,
+            source_sha256=source.sha256,
+            subject="feature-x",
+            predicate="default_is",
+            object=default_value,
+            confidence=0.9,
+            observed_at=source.observed_at,
+            metadata={
+                "provider": "fake",
+                "requested_model": "requested-model",
+                "response_model": "actual-producer-model",
+            },
+        )
+        return (base, conflict)
+
+
 class FakeEvaluator:
     def evaluate(self, task: EvaluatorTask, tool: SubstrateRetrievalTool) -> EvaluatorAnswer:
         retrieval = tool.retrieve("system-x", "supports", 12)
@@ -72,6 +98,8 @@ def _manifest(
     tmp_path: Path,
     *,
     minimum_events_per_producer: int | None = None,
+    minimum_temporal_conflict_keys: int | None = None,
+    temporal_sources: bool = False,
 ) -> CorpusManifest:
     sources: list[SourceManifestEntry] = []
     allocations: list[tuple[str, tuple[str, ...]]] = []
@@ -89,6 +117,7 @@ def _manifest(
                 title=f"Source {index}",
                 acquired_at=OBSERVED_AT,
                 local_path=path.name,
+                evidence_observed_at=(STALE_AT if temporal_sources and index == 1 else None),
             )
         )
         allocations.append((f"producer-{index}", (source_id,)))
@@ -103,6 +132,7 @@ def _manifest(
         accepted_answers=("component-y",),
         required_source_ids=("source-1", "source-2"),
         minimum_events_per_producer=minimum_events_per_producer,
+        minimum_temporal_conflict_keys=minimum_temporal_conflict_keys,
     )
     return CorpusManifest(manifest_version="1.0", sources=tuple(sources), cases=(case,))
 
@@ -144,6 +174,7 @@ def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -
         "producer-3": 1,
         "producer-4": 1,
     }
+    assert case["temporal_conflict_key_count"] == 0
     assert case["observed_producer_models"] == ["actual-producer-model"]
     assert case["observed_evaluator_models"] == ["actual-evaluator-model"]
     for draw in case["draws"]:
@@ -178,3 +209,56 @@ def test_runner_rejects_declared_producer_deposit_shortfall_before_replay(
         assert "producer-4=0" in message
     else:
         raise AssertionError("producer deposit shortfall reached substrate replay")
+
+
+def test_runner_rejects_missing_temporal_conflict_before_replay(tmp_path: Path) -> None:
+    campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
+    parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
+    manifest = _manifest(
+        tmp_path,
+        minimum_events_per_producer=1,
+        minimum_temporal_conflict_keys=1,
+        temporal_sources=True,
+    )
+
+    try:
+        run_instrumentation(
+            manifest,
+            tmp_path,
+            campaign,
+            parent,
+            FakeProducer(),
+            FakeEvaluator(),
+        )
+    except ValueError as exc:
+        assert "temporal conflict-key floor" in str(exc)
+    else:
+        raise AssertionError("missing temporal conflict reached substrate replay")
+
+
+def test_runner_records_cross_time_opposing_claim_key(tmp_path: Path) -> None:
+    campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
+    parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
+    manifest = _manifest(
+        tmp_path,
+        minimum_events_per_producer=1,
+        minimum_temporal_conflict_keys=1,
+        temporal_sources=True,
+    )
+
+    result = run_instrumentation(
+        manifest,
+        tmp_path,
+        campaign,
+        parent,
+        TemporalConflictProducer(),
+        FakeEvaluator(),
+    )
+
+    case = result["cases"][0]
+    assert case["temporal_conflict_key_count"] == 1
+    conflict = case["temporal_conflict_keys"][0]
+    assert conflict["subject"] == "feature-x"
+    assert conflict["predicate"] == "default_is"
+    assert conflict["objects"] == ["current", "legacy"]
+    assert conflict["observed_at"] == [STALE_AT, OBSERVED_AT]
