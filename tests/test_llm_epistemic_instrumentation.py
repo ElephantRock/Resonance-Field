@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 
 from resonance.experiments.epistemic_substrate_config import load_epistemic_substrate_config
@@ -39,6 +40,11 @@ class FakeProducer:
                 object="component-y",
                 confidence=0.9,
                 observed_at=source.observed_at,
+                metadata={
+                    "provider": "fake",
+                    "requested_model": "requested-model",
+                    "response_model": "actual-producer-model",
+                },
             ),
         )
 
@@ -51,7 +57,7 @@ class FakeEvaluator:
             confidence=0.9,
             cited_event_ids=tuple(event.event_id for event in retrieval.events),
             retrieval_operation_units=retrieval.operation_cost,
-            model="fake-model",
+            model="actual-evaluator-model",
         )
 
 
@@ -115,6 +121,13 @@ def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -
         for arm_result in draw["arms"].values()
     }
     assert hashes == {case["event_log_sha256"]}
+    assert case["event_count"] == len(case["event_log"]["events"])
+    canonical = json.dumps(
+        case["event_log"], sort_keys=True, separators=(",", ":")
+    ).encode()
+    assert hashlib.sha256(canonical).hexdigest() == case["event_log_sha256"]
+    assert case["observed_producer_models"] == ["actual-producer-model"]
+    assert case["observed_evaluator_models"] == ["actual-evaluator-model"]
     for draw in case["draws"]:
         assert set(draw["arms"]) == {
             "pile",
