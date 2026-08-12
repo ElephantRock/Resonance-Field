@@ -38,6 +38,15 @@ def _require_string(mapping: dict[str, Any], key: str) -> str:
     return value
 
 
+def _optional_string(mapping: dict[str, Any], key: str) -> str | None:
+    value = mapping.get(key)
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"{key} must be a non-empty string when provided")
+    return value
+
+
 def _raw_url(repository: str, commit_sha: str, path: str) -> str:
     if repository.count("/") != 1:
         raise ValueError("repository must use owner/name form")
@@ -116,28 +125,31 @@ def freeze_plan(plan_path: str | Path, output_dir: str | Path, *, timeout: float
         local_path = output_dir / local_rel
         local_path.write_bytes(content)
         content_sha256 = _sha256(content)
-        manifest_sources.append(
-            {
-                "source_id": source_id,
-                "sha256": content_sha256,
-                "media_type": _require_string(raw_source, "media_type"),
-                "title": _require_string(raw_source, "title"),
-                "acquired_at": _require_string(raw_source, "acquired_at"),
-                "local_path": local_rel,
-                "canonical_url": _github_blob_url(repository, commit_sha, path),
-            }
-        )
-        freeze_sources.append(
-            {
-                "source_id": source_id,
-                "repository": repository,
-                "commit_sha": commit_sha,
-                "path": path,
-                "git_blob_sha": observed_blob,
-                "sha256": content_sha256,
-                "bytes": len(content),
-            }
-        )
+        manifest_source: dict[str, Any] = {
+            "source_id": source_id,
+            "sha256": content_sha256,
+            "media_type": _require_string(raw_source, "media_type"),
+            "title": _require_string(raw_source, "title"),
+            "acquired_at": _require_string(raw_source, "acquired_at"),
+            "local_path": local_rel,
+            "canonical_url": _github_blob_url(repository, commit_sha, path),
+        }
+        evidence_observed_at = _optional_string(raw_source, "evidence_observed_at")
+        if evidence_observed_at is not None:
+            manifest_source["evidence_observed_at"] = evidence_observed_at
+        manifest_sources.append(manifest_source)
+        freeze_source = {
+            "source_id": source_id,
+            "repository": repository,
+            "commit_sha": commit_sha,
+            "path": path,
+            "git_blob_sha": observed_blob,
+            "sha256": content_sha256,
+            "bytes": len(content),
+        }
+        if evidence_observed_at is not None:
+            freeze_source["evidence_observed_at"] = evidence_observed_at
+        freeze_sources.append(freeze_source)
 
     manifest_payload = {
         "manifest_version": "1.0",
