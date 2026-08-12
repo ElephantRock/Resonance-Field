@@ -1,0 +1,71 @@
+name: LLM Epistemic Substrate 142-145 Provider Identity Probe
+
+on:
+  push:
+    branches: [experiment/llm-epistemic-substrate]
+    paths:
+      - configs/corpora/llm-epistemic-142-145/provider-identity-probe-v*.txt
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145/provider-identity-probe
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
+      ZAI_MODEL: glm-5.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - name: Install stack
+        run: pip install -e '.[dev,llm]'
+      - name: Verify provider and replication mechanics
+        run: |
+          ruff check scripts/probe_llm_epistemic_zai_identity.py src/resonance/experiments/llm_epistemic_*.py tests/test_llm_epistemic_*.py
+          pytest tests/test_llm_epistemic_*.py
+      - name: Prove pre-confirmatory boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value=json.loads(Path('configs/experiments/llm-epistemic-substrate-142-145.json').read_text())
+          assert value['stage']=='instrumentation_scaffold'
+          assert value['corpus']['confirmatory_case_count']==512
+          assert value['corpus']['minimum_evaluable_confirmatory_cases']==496
+          assert not value['corpus']['confirmatory_cases_sealed']
+          assert not list(Path('configs').glob('**/*142-145*confirmatory*manifest*'))
+          out=Path('artifacts/llm-epistemic-substrate-142-145/provider-identity-probe')
+          out.mkdir(parents=True, exist_ok=True)
+          (out/'probe-boundary.json').write_text(json.dumps({
+              'inferential': False,
+              'confirmatory_access': False,
+              'confirmatory_cases_evaluated': False,
+              'treatment_execution': False,
+          }, sort_keys=True)+'\n')
+          PY
+      - name: Require Z.AI credential
+        shell: bash
+        run: test -n "$ZAI_API_KEY"
+      - name: Probe Z.AI request surface and served identity
+        run: |
+          python scripts/probe_llm_epistemic_zai_identity.py \
+            --model "$ZAI_MODEL" \
+            --base-url "$ZAI_BASE_URL" \
+            --output "$OUTPUT_DIR/provider-identity-probe.json"
+          sha256sum "$OUTPUT_DIR/provider-identity-probe.json" > "$OUTPUT_DIR/provider-identity-probe.sha256"
+      - name: Upload provider identity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-epistemic-substrate-142-145-provider-identity-probe
+          path: ${{ env.OUTPUT_DIR }}/
+          if-no-files-found: warn
+          retention-days: 90
