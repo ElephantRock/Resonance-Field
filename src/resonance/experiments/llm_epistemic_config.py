@@ -25,6 +25,22 @@ EXPECTED_PRIORITY_CONTRASTS = (
 EXPECTED_INSTRUMENTATION_CASE_COUNT = 24
 EXPECTED_CONFIRMATORY_CASE_COUNT = 512
 EXPECTED_MINIMUM_EVALUABLE_CASE_COUNT = 496
+EXPECTED_PROVIDER_NAME = "zai"
+EXPECTED_PROVIDER_PROTOCOL = "openai_compatible_chat_completions"
+EXPECTED_PROVIDER_BASE_URL = "https://api.z.ai/api/coding/paas/v4"
+EXPECTED_REQUESTED_MODEL = "glm-5.1"
+EXPECTED_RESPONSE_MODEL = "glm-5.2"
+EXPECTED_PROVIDER_PROBE_RUN_ID = 31642753502
+EXPECTED_PROVIDER_PROBE_ARTIFACT_ID = 9159514128
+EXPECTED_PROVIDER_PROBE_ARTIFACT_DIGEST = (
+    "sha256:c56a57e94a57657054195960bb0bd556aadd504b7d6d2ba9e53a19babba4757a"
+)
+EXPECTED_PROVIDER_PROBE_JSON_SHA256 = (
+    "835bc51a029517d6d3f5271c5f0f0d98e286df79b486d64742517742c81d7581"
+)
+EXPECTED_PROVIDER_REQUEST_CONTRACT_SHA256 = (
+    "739fba6b309308d0798003f7c1c6a5d9b859b8ad2c4d94fc3bdcd75a8f246acd"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,6 +48,23 @@ class LLMEpistemicConfig:
     name: str
     stage: str
     experiments: tuple[tuple[str, str], ...]
+    provider_name: str
+    provider_protocol: str
+    provider_base_url: str
+    requested_model: str
+    expected_response_model: str
+    provider_probe_run_id: int
+    provider_probe_artifact_id: int
+    provider_probe_artifact_digest: str
+    provider_probe_json_sha256: str
+    provider_request_contract_sha256: str
+    provider_temperature: float
+    provider_thinking_enabled: bool
+    provider_clear_thinking: bool
+    provider_sdk_internal_retries: int
+    provider_transient_retry_business_codes: tuple[str, ...]
+    provider_maximum_transient_retries: int
+    provider_fail_closed_on_model_mismatch: bool
     instrumentation_case_count: int
     confirmatory_case_count: int
     minimum_evaluable_case_count: int
@@ -64,6 +97,42 @@ class LLMEpistemicConfig:
             raise ValueError("campaign stage changed before seal")
         if dict(self.experiments) != EXPECTED_EXPERIMENTS:
             raise ValueError("experiment-to-arm assignment changed")
+        provider_identity = (
+            self.provider_name,
+            self.provider_protocol,
+            self.provider_base_url,
+            self.requested_model,
+            self.expected_response_model,
+            self.provider_probe_run_id,
+            self.provider_probe_artifact_id,
+            self.provider_probe_artifact_digest,
+            self.provider_probe_json_sha256,
+            self.provider_request_contract_sha256,
+        )
+        expected_provider_identity = (
+            EXPECTED_PROVIDER_NAME,
+            EXPECTED_PROVIDER_PROTOCOL,
+            EXPECTED_PROVIDER_BASE_URL,
+            EXPECTED_REQUESTED_MODEL,
+            EXPECTED_RESPONSE_MODEL,
+            EXPECTED_PROVIDER_PROBE_RUN_ID,
+            EXPECTED_PROVIDER_PROBE_ARTIFACT_ID,
+            EXPECTED_PROVIDER_PROBE_ARTIFACT_DIGEST,
+            EXPECTED_PROVIDER_PROBE_JSON_SHA256,
+            EXPECTED_PROVIDER_REQUEST_CONTRACT_SHA256,
+        )
+        if provider_identity != expected_provider_identity:
+            raise ValueError("provider/model identity freeze changed")
+        if (
+            self.provider_temperature,
+            self.provider_thinking_enabled,
+            self.provider_clear_thinking,
+            self.provider_sdk_internal_retries,
+            self.provider_transient_retry_business_codes,
+            self.provider_maximum_transient_retries,
+            self.provider_fail_closed_on_model_mismatch,
+        ) != (1.0, True, False, 0, ("1302", "1305"), 5, True):
+            raise ValueError("provider request/retry contract changed")
         expected_counts = (
             EXPECTED_INSTRUMENTATION_CASE_COUNT,
             EXPECTED_CONFIRMATORY_CASE_COUNT,
@@ -133,6 +202,7 @@ def _contrast_tuple(value: object) -> tuple[tuple[str, str], ...]:
 
 def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
     value = json.loads(Path(path).read_text())
+    provider = value["provider"]
     corpus = value["corpus"]
     agents = value["agents"]
     analysis = value["analysis"]
@@ -140,6 +210,27 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
         name=str(value["name"]),
         stage=str(value["stage"]),
         experiments=tuple((str(k), str(v)) for k, v in value["experiments"].items()),
+        provider_name=str(provider["name"]),
+        provider_protocol=str(provider["protocol"]),
+        provider_base_url=str(provider["base_url"]),
+        requested_model=str(provider["requested_model"]),
+        expected_response_model=str(provider["expected_response_model"]),
+        provider_probe_run_id=int(provider["identity_probe_run_id"]),
+        provider_probe_artifact_id=int(provider["identity_probe_artifact_id"]),
+        provider_probe_artifact_digest=str(provider["identity_probe_artifact_digest"]),
+        provider_probe_json_sha256=str(provider["identity_probe_json_sha256"]),
+        provider_request_contract_sha256=str(provider["request_contract_sha256"]),
+        provider_temperature=float(provider["temperature"]),
+        provider_thinking_enabled=bool(provider["thinking_enabled"]),
+        provider_clear_thinking=bool(provider["clear_thinking"]),
+        provider_sdk_internal_retries=int(provider["sdk_internal_retries"]),
+        provider_transient_retry_business_codes=tuple(
+            str(code) for code in provider["transient_retry_business_codes"]
+        ),
+        provider_maximum_transient_retries=int(provider["maximum_transient_retries"]),
+        provider_fail_closed_on_model_mismatch=bool(
+            provider["fail_closed_on_response_model_mismatch"]
+        ),
         instrumentation_case_count=int(corpus["instrumentation_case_count"]),
         confirmatory_case_count=int(corpus["confirmatory_case_count"]),
         minimum_evaluable_case_count=int(corpus["minimum_evaluable_confirmatory_cases"]),
@@ -179,6 +270,8 @@ __all__ = [
     "EXPECTED_CONFIRMATORY_CASE_COUNT",
     "EXPECTED_INSTRUMENTATION_CASE_COUNT",
     "EXPECTED_MINIMUM_EVALUABLE_CASE_COUNT",
+    "EXPECTED_REQUESTED_MODEL",
+    "EXPECTED_RESPONSE_MODEL",
     "LLMEpistemicConfig",
     "load_llm_epistemic_config",
 ]
