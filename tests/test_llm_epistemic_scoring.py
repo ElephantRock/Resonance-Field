@@ -50,6 +50,31 @@ def _semantic_case() -> ResearchCaseManifest:
     )
 
 
+def _slot_case() -> ResearchCaseManifest:
+    base = _case()
+    return ResearchCaseManifest(
+        case_id=base.case_id,
+        cohort=base.cohort,
+        source_ids=base.source_ids,
+        producer_source_allocations=base.producer_source_allocations,
+        held_out_question_id=base.held_out_question_id,
+        question="Give version, controller, mutation status, and label key in order.",
+        accepted_answers=(
+            "v1.25; Pod Security Admission; non-mutating; pod-security.kubernetes.io/enforce",
+        ),
+        required_source_ids=base.required_source_ids,
+        semantic_answer_requirements=SemanticAnswerRequirements(
+            required_slots=(
+                ("v1.25", "1.25"),
+                ("Pod Security Admission",),
+                ("No", "non-mutating"),
+                ("pod-security.kubernetes.io/enforce",),
+            ),
+            forbidden_terms=("PodSecurityPolicy",),
+        ),
+    )
+
+
 def _log() -> EpistemicEventLog:
     return EpistemicEventLog(
         schema_version="1.0",
@@ -164,3 +189,54 @@ def test_semantic_requirements_reject_forbidden_term() -> None:
     )
 
     assert score.correct == 0.0
+
+
+def test_slot_requirements_accept_contextual_boolean_in_correct_slot() -> None:
+    score = score_case(
+        _slot_case(),
+        EvaluatorAnswer(
+            answer=(
+                "Kubernetes v1.25; Pod Security Admission; No; "
+                "pod-security.kubernetes.io/enforce"
+            ),
+            confidence=0.9,
+            cited_event_ids=("event-1", "event-2"),
+        ),
+        _log(),
+    )
+
+    assert score.correct == 1.0
+
+
+def test_slot_requirements_reject_right_term_in_wrong_slot() -> None:
+    score = score_case(
+        _slot_case(),
+        EvaluatorAnswer(
+            answer=(
+                "Kubernetes v1.25; No; Pod Security Admission; "
+                "pod-security.kubernetes.io/enforce"
+            ),
+            confidence=0.9,
+            cited_event_ids=("event-1", "event-2"),
+        ),
+        _log(),
+    )
+
+    assert score.correct == 0.0
+
+
+def test_slot_requirements_reject_extra_or_missing_slots() -> None:
+    for answer in (
+        "v1.25; Pod Security Admission; No",
+        "v1.25; Pod Security Admission; No; pod-security.kubernetes.io/enforce; extra",
+    ):
+        score = score_case(
+            _slot_case(),
+            EvaluatorAnswer(
+                answer=answer,
+                confidence=0.9,
+                cited_event_ids=("event-1", "event-2"),
+            ),
+            _log(),
+        )
+        assert score.correct == 0.0
