@@ -13,12 +13,12 @@ from resonance.experiments.llm_epistemic_agents import (
     SubstrateRetrievalTool,
 )
 from resonance.experiments.llm_epistemic_config import load_llm_epistemic_config
+from resonance.experiments.llm_epistemic_confirmatory_design import load_confirmatory_design
 from resonance.experiments.llm_epistemic_confirmatory_execution import (
     ConfirmatoryProtocolError,
     aggregate_confirmatory_results,
     run_confirmatory_case,
 )
-from resonance.experiments.llm_epistemic_confirmatory_design import load_confirmatory_design
 from resonance.experiments.llm_epistemic_corpus import (
     CorpusManifest,
     ResearchCaseManifest,
