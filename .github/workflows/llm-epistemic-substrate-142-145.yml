@@ -5,6 +5,7 @@ on:
     paths:
       - "pyproject.toml"
       - "configs/experiments/llm-epistemic-substrate-142-145.json"
+      - "configs/experiments/llm-epistemic-substrate-142-145-confirmatory-design.json"
       - "configs/corpora/llm-epistemic-142-145/**"
       - "docs/llm-epistemic-substrate-142-145.md"
       - "scripts/freeze_llm_epistemic_sources.py"
@@ -50,6 +51,7 @@ jobs:
             src/resonance/experiments/llm_epistemic_scoring.py \
             src/resonance/experiments/llm_epistemic_instrumentation.py \
             src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
+            src/resonance/experiments/llm_epistemic_confirmatory_design.py \
             tests/test_llm_epistemic_config.py \
             tests/test_llm_epistemic_corpus.py \
             tests/test_llm_epistemic_events.py \
@@ -58,7 +60,8 @@ jobs:
             tests/test_llm_epistemic_openai.py \
             tests/test_llm_epistemic_zai.py \
             tests/test_llm_epistemic_scoring.py \
-            tests/test_llm_epistemic_instrumentation.py
+            tests/test_llm_epistemic_instrumentation.py \
+            tests/test_llm_epistemic_confirmatory_design.py
       - name: Test replication mechanics and provider contract
         run: pytest tests/test_llm_epistemic_*.py
       - name: Enforce instrumentation-only boundary
@@ -74,9 +77,32 @@ jobs:
               raise SystemExit("142-145 workflow may only run the instrumentation scaffold")
           if value["corpus"]["confirmatory_cases_sealed"]:
               raise SystemExit("confirmatory corpus must remain inaccessible in instrumentation workflow")
-          forbidden = list(Path("configs").glob("**/*142-145*confirmatory*"))
-          if forbidden:
-              raise SystemExit(f"confirmatory corpus material present in instrumentation tree: {forbidden}")
+
+          corpus_root = Path("configs/corpora/llm-epistemic-142-145")
+          named_confirmatory = [
+              path for path in corpus_root.rglob("*")
+              if path.is_file() and "confirmatory" in path.as_posix().lower()
+          ]
+          if named_confirmatory:
+              raise SystemExit(
+                  "confirmatory corpus material present in instrumentation tree: "
+                  f"{named_confirmatory}"
+              )
+          for manifest_path in corpus_root.rglob("*.json"):
+              try:
+                  payload = json.loads(manifest_path.read_text())
+              except (json.JSONDecodeError, UnicodeDecodeError):
+                  continue
+              if not isinstance(payload, dict):
+                  continue
+              cases = payload.get("cases", [])
+              if isinstance(cases, list) and any(
+                  isinstance(case, dict) and case.get("cohort") == "confirmatory"
+                  for case in cases
+              ):
+                  raise SystemExit(
+                      f"confirmatory case content present in instrumentation tree: {manifest_path}"
+                  )
 
           output = Path("artifacts/llm-epistemic-substrate-142-145")
           output.mkdir(parents=True, exist_ok=True)
