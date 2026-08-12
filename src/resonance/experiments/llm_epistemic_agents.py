@@ -1,0 +1,151 @@
+"""Provider-neutral agent boundaries for Experiments 142–145 instrumentation."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Protocol
+
+from .epistemic_substrate_campaign import Substrate
+from .llm_epistemic_events import EpistemicEvent, EpistemicEventLog
+from .llm_epistemic_replay import ReplayedEvidence
+
+
+@dataclass(frozen=True, slots=True)
+class FrozenSource:
+    source_id: str
+    sha256: str
+    text: str
+
+
+@dataclass(frozen=True, slots=True)
+class ProducerTask:
+    case_id: str
+    producer_id: str
+    sources: tuple[FrozenSource, ...]
+
+
+class ProducerClient(Protocol):
+    def produce(self, task: ProducerTask) -> tuple[EpistemicEvent, ...]: ...
+
+
+def run_producers(tasks: tuple[ProducerTask, ...], client: ProducerClient) -> EpistemicEventLog:
+    if not tasks:
+        raise ValueError("at least one producer task is required")
+    case_ids = {task.case_id for task in tasks}
+    if len(case_ids) != 1:
+        raise ValueError("producer tasks must belong to one case")
+    all_events: list[EpistemicEvent] = []
+    for task in tasks:
+        allowed = {source.source_id: source.sha256.lower() for source in task.sources}
+        events = client.produce(task)
+        for event in events:
+            event.validate()
+            if event.case_id != task.case_id or event.producer_id != task.producer_id:
+                raise ValueError("producer emitted an event outside its assigned identity")
+            expected_hash = allowed.get(event.source_id)
+            if expected_hash is None:
+                raise ValueError("producer cited an unassigned source")
+            if event.source_sha256.lower() != expected_hash:
+                raise ValueError("producer cited a source with the wrong content hash")
+        all_events.extend(events)
+    ordered = tuple(sorted(all_events, key=lambda event: (event.observed_at, event.event_id)))
+    log = EpistemicEventLog(schema_version="1.0", case_id=tasks[0].case_id, events=ordered)
+    log.validate()
+    return log
+
+
+@dataclass(frozen=True, slots=True)
+class RetrievedEvent:
+    event_id: str
+    subject: str
+    predicate: str
+    object: str
+    confidence: float
+    source_id: str
+    source_sha256: str
+    producer_id: str
+    observed_at: str
+
+
+@dataclass(frozen=True, slots=True)
+class RetrievalToolResult:
+    events: tuple[RetrievedEvent, ...]
+    chosen_event_id: str | None
+    operation_cost: int
+    complete: bool
+
+
+class SubstrateRetrievalTool:
+    def __init__(
+        self,
+        event_log: EpistemicEventLog,
+        evidence: ReplayedEvidence,
+        substrate: Substrate,
+    ) -> None:
+        event_log.validate()
+        if event_log.sha256() != evidence.event_log_sha256:
+            raise ValueError("retrieval tool event log does not match replayed evidence")
+        self._events = {event.event_id: event for event in event_log.events}
+        self._evidence = evidence
+        self._substrate = substrate
+
+    def retrieve(self, subject: str, predicate: str, budget: int) -> RetrievalToolResult:
+        subject_id = self._evidence.index.entity_to_id.get(subject)
+        relation_id = self._evidence.index.relation_to_id.get(predicate)
+        if subject_id is None or relation_id is None:
+            return RetrievalToolResult((), None, 0, True)
+        retrieval = self._substrate.retrieve(subject_id, relation_id, budget)
+        selected = self._substrate.choose(retrieval.claims) if retrieval.complete else None
+        events = tuple(self._event_for_claim(claim.claim_id) for claim in retrieval.claims)
+        chosen_event_id = None
+        if selected is not None:
+            chosen_event_id = self._evidence.index.claim_to_event_id[selected.claim_id]
+        return RetrievalToolResult(events, chosen_event_id, retrieval.cost, retrieval.complete)
+
+    def _event_for_claim(self, claim_id: int) -> RetrievedEvent:
+        event_id = self._evidence.index.claim_to_event_id[claim_id]
+        event = self._events[event_id]
+        return RetrievedEvent(
+            event_id=event.event_id,
+            subject=event.subject,
+            predicate=event.predicate,
+            object=event.object,
+            confidence=event.confidence,
+            source_id=event.source_id,
+            source_sha256=event.source_sha256,
+            producer_id=event.producer_id,
+            observed_at=event.observed_at,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class EvaluatorTask:
+    case_id: str
+    question_id: str
+    question: str
+    draw_id: int
+
+
+@dataclass(frozen=True, slots=True)
+class EvaluatorAnswer:
+    answer: str
+    confidence: float
+    cited_event_ids: tuple[str, ...]
+
+
+class EvaluatorClient(Protocol):
+    def evaluate(self, task: EvaluatorTask, tool: SubstrateRetrievalTool) -> EvaluatorAnswer: ...
+
+
+__all__ = [
+    "EvaluatorAnswer",
+    "EvaluatorClient",
+    "EvaluatorTask",
+    "FrozenSource",
+    "ProducerClient",
+    "ProducerTask",
+    "RetrievedEvent",
+    "RetrievalToolResult",
+    "SubstrateRetrievalTool",
+    "run_producers",
+]
