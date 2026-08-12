@@ -124,6 +124,7 @@ class ResearchCaseManifest:
     required_source_ids: tuple[str, ...]
     semantic_answer_requirements: SemanticAnswerRequirements | None = None
     minimum_events_per_producer: int | None = None
+    minimum_conflict_keys: int | None = None
     minimum_temporal_conflict_keys: int | None = None
 
     def validate(self, known_sources: set[str]) -> None:
@@ -154,6 +155,11 @@ class ResearchCaseManifest:
                 raise ValueError(
                     "minimum_events_per_producer requires every producer to have assigned sources"
                 )
+        if self.minimum_conflict_keys is not None:
+            if self.minimum_conflict_keys < 1:
+                raise ValueError("minimum_conflict_keys must be a positive integer")
+            if self.minimum_events_per_producer is None:
+                raise ValueError("minimum_conflict_keys requires minimum_events_per_producer")
         if self.minimum_temporal_conflict_keys is not None:
             if self.minimum_temporal_conflict_keys < 1:
                 raise ValueError("minimum_temporal_conflict_keys must be a positive integer")
@@ -195,6 +201,8 @@ class ResearchCaseManifest:
             )
         if self.minimum_events_per_producer is not None:
             value["minimum_events_per_producer"] = self.minimum_events_per_producer
+        if self.minimum_conflict_keys is not None:
+            value["minimum_conflict_keys"] = self.minimum_conflict_keys
         if self.minimum_temporal_conflict_keys is not None:
             value["minimum_temporal_conflict_keys"] = self.minimum_temporal_conflict_keys
         return value
@@ -349,6 +357,10 @@ def load_corpus_manifest(path: str | Path) -> CorpusManifest:
                 minimum_events_per_producer=_optional_positive_int(
                     raw_case.get("minimum_events_per_producer"),
                     "minimum_events_per_producer",
+                ),
+                minimum_conflict_keys=_optional_positive_int(
+                    raw_case.get("minimum_conflict_keys"),
+                    "minimum_conflict_keys",
                 ),
                 minimum_temporal_conflict_keys=_optional_positive_int(
                     raw_case.get("minimum_temporal_conflict_keys"),
