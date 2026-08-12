@@ -49,6 +49,13 @@ class FakeProducer:
         )
 
 
+class SparseProducer(FakeProducer):
+    def produce(self, task: ProducerTask) -> tuple[EpistemicEvent, ...]:
+        if task.producer_id == "producer-4":
+            return ()
+        return super().produce(task)
+
+
 class FakeEvaluator:
     def evaluate(self, task: EvaluatorTask, tool: SubstrateRetrievalTool) -> EvaluatorAnswer:
         retrieval = tool.retrieve("system-x", "supports", 12)
@@ -61,7 +68,11 @@ class FakeEvaluator:
         )
 
 
-def _manifest(tmp_path: Path) -> CorpusManifest:
+def _manifest(
+    tmp_path: Path,
+    *,
+    minimum_events_per_producer: int | None = None,
+) -> CorpusManifest:
     sources: list[SourceManifestEntry] = []
     allocations: list[tuple[str, tuple[str, ...]]] = []
     source_ids: list[str] = []
@@ -91,6 +102,7 @@ def _manifest(tmp_path: Path) -> CorpusManifest:
         question="Which component is supported by the distributed evidence?",
         accepted_answers=("component-y",),
         required_source_ids=("source-1", "source-2"),
+        minimum_events_per_producer=minimum_events_per_producer,
     )
     return CorpusManifest(manifest_version="1.0", sources=tuple(sources), cases=(case,))
 
@@ -126,6 +138,12 @@ def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -
         case["event_log"], sort_keys=True, separators=(",", ":")
     ).encode()
     assert hashlib.sha256(canonical).hexdigest() == case["event_log_sha256"]
+    assert case["producer_event_counts"] == {
+        "producer-1": 1,
+        "producer-2": 1,
+        "producer-3": 1,
+        "producer-4": 1,
+    }
     assert case["observed_producer_models"] == ["actual-producer-model"]
     assert case["observed_evaluator_models"] == ["actual-evaluator-model"]
     for draw in case["draws"]:
@@ -136,3 +154,27 @@ def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -
             "resonance_field",
         }
         assert all(arm["score"]["correct"] == 1.0 for arm in draw["arms"].values())
+
+
+def test_runner_rejects_declared_producer_deposit_shortfall_before_replay(
+    tmp_path: Path,
+) -> None:
+    campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
+    parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
+    manifest = _manifest(tmp_path, minimum_events_per_producer=1)
+
+    try:
+        run_instrumentation(
+            manifest,
+            tmp_path,
+            campaign,
+            parent,
+            SparseProducer(),
+            FakeEvaluator(),
+        )
+    except ValueError as exc:
+        message = str(exc)
+        assert "producer deposit floor" in message
+        assert "producer-4=0" in message
+    else:
+        raise AssertionError("producer deposit shortfall reached substrate replay")
