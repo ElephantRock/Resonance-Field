@@ -139,6 +139,7 @@ def build_confirmatory_seal(
             "base_url": campaign.provider_base_url,
             "requested_model": campaign.requested_model,
             "expected_response_model": campaign.expected_response_model,
+            "openai_sdk_version": campaign.provider_openai_sdk_version,
             "request_contract_sha256": campaign.provider_request_contract_sha256,
             "identity_probe_run_id": campaign.provider_probe_run_id,
             "identity_probe_artifact_id": campaign.provider_probe_artifact_id,
