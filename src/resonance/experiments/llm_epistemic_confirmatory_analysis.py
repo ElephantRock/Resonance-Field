@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import hashlib
 import random
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Iterable, Mapping, Sequence
 
 ARMS = ("pile", "shared_memory", "provenance_graph", "resonance_field")
 PLANNED_CONTRASTS = (
