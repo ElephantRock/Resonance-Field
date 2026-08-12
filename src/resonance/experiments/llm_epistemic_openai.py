@@ -11,6 +11,7 @@ from .llm_epistemic_agents import (
     EvaluatorAnswer,
     EvaluatorTask,
     ProducerTask,
+    RetrievedEvent,
     SubstrateRetrievalTool,
 )
 from .llm_epistemic_events import EpistemicEvent
@@ -107,6 +108,28 @@ def _producer_input(task: ProducerTask) -> str:
             ]
         )
     return "\n".join(parts)
+
+
+def _usage(response: Any) -> tuple[int, int]:
+    usage = getattr(response, "usage", None)
+    return (
+        int(getattr(usage, "input_tokens", 0) or 0),
+        int(getattr(usage, "output_tokens", 0) or 0),
+    )
+
+
+def _retrieved_event_mapping(event: RetrievedEvent) -> dict[str, object]:
+    return {
+        "event_id": event.event_id,
+        "subject": event.subject,
+        "predicate": event.predicate,
+        "object": event.object,
+        "confidence": event.confidence,
+        "source_id": event.source_id,
+        "source_sha256": event.source_sha256,
+        "producer_id": event.producer_id,
+        "observed_at": event.observed_at,
+    }
 
 
 @dataclass(slots=True)
@@ -221,6 +244,7 @@ class OpenAIEvaluatorClient:
             text=_text_format("evaluator_answer", _answer_schema()),
             store=False,
         )
+        input_tokens, output_tokens = _usage(response)
         operation_cost = 0
         for _round in range(self.max_tool_rounds):
             calls = [item for item in response.output if getattr(item, "type", None) == "function_call"]
@@ -243,7 +267,9 @@ class OpenAIEvaluatorClient:
                         "call_id": call.call_id,
                         "output": json.dumps(
                             {
-                                "events": [event.__dict__ for event in retrieval.events],
+                                "events": [
+                                    _retrieved_event_mapping(event) for event in retrieval.events
+                                ],
                                 "chosen_event_id": retrieval.chosen_event_id,
                                 "operation_cost": retrieval.operation_cost,
                                 "complete": retrieval.complete,
@@ -264,14 +290,14 @@ class OpenAIEvaluatorClient:
                 text=_text_format("evaluator_answer", _answer_schema()),
                 store=False,
             )
+            current_input, current_output = _usage(response)
+            input_tokens += current_input
+            output_tokens += current_output
         else:
             raise RuntimeError("evaluator exceeded maximum retrieval rounds")
 
         payload = json.loads(response.output_text)
         latency_ms = round((time.perf_counter() - started) * 1000)
-        usage = getattr(response, "usage", None)
-        input_tokens = int(getattr(usage, "input_tokens", 0) or 0)
-        output_tokens = int(getattr(usage, "output_tokens", 0) or 0)
         return EvaluatorAnswer(
             answer=str(payload["answer"]),
             confidence=float(payload["confidence"]),
