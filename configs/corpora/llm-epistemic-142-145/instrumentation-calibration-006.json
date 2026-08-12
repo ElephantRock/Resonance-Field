@@ -1,0 +1,89 @@
+{
+  "plan_version": "1.0",
+  "cohort": "instrumentation",
+  "sources": [
+    {
+      "source_id": "postgres-password-default-13",
+      "repository": "postgres/postgres",
+      "commit_sha": "29be9983a64c011eac0b9ee29895cce71e15ea77",
+      "path": "src/backend/utils/misc/postgresql.conf.sample",
+      "git_blob_sha": "7bd659dbfa458aa63cba3adfdf8abe95aac8ce95",
+      "media_type": "text/plain",
+      "title": "PostgreSQL 13.0 sample configuration",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2020-09-21T19:14:05Z"
+    },
+    {
+      "source_id": "postgres-password-default-current",
+      "repository": "postgres/postgres",
+      "commit_sha": "bdaad789c843f57b1fc66c5ede7abaff8a915c3b",
+      "path": "src/backend/utils/misc/postgresql.conf.sample",
+      "git_blob_sha": "e759f06b50f0670674b2c295624e5d333778045d",
+      "media_type": "text/plain",
+      "title": "Current PostgreSQL sample configuration",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2026-08-12T19:00:00Z"
+    },
+    {
+      "source_id": "postgres-client-auth-current",
+      "repository": "postgres/postgres",
+      "commit_sha": "bdaad789c843f57b1fc66c5ede7abaff8a915c3b",
+      "path": "doc/src/sgml/client-auth.sgml",
+      "git_blob_sha": "e4e65f8feb1d11f524ebc92431a1ab38f25b2f21",
+      "media_type": "text/sgml",
+      "title": "Current PostgreSQL client authentication documentation",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2026-08-12T19:00:00Z"
+    },
+    {
+      "source_id": "postgres-create-role-current",
+      "repository": "postgres/postgres",
+      "commit_sha": "bdaad789c843f57b1fc66c5ede7abaff8a915c3b",
+      "path": "doc/src/sgml/ref/create_role.sgml",
+      "git_blob_sha": "cee23b1ea6b4dcf2d9d356d07a582e64808c2912",
+      "media_type": "text/sgml",
+      "title": "Current PostgreSQL CREATE ROLE documentation",
+      "acquired_at": "2026-08-12T19:00:00Z",
+      "evidence_observed_at": "2026-08-12T19:00:00Z"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "instr-postgresql-password-006",
+      "cohort": "instrumentation",
+      "source_ids": [
+        "postgres-password-default-13",
+        "postgres-password-default-current",
+        "postgres-client-auth-current",
+        "postgres-create-role-current"
+      ],
+      "producer_source_allocations": [
+        ["producer-postgres-stale", ["postgres-password-default-13"]],
+        ["producer-postgres-default", ["postgres-password-default-current"]],
+        ["producer-postgres-auth", ["postgres-client-auth-current"]],
+        ["producer-postgres-role", ["postgres-create-role-current"]]
+      ],
+      "held_out_question_id": "question-postgresql-password-006",
+      "question": "For current PostgreSQL password authentication, give four values in order: the default value of password_encryption; the current support status of MD5-encrypted passwords; which authentication family is automatically chosen when pg_hba.conf specifies md5 but the stored password is SCRAM-encrypted; and the configuration parameter that determines the encryption method when CREATE ROLE receives a plaintext password.",
+      "accepted_answers": [
+        "scram-sha-256; deprecated; SCRAM; password_encryption"
+      ],
+      "required_source_ids": [
+        "postgres-password-default-current",
+        "postgres-client-auth-current",
+        "postgres-create-role-current"
+      ],
+      "semantic_answer_requirements": {
+        "required_slots": [
+          ["scram-sha-256", "SCRAM-SHA-256"],
+          ["deprecated", "deprecated and will be removed"],
+          ["SCRAM", "SCRAM-based authentication", "scram-sha-256"],
+          ["password_encryption"]
+        ],
+        "forbidden_terms": []
+      },
+      "minimum_events_per_producer": 1,
+      "minimum_temporal_conflict_keys": 1
+    }
+  ]
+}
