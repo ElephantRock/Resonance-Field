@@ -16,6 +16,12 @@ from .llm_epistemic_openai import (
     OpenAIEvaluatorClient,
     OpenAIProducerClient,
 )
+from .llm_epistemic_zai import (
+    DEFAULT_ZAI_BASE_URL,
+    DEFAULT_ZAI_MODEL,
+    ZAIEvaluatorClient,
+    ZAIProducerClient,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -25,21 +31,38 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--corpus-root", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--model", default=DEFAULT_INSTRUMENTATION_MODEL)
+    parser.add_argument("--provider", choices=("openai", "zai"), default="openai")
+    parser.add_argument("--model")
+    parser.add_argument("--base-url")
     parser.add_argument("--code-sha", default=os.getenv("GITHUB_SHA", "local"))
     return parser
 
 
+def _clients(args: argparse.Namespace):
+    if args.provider == "zai":
+        if not os.getenv("ZAI_API_KEY"):
+            raise SystemExit("ZAI_API_KEY is required for Z.AI stochastic instrumentation")
+        model = args.model or DEFAULT_ZAI_MODEL
+        base_url = args.base_url or DEFAULT_ZAI_BASE_URL
+        return (
+            ZAIProducerClient(model=model, base_url=base_url),
+            ZAIEvaluatorClient(model=model, base_url=base_url),
+            model,
+            base_url,
+        )
+    if not os.getenv("OPENAI_API_KEY"):
+        raise SystemExit("OPENAI_API_KEY is required for OpenAI stochastic instrumentation")
+    model = args.model or DEFAULT_INSTRUMENTATION_MODEL
+    return OpenAIProducerClient(model=model), OpenAIEvaluatorClient(model=model), model, None
+
+
 def main() -> int:
     args = build_parser().parse_args()
-    if not os.getenv("OPENAI_API_KEY"):
-        raise SystemExit("OPENAI_API_KEY is required for stochastic instrumentation")
     campaign_config = load_llm_epistemic_config(args.config)
     parent_config, parent_config_hash = load_epistemic_substrate_config(args.parent_config)
     manifest = load_corpus_manifest(args.manifest)
     manifest.cases_for_instrumentation()
-    producer = OpenAIProducerClient(model=args.model)
-    evaluator = OpenAIEvaluatorClient(model=args.model)
+    producer, evaluator, model, base_url = _clients(args)
     result = run_instrumentation(
         manifest,
         args.corpus_root,
@@ -50,7 +73,9 @@ def main() -> int:
     )
     result.update(
         {
-            "requested_model": args.model,
+            "requested_provider": args.provider,
+            "requested_model": model,
+            "provider_base_url": base_url,
             "code_sha": args.code_sha,
             "parent_config_hash": parent_config_hash,
         }
