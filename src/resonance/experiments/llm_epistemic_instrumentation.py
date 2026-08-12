@@ -106,7 +106,11 @@ def _producer_event_counts(
     }
 
 
-def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
+def _claim_conflict_keys(
+    event_log: Any,
+    *,
+    require_cross_time: bool,
+) -> tuple[dict[str, Any], ...]:
     grouped: dict[tuple[str, str], list[Any]] = defaultdict(list)
     for event in event_log.events:
         grouped[(event.subject, event.predicate)].append(event)
@@ -116,7 +120,9 @@ def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
         producers = {event.producer_id for event in events}
         observed_times = {event.observed_at for event in events}
         objects = {event.object for event in events}
-        if len(producers) < 2 or len(observed_times) < 2 or len(objects) < 2:
+        if len(producers) < 2 or len(objects) < 2:
+            continue
+        if require_cross_time and len(observed_times) < 2:
             continue
         conflicts.append(
             {
@@ -131,6 +137,14 @@ def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
     return tuple(conflicts)
 
 
+def _conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
+    return _claim_conflict_keys(event_log, require_cross_time=False)
+
+
+def _temporal_conflict_keys(event_log: Any) -> tuple[dict[str, Any], ...]:
+    return _claim_conflict_keys(event_log, require_cross_time=True)
+
+
 def _gate_audit(
     case: ResearchCaseManifest,
     event_log: Any,
@@ -138,6 +152,7 @@ def _gate_audit(
     *,
     gate: str,
     message: str,
+    conflict_keys: tuple[dict[str, Any], ...] | None = None,
     temporal_conflict_keys: tuple[dict[str, Any], ...] | None = None,
 ) -> dict[str, Any]:
     return {
@@ -156,6 +171,8 @@ def _gate_audit(
         "event_log": _event_log_mapping(event_log),
         "producer_ids": list(event_log.producer_ids()),
         "producer_event_counts": producer_event_counts,
+        "conflict_key_count": None if conflict_keys is None else len(conflict_keys),
+        "conflict_keys": None if conflict_keys is None else list(conflict_keys),
         "temporal_conflict_key_count": (
             None if temporal_conflict_keys is None else len(temporal_conflict_keys)
         ),
@@ -202,10 +219,37 @@ def _enforce_minimum_producer_deposits(
     return counts
 
 
+def _enforce_conflict_floor(
+    case: ResearchCaseManifest,
+    event_log: Any,
+    producer_event_counts: dict[str, int],
+) -> tuple[dict[str, Any], ...]:
+    conflicts = _conflict_keys(event_log)
+    minimum = case.minimum_conflict_keys
+    if minimum is not None and len(conflicts) < minimum:
+        message = (
+            "conflict-key floor not met before substrate replay: "
+            f"minimum={minimum}; observed={len(conflicts)}"
+        )
+        raise InstrumentationGateError(
+            message,
+            _gate_audit(
+                case,
+                event_log,
+                producer_event_counts,
+                gate="minimum_conflict_keys",
+                message=message,
+                conflict_keys=conflicts,
+            ),
+        )
+    return conflicts
+
+
 def _enforce_temporal_conflict_floor(
     case: ResearchCaseManifest,
     event_log: Any,
     producer_event_counts: dict[str, int],
+    conflict_keys: tuple[dict[str, Any], ...],
 ) -> tuple[dict[str, Any], ...]:
     conflicts = _temporal_conflict_keys(event_log)
     minimum = case.minimum_temporal_conflict_keys
@@ -222,6 +266,7 @@ def _enforce_temporal_conflict_floor(
                 producer_event_counts,
                 gate="minimum_temporal_conflict_keys",
                 message=message,
+                conflict_keys=conflict_keys,
                 temporal_conflict_keys=conflicts,
             ),
         )
@@ -242,10 +287,12 @@ def run_instrumentation_case(
     sources = _frozen_sources(manifest, corpus_root)
     event_log = run_producers(_producer_tasks(case, sources), producer_client)
     producer_event_counts = _enforce_minimum_producer_deposits(case, event_log)
+    conflict_keys = _enforce_conflict_floor(case, event_log, producer_event_counts)
     temporal_conflict_keys = _enforce_temporal_conflict_floor(
         case,
         event_log,
         producer_event_counts,
+        conflict_keys,
     )
     evidence = replay_event_log(event_log, substrate_config)
     event_log_sha256 = event_log.sha256()
@@ -291,6 +338,8 @@ def run_instrumentation_case(
         "event_log": _event_log_mapping(event_log),
         "producer_ids": list(event_log.producer_ids()),
         "producer_event_counts": producer_event_counts,
+        "conflict_key_count": len(conflict_keys),
+        "conflict_keys": list(conflict_keys),
         "temporal_conflict_key_count": len(temporal_conflict_keys),
         "temporal_conflict_keys": list(temporal_conflict_keys),
         "observed_producer_models": _observed_producer_models(event_log),
