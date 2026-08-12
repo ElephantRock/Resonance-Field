@@ -96,11 +96,11 @@ This prevents a confirmatory model freeze on the current configuration. Before c
 
 Post-pilot engineering now persists the complete canonical event log in instrumentation output and records observed model identities. These changes improve auditability; they do not alter the successful v2 result retroactively.
 
-## Coding Plan scope boundary
+## Z.AI execution status and provider-use note
 
-The Z.AI Coding endpoint is a coding-plan endpoint and current provider documentation/terms restrict it to supported coding tools/scenarios rather than unrestricted general-purpose API use. The completed Python/PyPA pilot is retained as an instrumentation record, but no further custom paid experiment calls should be launched through this endpoint until the project has an authorized usage path.
+The Z.AI stochastic pilot workflow remains **active** for instrumentation at `https://api.z.ai/api/coding/paas/v4` using the repository secret `ZAI_API_KEY`. On 2026-08-12 the workflow was briefly archived after a provider-scope review; that archive was reversed at the project owner's direction before any additional experiment execution. The archive/re-enable sequence is retained in Git history for auditability.
 
-For continued multi-domain instrumentation, use a provider endpoint/plan whose terms permit the experiment runner, such as Z.AI's general API endpoint with appropriate billing/authorization, or another authorized model provider.
+Provider documentation/terms regarding the Coding Plan endpoint remain a recorded operational consideration. They are not encoded as an automatic experiment shutdown policy. Any future decision to disable, archive, replace, or materially restrict the configured provider path should be treated as a project-level operational decision and consulted with the project owner unless an immediate security incident requires containment.
 
 ## Instrumentation decision
 
@@ -108,7 +108,7 @@ The correct next scientific step is **not** to scale 23 more cases of the same d
 
 Before expanding the instrumentation cohort:
 
-1. resolve the authorized provider endpoint and freeze actual model-identity checks;
+1. continue recording requested and returned Z.AI model identities and freeze the final identity policy before confirmatory sealing;
 2. preserve full canonical producer event logs in outcome artifacts;
 3. curate a harder difficulty-calibration tranche with contradictions, stale/current evidence, multi-hop composition, plausible distractors, and at least three distributed required facts; and
 4. freeze a total per-answer retrieval-operation ceiling rather than relying only on a per-call ceiling, so substrate search efficiency is tested under a common resource constraint.
