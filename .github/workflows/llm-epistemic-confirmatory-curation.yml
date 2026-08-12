@@ -1,0 +1,89 @@
+name: LLM Epistemic Confirmatory Corpus Curation
+
+on:
+  push:
+    branches: [experiment/llm-epistemic-confirmatory-corpus]
+    paths:
+      - "configs/corpora/llm-epistemic-142-145-confirmatory/**"
+      - "tools/confirmatory_curation/**"
+      - ".github/workflows/llm-epistemic-confirmatory-curation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freeze-candidate-sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SCIENTIFIC_BASE_SHA: c33d29a3ad359c040b63c644fb8e552bd28f1615
+      PLAN_ROOT: configs/corpora/llm-epistemic-142-145-confirmatory/acquisition-plans
+      OUTPUT_ROOT: artifacts/llm-epistemic-142-145-confirmatory/candidate-freezes
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Prove frozen scientific implementation is unchanged
+        run: |
+          python - <<'PY'
+          import subprocess
+
+          base = "c33d29a3ad359c040b63c644fb8e552bd28f1615"
+          changed = subprocess.check_output(
+              ["git", "diff", "--name-only", f"{base}..HEAD"],
+              text=True,
+          ).splitlines()
+          forbidden_exact = {
+              "pyproject.toml",
+              "configs/experiments/epistemic-substrate-138-141.json",
+              "configs/experiments/llm-epistemic-substrate-142-145.json",
+              "configs/experiments/llm-epistemic-substrate-142-145-confirmatory-design.json",
+              "src/resonance/experiments/epistemic_substrate_campaign.py",
+              "src/resonance/experiments/epistemic_substrate_config.py",
+          }
+          forbidden = []
+          for path in changed:
+              if path in forbidden_exact:
+                  forbidden.append(path)
+              elif path.startswith("src/resonance/experiments/llm_epistemic_") and path.endswith(".py"):
+                  forbidden.append(path)
+              elif path.startswith("scripts/") and "llm_epistemic" in path and path.endswith(".py"):
+                  forbidden.append(path)
+          if forbidden:
+              raise SystemExit(
+                  "confirmatory corpus branch changed frozen scientific files: "
+                  + ", ".join(sorted(forbidden))
+              )
+          print("Frozen scientific implementation unchanged.")
+          PY
+      - name: Verify curation utility syntax
+        run: python -m py_compile tools/confirmatory_curation/freeze_batch.py
+      - name: Freeze all declared candidate source batches
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUTPUT_ROOT"
+          count=0
+          shopt -s nullglob
+          for plan in "$PLAN_ROOT"/*.json; do
+            name="$(basename "$plan" .json)"
+            python tools/confirmatory_curation/freeze_batch.py \
+              --plan "$plan" \
+              --output-dir "$OUTPUT_ROOT/$name"
+            count=$((count + 1))
+          done
+          test "$count" -gt 0
+          printf '{"plan_count":%s,"treatment_execution":false,"evaluator_execution":false,"confirmatory_outcomes_observed":false}\n' \
+            "$count" > "$OUTPUT_ROOT/curation-index.json"
+      - name: Upload frozen candidate evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-epistemic-confirmatory-candidate-freezes
+          path: ${{ env.OUTPUT_ROOT }}/
+          if-no-files-found: error
+          retention-days: 90
