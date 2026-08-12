@@ -18,7 +18,14 @@ from resonance.experiments.llm_epistemic_corpus import (
     SourceManifestEntry,
 )
 from resonance.experiments.llm_epistemic_events import EpistemicEvent
-from resonance.experiments.llm_epistemic_instrumentation import run_instrumentation
+from resonance.experiments.llm_epistemic_instrumentation import (
+    InstrumentationGateError,
+    run_instrumentation,
+)
+from resonance.experiments.llm_epistemic_instrumentation_cli import (
+    _gate_failure_result,
+    _write_result,
+)
 
 CAMPAIGN_CONFIG = Path("configs/experiments/llm-epistemic-substrate-142-145.json")
 PARENT_CONFIG = Path("configs/experiments/epistemic-substrate-138-141.json")
@@ -137,6 +144,13 @@ def _manifest(
     return CorpusManifest(manifest_version="1.0", sources=tuple(sources), cases=(case,))
 
 
+def _assert_audit_hash(audit: dict[str, object]) -> None:
+    canonical = json.dumps(
+        audit["event_log"], sort_keys=True, separators=(",", ":")
+    ).encode()
+    assert hashlib.sha256(canonical).hexdigest() == audit["event_log_sha256"]
+
+
 def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -> None:
     campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
     parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
@@ -187,7 +201,7 @@ def test_runner_reuses_one_event_log_across_all_arms_and_draws(tmp_path: Path) -
         assert all(arm["score"]["correct"] == 1.0 for arm in draw["arms"].values())
 
 
-def test_runner_rejects_declared_producer_deposit_shortfall_before_replay(
+def test_runner_retains_declared_producer_deposit_shortfall_before_replay(
     tmp_path: Path,
 ) -> None:
     campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
@@ -203,15 +217,25 @@ def test_runner_rejects_declared_producer_deposit_shortfall_before_replay(
             SparseProducer(),
             FakeEvaluator(),
         )
-    except ValueError as exc:
+    except InstrumentationGateError as exc:
         message = str(exc)
         assert "producer deposit floor" in message
         assert "producer-4=0" in message
+        audit = exc.audit
+        assert audit["stage"] == "pre_replay_gate_failure"
+        assert audit["gate"] == "minimum_events_per_producer"
+        assert audit["replay_attempted"] is False
+        assert audit["evaluator_execution_attempted"] is False
+        assert audit["event_count"] == 3
+        assert audit["producer_event_counts"]["producer-4"] == 0
+        assert audit["temporal_conflict_key_count"] is None
+        assert audit["draws"] == []
+        _assert_audit_hash(audit)
     else:
         raise AssertionError("producer deposit shortfall reached substrate replay")
 
 
-def test_runner_rejects_missing_temporal_conflict_before_replay(tmp_path: Path) -> None:
+def test_runner_retains_missing_temporal_conflict_before_replay(tmp_path: Path) -> None:
     campaign = load_llm_epistemic_config(CAMPAIGN_CONFIG)
     parent, _ = load_epistemic_substrate_config(PARENT_CONFIG)
     manifest = _manifest(
@@ -230,8 +254,34 @@ def test_runner_rejects_missing_temporal_conflict_before_replay(tmp_path: Path) 
             FakeProducer(),
             FakeEvaluator(),
         )
-    except ValueError as exc:
+    except InstrumentationGateError as exc:
         assert "temporal conflict-key floor" in str(exc)
+        audit = exc.audit
+        assert audit["gate"] == "minimum_temporal_conflict_keys"
+        assert audit["replay_attempted"] is False
+        assert audit["evaluator_execution_attempted"] is False
+        assert audit["event_count"] == 4
+        assert audit["producer_event_counts"] == {
+            "producer-1": 1,
+            "producer-2": 1,
+            "producer-3": 1,
+            "producer-4": 1,
+        }
+        assert audit["temporal_conflict_key_count"] == 0
+        assert audit["temporal_conflict_keys"] == []
+        assert audit["draws"] == []
+        _assert_audit_hash(audit)
+
+        result = _gate_failure_result(campaign.name, manifest, exc)
+        assert result["status"] == "pre_replay_gate_failure"
+        assert result["inferential"] is False
+        assert result["confirmatory_access"] is False
+        assert result["confirmatory_cases_evaluated"] is False
+        assert result["manifest_sha256"] == manifest.sha256()
+        assert result["cases"] == [audit]
+        output = tmp_path / "gate-failure.json"
+        _write_result(output, result)
+        assert json.loads(output.read_text()) == result
     else:
         raise AssertionError("missing temporal conflict reached substrate replay")
 
