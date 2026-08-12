@@ -5,7 +5,9 @@ on:
     paths:
       - "pyproject.toml"
       - "configs/experiments/llm-epistemic-substrate-142-145.json"
+      - "configs/corpora/llm-epistemic-142-145/**"
       - "docs/llm-epistemic-substrate-142-145.md"
+      - "scripts/freeze_llm_epistemic_sources.py"
       - "src/resonance/experiments/llm_epistemic_*.py"
       - "tests/test_llm_epistemic_*.py"
       - ".github/workflows/llm-epistemic-substrate-142-145.yml"
@@ -34,18 +36,22 @@ jobs:
       - name: Lint replication layer
         run: |
           ruff check --output-format=github \
+            scripts/freeze_llm_epistemic_sources.py \
             src/resonance/experiments/llm_epistemic_config.py \
             src/resonance/experiments/llm_epistemic_corpus.py \
             src/resonance/experiments/llm_epistemic_events.py \
+            src/resonance/experiments/llm_epistemic_ontology.py \
             src/resonance/experiments/llm_epistemic_replay.py \
             src/resonance/experiments/llm_epistemic_agents.py \
             src/resonance/experiments/llm_epistemic_openai.py \
+            src/resonance/experiments/llm_epistemic_scoring.py \
             tests/test_llm_epistemic_config.py \
             tests/test_llm_epistemic_corpus.py \
             tests/test_llm_epistemic_events.py \
             tests/test_llm_epistemic_replay.py \
             tests/test_llm_epistemic_agents.py \
-            tests/test_llm_epistemic_openai.py
+            tests/test_llm_epistemic_openai.py \
+            tests/test_llm_epistemic_scoring.py
       - name: Test replication mechanics and provider contract
         run: pytest tests/test_llm_epistemic_*.py
       - name: Enforce instrumentation-only boundary
