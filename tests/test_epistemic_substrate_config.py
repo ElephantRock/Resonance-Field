@@ -30,6 +30,9 @@ def test_epistemic_substrate_config_is_frozen_and_loadable() -> None:
         "transfer_accuracy",
         "collective_emergence_ratio",
     )
+    assert config.relation_count_semantics == "observation_claims"
+    assert (config.pile_claim_cost, config.shared_claim_cost, config.graph_claim_cost) == (3, 1, 1)
+    assert config.contradiction_override_margin == 0.60
     assert len(config.instrumentation_seeds) == 8
     assert len(config.confirmatory_seeds) == 64
     assert len(digest) == 64
@@ -59,9 +62,33 @@ def test_epistemic_substrate_rejects_arm_semantics_change(tmp_path: Path) -> Non
         load_epistemic_substrate_config(_mutated_config(tmp_path, value))
 
 
+def test_epistemic_substrate_rejects_evidence_regime_change(tmp_path: Path) -> None:
+    value = json.loads(CONFIG_PATH.read_text())
+    value["benchmark"]["evidence_regimes"]["recent_rumor"] = 9
+
+    with pytest.raises(ValueError, match="evidence regime mixture"):
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
+
+
+def test_epistemic_substrate_rejects_representation_cost_change(tmp_path: Path) -> None:
+    value = json.loads(CONFIG_PATH.read_text())
+    value["budget"]["pile_claim_cost"] = 2
+
+    with pytest.raises(ValueError, match="representation costs"):
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
+
+
 def test_epistemic_substrate_rejects_resonance_parameter_change(tmp_path: Path) -> None:
     value = json.loads(CONFIG_PATH.read_text())
     value["resonance"]["bridge_gain"] = 0.25
+
+    with pytest.raises(ValueError, match="resonance dynamics"):
+        load_epistemic_substrate_config(_mutated_config(tmp_path, value))
+
+
+def test_epistemic_substrate_rejects_override_margin_change(tmp_path: Path) -> None:
+    value = json.loads(CONFIG_PATH.read_text())
+    value["resonance"]["contradiction_override_margin"] = 0.50
 
     with pytest.raises(ValueError, match="resonance dynamics"):
         load_epistemic_substrate_config(_mutated_config(tmp_path, value))
