@@ -8,9 +8,12 @@ on:
     paths:
       - src/resonance/experiments/piano_agent_runtime.py
       - src/resonance/experiments/piano_phase1_fixture.py
+      - src/resonance/experiments/piano_phase2.py
       - tests/test_piano_agent_runtime.py
       - tests/test_piano_phase1_fixture.py
+      - tests/test_piano_phase2.py
       - docs/piano-agent-runtime-experiment.md
+      - docs/piano-phase2-model-experiment.md
       - .github/workflows/piano-agent-runtime.yml
 
 permissions:
@@ -35,14 +38,17 @@ jobs:
           ruff check
           src/resonance/experiments/piano_agent_runtime.py
           src/resonance/experiments/piano_phase1_fixture.py
+          src/resonance/experiments/piano_phase2.py
           tests/test_piano_agent_runtime.py
           tests/test_piano_phase1_fixture.py
+          tests/test_piano_phase2.py
       - name: Test experimental contract
         run: >-
           pytest
           tests/test_piano_agent_runtime.py
           tests/test_piano_phase1_fixture.py
-      - name: Emit fixture records
+          tests/test_piano_phase2.py
+      - name: Emit Phase 1 fixture records
         run: |
           python -m resonance.experiments.piano_phase1_fixture --arm control --output /tmp/control.json
           python -m resonance.experiments.piano_phase1_fixture --arm treatment --output /tmp/treatment.json
