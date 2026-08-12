@@ -15,6 +15,44 @@ EXPECTED_EXPERIMENTS = {
     "140": "provenance_graph",
     "141": "resonance_field",
 }
+EXPECTED_ARMS = {
+    "pile": {
+        "persistent_reports": True,
+        "cross_agent_reads_during_discovery": False,
+        "relational_edges": False,
+        "provenance": False,
+        "activation_dynamics": False,
+    },
+    "shared_memory": {
+        "persistent_reports": True,
+        "cross_agent_reads_during_discovery": True,
+        "relational_edges": False,
+        "provenance": True,
+        "activation_dynamics": False,
+    },
+    "provenance_graph": {
+        "persistent_reports": True,
+        "cross_agent_reads_during_discovery": True,
+        "relational_edges": True,
+        "provenance": True,
+        "activation_dynamics": False,
+    },
+    "resonance_field": {
+        "persistent_reports": True,
+        "cross_agent_reads_during_discovery": True,
+        "relational_edges": True,
+        "provenance": True,
+        "activation_dynamics": True,
+    },
+}
+EXPECTED_RESONANCE = {
+    "initial_activation": 1.0,
+    "decay_factor_per_epoch": 0.97,
+    "independent_confirmation_gain": 0.25,
+    "contradiction_gain": 0.10,
+    "bridge_gain": 0.20,
+    "maximum_activation": 3.0,
+}
 EXPECTED_PRIMARY_ENDPOINTS = (
     "transfer_accuracy",
     "collective_emergence_ratio",
@@ -39,10 +77,15 @@ def _int_tuple(value: object, label: str) -> tuple[int, ...]:
     return tuple(int(item) for item in value)
 
 
+def _canonical(value: object) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+
 @dataclass(frozen=True, slots=True)
 class EpistemicSubstrateConfig:
     name: str
     experiments: tuple[tuple[str, str], ...]
+    benchmark_mode: str
     entity_count: int
     relation_count: int
     source_packet_count: int
@@ -56,12 +99,22 @@ class EpistemicSubstrateConfig:
     max_retrieval_items_per_query: int
     max_graph_hops_per_query: int
     max_reasoning_steps_per_query: int
+    arms_canonical: str
+    resonance_canonical: str
     primary_endpoints: tuple[str, ...]
     confirmatory_contrasts: tuple[tuple[str, str], ...]
+    paired_by_world_seed: bool
+    multiple_testing: str
     alpha: float
+    confidence_interval: float
     bootstrap_resamples: int
     minimum_total_effect_transfer_accuracy: float
     minimum_total_effect_collective_emergence_ratio: float
+    identical_worlds_required: bool
+    identical_observations_required: bool
+    identical_queries_required: bool
+    identical_budgets_required: bool
+    no_cross_arm_leakage_required: bool
     maximum_false_synthesis_rate: float
     maximum_provenance_loss_graph_arms: float
     instrumentation_seeds: tuple[int, ...]
@@ -74,6 +127,8 @@ class EpistemicSubstrateConfig:
         analysis = _mapping(value["analysis"], "analysis")
         gates = _mapping(value["quality_gates"], "quality_gates")
         experiments = _mapping(value["experiments"], "experiments")
+        arms = _mapping(value["arms"], "arms")
+        resonance = _mapping(value["resonance"], "resonance")
 
         raw_contrasts = value["confirmatory_contrasts"]
         if not isinstance(raw_contrasts, Sequence) or isinstance(raw_contrasts, (str, bytes)):
@@ -91,6 +146,7 @@ class EpistemicSubstrateConfig:
         config = cls(
             name=str(value["name"]),
             experiments=tuple((str(k), str(v)) for k, v in experiments.items()),
+            benchmark_mode=str(benchmark["mode"]),
             entity_count=int(benchmark["entity_count"]),
             relation_count=int(benchmark["relation_count"]),
             source_packet_count=int(benchmark["source_packet_count"]),
@@ -106,9 +162,14 @@ class EpistemicSubstrateConfig:
             max_retrieval_items_per_query=int(budget["max_retrieval_items_per_query"]),
             max_graph_hops_per_query=int(budget["max_graph_hops_per_query"]),
             max_reasoning_steps_per_query=int(budget["max_reasoning_steps_per_query"]),
+            arms_canonical=_canonical(arms),
+            resonance_canonical=_canonical(resonance),
             primary_endpoints=tuple(str(item) for item in raw_endpoints),
             confirmatory_contrasts=tuple(contrasts),
+            paired_by_world_seed=bool(analysis["paired_by_world_seed"]),
+            multiple_testing=str(analysis["multiple_testing"]),
             alpha=float(analysis["alpha"]),
+            confidence_interval=float(analysis["confidence_interval"]),
             bootstrap_resamples=int(analysis["bootstrap_resamples"]),
             minimum_total_effect_transfer_accuracy=float(
                 analysis["minimum_total_effect_transfer_accuracy"]
@@ -116,6 +177,13 @@ class EpistemicSubstrateConfig:
             minimum_total_effect_collective_emergence_ratio=float(
                 analysis["minimum_total_effect_collective_emergence_ratio"]
             ),
+            identical_worlds_required=bool(gates["require_identical_worlds_across_arms"]),
+            identical_observations_required=bool(
+                gates["require_identical_agent_observations_across_arms"]
+            ),
+            identical_queries_required=bool(gates["require_identical_query_sets_across_arms"]),
+            identical_budgets_required=bool(gates["require_identical_budgets_across_arms"]),
+            no_cross_arm_leakage_required=bool(gates["require_no_cross_arm_state_leakage"]),
             maximum_false_synthesis_rate=float(gates["maximum_false_synthesis_rate"]),
             maximum_provenance_loss_graph_arms=float(
                 gates["maximum_provenance_loss_graph_arms"]
@@ -131,6 +199,12 @@ class EpistemicSubstrateConfig:
             raise ValueError("epistemic-substrate campaign name changed")
         if dict(self.experiments) != EXPECTED_EXPERIMENTS:
             raise ValueError("experiment-to-arm assignment changed")
+        if self.arms_canonical != _canonical(EXPECTED_ARMS):
+            raise ValueError("substrate arm semantics changed")
+        if self.resonance_canonical != _canonical(EXPECTED_RESONANCE):
+            raise ValueError("resonance dynamics changed")
+        if self.benchmark_mode != "deterministic_relational_world":
+            raise ValueError("benchmark mode changed")
         if (
             self.entity_count,
             self.relation_count,
@@ -156,13 +230,29 @@ class EpistemicSubstrateConfig:
             raise ValueError("primary endpoints changed")
         if self.confirmatory_contrasts != EXPECTED_CONFIRMATORY_CONTRASTS:
             raise ValueError("confirmatory contrast set changed")
-        if self.alpha != 0.05 or self.bootstrap_resamples != 10000:
+        if (
+            not self.paired_by_world_seed
+            or self.multiple_testing != "holm"
+            or self.alpha != 0.05
+            or self.confidence_interval != 0.95
+            or self.bootstrap_resamples != 10000
+        ):
             raise ValueError("confirmatory analysis settings changed")
         if (
             self.minimum_total_effect_transfer_accuracy,
             self.minimum_total_effect_collective_emergence_ratio,
         ) != (0.10, 0.10):
             raise ValueError("minimum total-effect gates changed")
+        if not all(
+            (
+                self.identical_worlds_required,
+                self.identical_observations_required,
+                self.identical_queries_required,
+                self.identical_budgets_required,
+                self.no_cross_arm_leakage_required,
+            )
+        ):
+            raise ValueError("cross-arm identity gates changed")
         if (self.maximum_false_synthesis_rate, self.maximum_provenance_loss_graph_arms) != (
             0.05,
             0.01,
