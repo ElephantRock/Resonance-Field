@@ -33,10 +33,17 @@ def _semantic_correct(
     requirements.validate()
     if not observed:
         return False
-    required_ok = all(
-        any(_contains_term(observed, alternative) for alternative in group)
-        for group in requirements.required_groups
-    )
+    if requirements.required_slots:
+        slots = tuple(normalize_answer(slot) for slot in observed.split(";"))
+        required_ok = len(slots) == len(requirements.required_slots) and all(
+            any(_contains_term(slot, alternative) for alternative in alternatives)
+            for slot, alternatives in zip(slots, requirements.required_slots, strict=True)
+        )
+    else:
+        required_ok = all(
+            any(_contains_term(observed, alternative) for alternative in group)
+            for group in requirements.required_groups
+        )
     forbidden_hit = any(_contains_term(observed, term) for term in requirements.forbidden_terms)
     return required_ok and not forbidden_hit
 
