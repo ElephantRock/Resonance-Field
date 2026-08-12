@@ -47,13 +47,16 @@ jobs:
             src/resonance/experiments/llm_epistemic_agents.py \
             src/resonance/experiments/llm_epistemic_openai.py \
             src/resonance/experiments/llm_epistemic_scoring.py \
+            src/resonance/experiments/llm_epistemic_instrumentation.py \
+            src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
             tests/test_llm_epistemic_config.py \
             tests/test_llm_epistemic_corpus.py \
             tests/test_llm_epistemic_events.py \
             tests/test_llm_epistemic_replay.py \
             tests/test_llm_epistemic_agents.py \
             tests/test_llm_epistemic_openai.py \
-            tests/test_llm_epistemic_scoring.py
+            tests/test_llm_epistemic_scoring.py \
+            tests/test_llm_epistemic_instrumentation.py
       - name: Test replication mechanics and provider contract
         run: pytest tests/test_llm_epistemic_*.py
       - name: Enforce instrumentation-only boundary
