@@ -57,6 +57,8 @@ jobs:
             src/resonance/experiments/llm_epistemic_confirmatory_design.py \
             src/resonance/experiments/llm_epistemic_confirmatory_admissibility.py \
             src/resonance/experiments/llm_epistemic_confirmatory_seal.py \
+            src/resonance/experiments/llm_epistemic_confirmatory_execution.py \
+            src/resonance/experiments/llm_epistemic_confirmatory_cli.py \
             tests/test_llm_epistemic_config.py \
             tests/test_llm_epistemic_corpus.py \
             tests/test_llm_epistemic_events.py \
@@ -67,7 +69,8 @@ jobs:
             tests/test_llm_epistemic_scoring.py \
             tests/test_llm_epistemic_instrumentation.py \
             tests/test_llm_epistemic_confirmatory_design.py \
-            tests/test_llm_epistemic_confirmatory_seal.py
+            tests/test_llm_epistemic_confirmatory_seal.py \
+            tests/test_llm_epistemic_confirmatory_execution.py
       - name: Test replication mechanics and provider contract
         run: pytest tests/test_llm_epistemic_*.py
       - name: Enforce instrumentation-only boundary
