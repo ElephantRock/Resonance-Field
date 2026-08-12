@@ -54,6 +54,11 @@ EXPECTED_PROVIDER_REQUEST_CONTRACT_SHA256 = (
     "739fba6b309308d0798003f7c1c6a5d9b859b8ad2c4d94fc3bdcd75a8f246acd"
 )
 EXPECTED_SEAL_SCHEMA_VERSION = "1.0"
+EXPECTED_PER_CALL_RETRIEVAL_BUDGET = 12
+EXPECTED_TOTAL_RETRIEVAL_BUDGET = 24
+EXPECTED_MAXIMUM_RETRIEVAL_TOOL_ROUNDS = 8
+EXPECTED_MAXIMUM_UNSUPPORTED_SYNTHESIS_RATE = 0.05
+EXPECTED_MINIMUM_EVENT_PROVENANCE_COMPLETENESS = 0.99
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,6 +94,9 @@ class LLMEpistemicConfig:
     confirmatory_cases_sealed: bool
     post_seal_case_replacement_allowed: bool
     evaluator_draws: int
+    per_call_retrieval_budget: int
+    total_retrieval_budget: int
+    maximum_retrieval_tool_rounds: int
     primary_endpoint: str
     planned_contrasts: tuple[tuple[str, str], ...]
     priority_contrasts: tuple[tuple[str, str], ...]
@@ -107,6 +115,8 @@ class LLMEpistemicConfig:
     power_detection_target: float
     power_planning_paired_sd_ceiling_r_minus_g: float
     power_reporting: str
+    maximum_unsupported_synthesis_rate: float
+    minimum_event_provenance_completeness: float
     seal_schema_version: str
     seal_scientific_hashes_required: bool
     seal_source_bytes_reverified: bool
@@ -185,6 +195,16 @@ class LLMEpistemicConfig:
             raise ValueError("post-seal confirmatory case replacement must remain disabled")
         if self.evaluator_draws != 5:
             raise ValueError("evaluator draw count changed")
+        if (
+            self.per_call_retrieval_budget,
+            self.total_retrieval_budget,
+            self.maximum_retrieval_tool_rounds,
+        ) != (
+            EXPECTED_PER_CALL_RETRIEVAL_BUDGET,
+            EXPECTED_TOTAL_RETRIEVAL_BUDGET,
+            EXPECTED_MAXIMUM_RETRIEVAL_TOOL_ROUNDS,
+        ):
+            raise ValueError("evaluator retrieval resource controls changed")
         if self.primary_endpoint != "post_agent_task_accuracy":
             raise ValueError("primary endpoint changed")
         if self.planned_contrasts != EXPECTED_CONTRASTS:
@@ -228,6 +248,14 @@ class LLMEpistemicConfig:
             "detection_and_hard_gate_pass_probability_separately",
         ):
             raise ValueError("pre-seal power semantics changed")
+        if (
+            self.maximum_unsupported_synthesis_rate,
+            self.minimum_event_provenance_completeness,
+        ) != (
+            EXPECTED_MAXIMUM_UNSUPPORTED_SYNTHESIS_RATE,
+            EXPECTED_MINIMUM_EVENT_PROVENANCE_COMPLETENESS,
+        ):
+            raise ValueError("confirmatory quality gates changed")
         if self.seal_schema_version != EXPECTED_SEAL_SCHEMA_VERSION:
             raise ValueError("confirmatory seal schema changed")
         if not self.seal_scientific_hashes_required or not self.seal_source_bytes_reverified:
@@ -252,6 +280,7 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
     corpus = value["corpus"]
     agents = value["agents"]
     analysis = value["analysis"]
+    quality = value["quality_gates"]
     seal = value["seal"]
     config = LLMEpistemicConfig(
         name=str(value["name"]),
@@ -291,6 +320,9 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
         confirmatory_cases_sealed=bool(corpus["confirmatory_cases_sealed"]),
         post_seal_case_replacement_allowed=bool(corpus["post_seal_case_replacement_allowed"]),
         evaluator_draws=int(agents["independent_evaluator_draws_per_case_arm"]),
+        per_call_retrieval_budget=int(agents["per_call_retrieval_operation_budget"]),
+        total_retrieval_budget=int(agents["total_retrieval_operation_budget_per_answer"]),
+        maximum_retrieval_tool_rounds=int(agents["maximum_retrieval_tool_rounds_per_answer"]),
         primary_endpoint=str(value["primary_endpoint"]),
         planned_contrasts=_contrast_tuple(value["planned_contrasts"]),
         priority_contrasts=_contrast_tuple(value["confirmatory_priority"]),
@@ -315,6 +347,10 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
             analysis["power_planning_paired_sd_ceiling_r_minus_g"]
         ),
         power_reporting=str(analysis["power_reporting"]),
+        maximum_unsupported_synthesis_rate=float(quality["maximum_unsupported_synthesis_rate"]),
+        minimum_event_provenance_completeness=float(
+            quality["minimum_event_provenance_completeness"]
+        ),
         seal_schema_version=str(seal["schema_version"]),
         seal_scientific_hashes_required=bool(seal["scientific_file_sha256_required"]),
         seal_source_bytes_reverified=bool(seal["source_bytes_reverified_at_seal"]),
