@@ -1,0 +1,3 @@
+One-shot trigger for instrumentation case instr-rust-edition-003 through Z.AI.
+Frozen before outcome: four commit-pinned Rust Edition Guide sources, accepted answers, 5 draws x 4 arms, 12 per-call retrieval units, and 24 total retrieval-operation units per evaluator answer.
+This marker must not be edited or reused for another outcome-bearing run.
