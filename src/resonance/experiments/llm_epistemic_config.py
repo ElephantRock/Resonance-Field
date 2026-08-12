@@ -22,14 +22,26 @@ EXPECTED_PRIORITY_CONTRASTS = (
     ("resonance_field", "provenance_graph"),
     ("resonance_field", "pile"),
 )
+EXPECTED_PROTOCOL_REVISION = "004-confirmatory-design-and-seal-freeze"
+EXPECTED_PROTOCOL_REVISION_HISTORY = (
+    "001-confirmatory-sample-size-512",
+    "002-success-rule-and-power-semantics",
+    "003-provider-identity-freeze",
+    "004-confirmatory-design-and-seal-freeze",
+)
 EXPECTED_INSTRUMENTATION_CASE_COUNT = 24
 EXPECTED_CONFIRMATORY_CASE_COUNT = 512
 EXPECTED_MINIMUM_EVALUABLE_CASE_COUNT = 496
+EXPECTED_MINIMUM_EVALUABLE_PER_CELL = 15
+EXPECTED_CONFIRMATORY_DESIGN_PATH = (
+    "configs/experiments/llm-epistemic-substrate-142-145-confirmatory-design.json"
+)
 EXPECTED_PROVIDER_NAME = "zai"
 EXPECTED_PROVIDER_PROTOCOL = "openai_compatible_chat_completions"
 EXPECTED_PROVIDER_BASE_URL = "https://api.z.ai/api/coding/paas/v4"
 EXPECTED_REQUESTED_MODEL = "glm-5.1"
 EXPECTED_RESPONSE_MODEL = "glm-5.2"
+EXPECTED_OPENAI_SDK_VERSION = "2.54.0"
 EXPECTED_PROVIDER_PROBE_RUN_ID = 31642753502
 EXPECTED_PROVIDER_PROBE_ARTIFACT_ID = 9159514128
 EXPECTED_PROVIDER_PROBE_ARTIFACT_DIGEST = (
@@ -41,18 +53,22 @@ EXPECTED_PROVIDER_PROBE_JSON_SHA256 = (
 EXPECTED_PROVIDER_REQUEST_CONTRACT_SHA256 = (
     "739fba6b309308d0798003f7c1c6a5d9b859b8ad2c4d94fc3bdcd75a8f246acd"
 )
+EXPECTED_SEAL_SCHEMA_VERSION = "1.0"
 
 
 @dataclass(frozen=True, slots=True)
 class LLMEpistemicConfig:
     name: str
     stage: str
+    protocol_revision: str
+    protocol_revision_history: tuple[str, ...]
     experiments: tuple[tuple[str, str], ...]
     provider_name: str
     provider_protocol: str
     provider_base_url: str
     requested_model: str
     expected_response_model: str
+    provider_openai_sdk_version: str
     provider_probe_run_id: int
     provider_probe_artifact_id: int
     provider_probe_artifact_digest: str
@@ -68,6 +84,8 @@ class LLMEpistemicConfig:
     instrumentation_case_count: int
     confirmatory_case_count: int
     minimum_evaluable_case_count: int
+    minimum_evaluable_per_cell: int
+    confirmatory_design_path: str
     confirmatory_cases_sealed: bool
     post_seal_case_replacement_allowed: bool
     evaluator_draws: int
@@ -89,12 +107,22 @@ class LLMEpistemicConfig:
     power_detection_target: float
     power_planning_paired_sd_ceiling_r_minus_g: float
     power_reporting: str
+    seal_schema_version: str
+    seal_scientific_hashes_required: bool
+    seal_source_bytes_reverified: bool
+    seal_treatment_execution: bool
+    seal_evaluator_execution: bool
+    seal_confirmatory_outcomes_observed: bool
 
     def validate(self) -> None:
         if self.name != "llm-epistemic-substrate-142-145-v0.1":
             raise ValueError("campaign name changed")
         if self.stage != "instrumentation_scaffold":
             raise ValueError("campaign stage changed before seal")
+        if self.protocol_revision != EXPECTED_PROTOCOL_REVISION:
+            raise ValueError("protocol revision changed")
+        if self.protocol_revision_history != EXPECTED_PROTOCOL_REVISION_HISTORY:
+            raise ValueError("protocol revision history changed")
         if dict(self.experiments) != EXPECTED_EXPERIMENTS:
             raise ValueError("experiment-to-arm assignment changed")
         provider_identity = (
@@ -103,6 +131,7 @@ class LLMEpistemicConfig:
             self.provider_base_url,
             self.requested_model,
             self.expected_response_model,
+            self.provider_openai_sdk_version,
             self.provider_probe_run_id,
             self.provider_probe_artifact_id,
             self.provider_probe_artifact_digest,
@@ -115,6 +144,7 @@ class LLMEpistemicConfig:
             EXPECTED_PROVIDER_BASE_URL,
             EXPECTED_REQUESTED_MODEL,
             EXPECTED_RESPONSE_MODEL,
+            EXPECTED_OPENAI_SDK_VERSION,
             EXPECTED_PROVIDER_PROBE_RUN_ID,
             EXPECTED_PROVIDER_PROBE_ARTIFACT_ID,
             EXPECTED_PROVIDER_PROBE_ARTIFACT_DIGEST,
@@ -122,7 +152,7 @@ class LLMEpistemicConfig:
             EXPECTED_PROVIDER_REQUEST_CONTRACT_SHA256,
         )
         if provider_identity != expected_provider_identity:
-            raise ValueError("provider/model identity freeze changed")
+            raise ValueError("provider/model/SDK identity freeze changed")
         if (
             self.provider_temperature,
             self.provider_thinking_enabled,
@@ -137,14 +167,18 @@ class LLMEpistemicConfig:
             EXPECTED_INSTRUMENTATION_CASE_COUNT,
             EXPECTED_CONFIRMATORY_CASE_COUNT,
             EXPECTED_MINIMUM_EVALUABLE_CASE_COUNT,
+            EXPECTED_MINIMUM_EVALUABLE_PER_CELL,
         )
         observed_counts = (
             self.instrumentation_case_count,
             self.confirmatory_case_count,
             self.minimum_evaluable_case_count,
+            self.minimum_evaluable_per_cell,
         )
         if observed_counts != expected_counts:
             raise ValueError("case cohort/evaluable sizes changed outside the frozen protocol revisions")
+        if self.confirmatory_design_path != EXPECTED_CONFIRMATORY_DESIGN_PATH:
+            raise ValueError("confirmatory design path changed")
         if self.confirmatory_cases_sealed:
             raise ValueError("confirmatory cases must remain unsealed during scaffold stage")
         if self.post_seal_case_replacement_allowed:
@@ -194,6 +228,18 @@ class LLMEpistemicConfig:
             "detection_and_hard_gate_pass_probability_separately",
         ):
             raise ValueError("pre-seal power semantics changed")
+        if self.seal_schema_version != EXPECTED_SEAL_SCHEMA_VERSION:
+            raise ValueError("confirmatory seal schema changed")
+        if not self.seal_scientific_hashes_required or not self.seal_source_bytes_reverified:
+            raise ValueError("confirmatory seal integrity requirements changed")
+        if any(
+            (
+                self.seal_treatment_execution,
+                self.seal_evaluator_execution,
+                self.seal_confirmatory_outcomes_observed,
+            )
+        ):
+            raise ValueError("confirmatory seal may not execute or observe outcomes")
 
 
 def _contrast_tuple(value: object) -> tuple[tuple[str, str], ...]:
@@ -206,15 +252,19 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
     corpus = value["corpus"]
     agents = value["agents"]
     analysis = value["analysis"]
+    seal = value["seal"]
     config = LLMEpistemicConfig(
         name=str(value["name"]),
         stage=str(value["stage"]),
+        protocol_revision=str(value["protocol_revision"]),
+        protocol_revision_history=tuple(str(item) for item in value["protocol_revision_history"]),
         experiments=tuple((str(k), str(v)) for k, v in value["experiments"].items()),
         provider_name=str(provider["name"]),
         provider_protocol=str(provider["protocol"]),
         provider_base_url=str(provider["base_url"]),
         requested_model=str(provider["requested_model"]),
         expected_response_model=str(provider["expected_response_model"]),
+        provider_openai_sdk_version=str(provider["openai_sdk_version"]),
         provider_probe_run_id=int(provider["identity_probe_run_id"]),
         provider_probe_artifact_id=int(provider["identity_probe_artifact_id"]),
         provider_probe_artifact_digest=str(provider["identity_probe_artifact_digest"]),
@@ -234,6 +284,10 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
         instrumentation_case_count=int(corpus["instrumentation_case_count"]),
         confirmatory_case_count=int(corpus["confirmatory_case_count"]),
         minimum_evaluable_case_count=int(corpus["minimum_evaluable_confirmatory_cases"]),
+        minimum_evaluable_per_cell=int(
+            corpus["minimum_evaluable_cases_per_domain_challenge_cell"]
+        ),
+        confirmatory_design_path=str(corpus["confirmatory_design_path"]),
         confirmatory_cases_sealed=bool(corpus["confirmatory_cases_sealed"]),
         post_seal_case_replacement_allowed=bool(corpus["post_seal_case_replacement_allowed"]),
         evaluator_draws=int(agents["independent_evaluator_draws_per_case_arm"]),
@@ -261,6 +315,14 @@ def load_llm_epistemic_config(path: str | Path) -> LLMEpistemicConfig:
             analysis["power_planning_paired_sd_ceiling_r_minus_g"]
         ),
         power_reporting=str(analysis["power_reporting"]),
+        seal_schema_version=str(seal["schema_version"]),
+        seal_scientific_hashes_required=bool(seal["scientific_file_sha256_required"]),
+        seal_source_bytes_reverified=bool(seal["source_bytes_reverified_at_seal"]),
+        seal_treatment_execution=bool(seal["treatment_execution_during_seal"]),
+        seal_evaluator_execution=bool(seal["evaluator_execution_during_seal"]),
+        seal_confirmatory_outcomes_observed=bool(
+            seal["confirmatory_outcomes_observed_during_seal"]
+        ),
     )
     config.validate()
     return config
@@ -270,6 +332,8 @@ __all__ = [
     "EXPECTED_CONFIRMATORY_CASE_COUNT",
     "EXPECTED_INSTRUMENTATION_CASE_COUNT",
     "EXPECTED_MINIMUM_EVALUABLE_CASE_COUNT",
+    "EXPECTED_OPENAI_SDK_VERSION",
+    "EXPECTED_PROTOCOL_REVISION",
     "EXPECTED_REQUESTED_MODEL",
     "EXPECTED_RESPONSE_MODEL",
     "LLMEpistemicConfig",
