@@ -56,23 +56,8 @@ def _completion(
     )
 
 
-def test_zai_producer_uses_source_controlled_timestamp_and_json_mode() -> None:
-    payload = {
-        "events": [
-            {
-                "source_id": "source-a",
-                "subject": "pip",
-                "predicate": "supports",
-                "object": "break-system-packages",
-                "confidence": 0.9,
-                "source_locator": "NEWS",
-                "uncertainty": None,
-            }
-        ]
-    }
-    fake = FakeClient([_completion(json.dumps(payload))])
-    client = ZAIProducerClient(client=fake)
-    task = ProducerTask(
+def _producer_task() -> ProducerTask:
+    return ProducerTask(
         case_id="case-1",
         producer_id="producer-a",
         research_goal="Find the relevant packaging behavior.",
@@ -86,18 +71,24 @@ def test_zai_producer_uses_source_controlled_timestamp_and_json_mode() -> None:
         ),
     )
 
-    events = client.produce(task)
 
-    assert events[0].observed_at == "2026-08-04T00:00:00Z"
-    assert events[0].metadata["provider"] == "zai"
-    call = fake.chat.completions.calls[0]
-    assert call["response_format"] == {"type": "json_object"}
-    assert call["extra_body"] == {
-        "thinking": {"type": "enabled", "clear_thinking": False}
+def _producer_payload(confidence: object) -> dict[str, object]:
+    return {
+        "events": [
+            {
+                "source_id": "source-a",
+                "subject": "pip",
+                "predicate": "supports",
+                "object": "break-system-packages",
+                "confidence": confidence,
+                "source_locator": "NEWS",
+                "uncertainty": None,
+            }
+        ]
     }
 
 
-def test_zai_evaluator_preserves_reasoning_across_tool_round() -> None:
+def _retrieval_tool() -> SubstrateRetrievalTool:
     config, _ = load_epistemic_substrate_config(PARENT_CONFIG)
     log = EpistemicEventLog(
         schema_version="1.0",
@@ -119,7 +110,44 @@ def test_zai_evaluator_preserves_reasoning_across_tool_round() -> None:
     )
     evidence = replay_event_log(log, config)
     substrate = make_replayed_substrate("provenance_graph", evidence, config)
-    tool = SubstrateRetrievalTool(log, evidence, substrate)
+    return SubstrateRetrievalTool(log, evidence, substrate)
+
+
+def test_zai_producer_uses_source_controlled_timestamp_and_json_mode() -> None:
+    fake = FakeClient([_completion(json.dumps(_producer_payload(0.9)))])
+    client = ZAIProducerClient(client=fake)
+
+    events = client.produce(_producer_task())
+
+    assert events[0].observed_at == "2026-08-04T00:00:00Z"
+    assert events[0].metadata["provider"] == "zai"
+    call = fake.chat.completions.calls[0]
+    assert call["response_format"] == {"type": "json_object"}
+    assert call["extra_body"] == {
+        "thinking": {"type": "enabled", "clear_thinking": False}
+    }
+
+
+def test_zai_producer_retries_non_numeric_confidence_without_coercion() -> None:
+    fake = FakeClient(
+        [
+            _completion(json.dumps(_producer_payload("high"))),
+            _completion(json.dumps(_producer_payload(0.84))),
+        ]
+    )
+    client = ZAIProducerClient(client=fake, max_schema_retries=1)
+
+    events = client.produce(_producer_task())
+
+    assert events[0].confidence == 0.84
+    assert len(fake.chat.completions.calls) == 2
+    retry_prompt = fake.chat.completions.calls[1]["messages"][1]["content"]
+    assert "must be a JSON number" in retry_prompt
+    assert "previous attempt violated" in retry_prompt.lower()
+
+
+def test_zai_evaluator_preserves_reasoning_across_tool_round() -> None:
+    tool = _retrieval_tool()
     call = SimpleNamespace(
         id="call-1",
         function=SimpleNamespace(
@@ -168,3 +196,40 @@ def test_zai_evaluator_preserves_reasoning_across_tool_round() -> None:
     second_messages = fake.chat.completions.calls[1]["messages"]
     assert second_messages[2]["reasoning_content"] == "reasoning-block-1"
     assert second_messages[3]["role"] == "tool"
+
+
+def test_zai_evaluator_retries_non_numeric_final_confidence() -> None:
+    tool = _retrieval_tool()
+    invalid = {
+        "answer": "break-system-packages",
+        "confidence": "high",
+        "cited_event_ids": ["event-1"],
+    }
+    valid = {
+        "answer": "break-system-packages",
+        "confidence": 0.91,
+        "cited_event_ids": ["event-1"],
+    }
+    fake = FakeClient(
+        [
+            _completion(json.dumps(invalid), prompt_tokens=5, completion_tokens=2),
+            _completion(json.dumps(valid), prompt_tokens=6, completion_tokens=3),
+        ]
+    )
+    client = ZAIEvaluatorClient(client=fake, max_schema_retries=1)
+
+    answer = client.evaluate(
+        EvaluatorTask(
+            case_id="case-1",
+            question_id="question-1",
+            question="Which option does pip support?",
+            draw_id=1,
+        ),
+        tool,
+    )
+
+    assert answer.confidence == 0.91
+    assert (answer.input_tokens, answer.output_tokens) == (11, 5)
+    retry_messages = fake.chat.completions.calls[1]["messages"]
+    assert retry_messages[-1]["role"] == "user"
+    assert "must be a JSON number" in retry_messages[-1]["content"]
