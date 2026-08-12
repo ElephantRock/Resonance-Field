@@ -9,6 +9,8 @@ from .epistemic_substrate_campaign import Substrate
 from .llm_epistemic_events import EpistemicEvent, EpistemicEventLog
 from .llm_epistemic_replay import ReplayedEvidence
 
+DEFAULT_TOTAL_RETRIEVAL_BUDGET = 24
+
 
 @dataclass(frozen=True, slots=True)
 class FrozenSource:
@@ -89,21 +91,34 @@ class SubstrateRetrievalTool:
         event_log: EpistemicEventLog,
         evidence: ReplayedEvidence,
         substrate: Substrate,
+        total_budget: int = DEFAULT_TOTAL_RETRIEVAL_BUDGET,
     ) -> None:
         event_log.validate()
         if event_log.sha256() != evidence.event_log_sha256:
             raise ValueError("retrieval tool event log does not match replayed evidence")
+        if total_budget <= 0:
+            raise ValueError("total retrieval budget must be positive")
         self._events = {event.event_id: event for event in event_log.events}
         self._subjects = tuple(sorted({event.subject for event in event_log.events}, key=str.casefold))
         self._evidence = evidence
         self._substrate = substrate
+        self._total_budget = total_budget
+        self._remaining_budget = total_budget
 
     def retrieve(self, subject: str, predicate: str, budget: int) -> RetrievalToolResult:
+        if budget <= 0:
+            raise ValueError("per-call retrieval budget must be positive")
+        if self._remaining_budget <= 0:
+            return RetrievalToolResult((), None, 0, False)
         subject_id = self._evidence.index.entity_to_id.get(subject)
         relation_id = self._evidence.index.relation_to_id.get(predicate)
         if subject_id is None or relation_id is None:
             return RetrievalToolResult((), None, 0, True)
-        retrieval = self._substrate.retrieve(subject_id, relation_id, budget)
+        allowed_budget = min(budget, self._remaining_budget)
+        retrieval = self._substrate.retrieve(subject_id, relation_id, allowed_budget)
+        if retrieval.cost < 0 or retrieval.cost > allowed_budget:
+            raise ValueError("substrate returned an invalid retrieval cost")
+        self._remaining_budget -= retrieval.cost
         selected = self._substrate.choose(retrieval.claims) if retrieval.complete else None
         events = tuple(self._event_for_claim(claim.claim_id) for claim in retrieval.claims)
         chosen_event_id = None
@@ -114,6 +129,14 @@ class SubstrateRetrievalTool:
     def subjects(self) -> tuple[str, ...]:
         """Expose the shared subject vocabulary without revealing factual objects."""
         return self._subjects
+
+    @property
+    def remaining_budget(self) -> int:
+        return self._remaining_budget
+
+    @property
+    def total_budget(self) -> int:
+        return self._total_budget
 
     def _event_for_claim(self, claim_id: int) -> RetrievedEvent:
         event_id = self._evidence.index.claim_to_event_id[claim_id]
@@ -156,6 +179,7 @@ class EvaluatorClient(Protocol):
 
 
 __all__ = [
+    "DEFAULT_TOTAL_RETRIEVAL_BUDGET",
     "EvaluatorAnswer",
     "EvaluatorClient",
     "EvaluatorTask",
