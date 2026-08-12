@@ -8,16 +8,19 @@ from resonance.experiments.piano_phase2 import ModelRequest
 from resonance.experiments.piano_phase2_zai import ZAIChatCompletionsBackend
 
 
+MODEL = "glm-5.2"
+
+
 def _backend() -> ZAIChatCompletionsBackend:
     return ZAIChatCompletionsBackend(
         api_key="test-key",
-        model_snapshot="glm-4-32b-0414-128k",
+        model_snapshot=MODEL,
         allowed_actions=("OBSERVE", "REQUEST_TOOL", "SLEEP"),
         temperature=0.0,
     )
 
 
-def test_zai_request_is_dated_zero_temperature_json_mode_without_provider_seed() -> None:
+def test_zai_request_is_zero_temperature_json_mode_without_provider_seed() -> None:
     body = _backend().request_body(
         ModelRequest(
             stage="action",
@@ -27,8 +30,10 @@ def test_zai_request_is_dated_zero_temperature_json_mode_without_provider_seed()
         )
     )
 
-    assert body["model"] == "glm-4-32b-0414-128k"
+    assert body["model"] == MODEL
     assert "seed" not in body
+    assert body["thinking"] == {"type": "disabled"}
+    assert body["do_sample"] is False
     assert body["temperature"] == 0.0
     assert body["max_tokens"] == 128
     assert body["stream"] is False
@@ -38,7 +43,7 @@ def test_zai_request_is_dated_zero_temperature_json_mode_without_provider_seed()
     assert "OBSERVE" in body["messages"][0]["content"]
 
 
-def _response(content: dict[str, object], *, model: str = "glm-4-32b-0414-128k") -> bytes:
+def _response(content: dict[str, object], *, model: str = MODEL) -> bytes:
     return json.dumps(
         {
             "model": model,
@@ -55,7 +60,7 @@ def test_zai_local_stage_validation_accepts_exact_action_contract() -> None:
         "action",
     )
 
-    assert reply.model_snapshot == "glm-4-32b-0414-128k"
+    assert reply.model_snapshot == MODEL
     assert reply.payload["action"] == "OBSERVE"
     assert reply.input_tokens == 12
     assert reply.output_tokens == 7
