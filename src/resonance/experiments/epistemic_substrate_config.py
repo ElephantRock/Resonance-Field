@@ -119,9 +119,15 @@ class EpistemicSubstrateConfig:
     confirmatory_contrasts: tuple[tuple[str, str], ...]
     paired_by_world_seed: bool
     multiple_testing: str
+    multiple_testing_family: str
     alpha: float
     confidence_interval: float
     bootstrap_resamples: int
+    randomization_test: str
+    randomization_resamples: int
+    randomization_seed: int
+    success_requires_total_effect_significant_on_both_primary_endpoints: bool
+    success_requires_total_effect_ci_lower_above_zero: bool
     minimum_total_effect_transfer_accuracy: float
     minimum_total_effect_collective_emergence_ratio: float
     identical_worlds_required: bool
@@ -191,9 +197,19 @@ class EpistemicSubstrateConfig:
             confirmatory_contrasts=tuple(contrasts),
             paired_by_world_seed=bool(analysis["paired_by_world_seed"]),
             multiple_testing=str(analysis["multiple_testing"]),
+            multiple_testing_family=str(analysis["multiple_testing_family"]),
             alpha=float(analysis["alpha"]),
             confidence_interval=float(analysis["confidence_interval"]),
             bootstrap_resamples=int(analysis["bootstrap_resamples"]),
+            randomization_test=str(analysis["randomization_test"]),
+            randomization_resamples=int(analysis["randomization_resamples"]),
+            randomization_seed=int(analysis["randomization_seed"]),
+            success_requires_total_effect_significant_on_both_primary_endpoints=bool(
+                analysis["success_requires_total_effect_significant_on_both_primary_endpoints"]
+            ),
+            success_requires_total_effect_ci_lower_above_zero=bool(
+                analysis["success_requires_total_effect_ci_lower_above_zero"]
+            ),
             minimum_total_effect_transfer_accuracy=float(
                 analysis["minimum_total_effect_transfer_accuracy"]
             ),
@@ -267,9 +283,15 @@ class EpistemicSubstrateConfig:
         if (
             not self.paired_by_world_seed
             or self.multiple_testing != "holm"
+            or self.multiple_testing_family != "all_primary_contrasts"
             or self.alpha != 0.05
             or self.confidence_interval != 0.95
             or self.bootstrap_resamples != 10000
+            or self.randomization_test != "paired_sign_flip"
+            or self.randomization_resamples != 100000
+            or self.randomization_seed != 138141
+            or not self.success_requires_total_effect_significant_on_both_primary_endpoints
+            or not self.success_requires_total_effect_ci_lower_above_zero
         ):
             raise ValueError("confirmatory analysis settings changed")
         if (
