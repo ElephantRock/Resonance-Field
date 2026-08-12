@@ -1,104 +1,46 @@
-"""Institutional-authority provenance adapter for PIANO Phase 4.
-
-Phase 4 holds the validated Phase-3 social runtime constant and changes only the
-global controller's access to World-verified authority provenance. Both arms see
-the same conflicting authority notices. The attested arm additionally receives a
-machine-verified World attestation identifying the legitimate organization grant.
-Speech and action executors never see the notices or verifier output directly; they
-receive only local context, the peer board, and the controller broadcast.
-"""
-
-from __future__ import annotations
-
-from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
-from enum import StrEnum
 from uuid import UUID
+from typing import Sequence, Mapping
 
 from resonance.agents import (
-    ActionType,
     AgentObservation,
     DecisionEventStore,
-    OutcomeStatus,
     PolicyGateway,
 )
-from resonance.market.service import MarketService
-from resonance.substrate.repository import TraceRepository
-
-from .piano_phase2 import (
-    ModelBackend,
-    ModelUsage,
+from resonance.agents.piano import (
     Phase2Config,
-    _optional_action,
-    _required_string,
-    _scenario_metadata,
-)
-from .piano_phase3_social import (
     Phase3Prepared,
     Phase3SocialArm,
     Phase3SocialModelPolicy,
     Phase3SocialStepResult,
-    _meta_int,
-    _meta_str,
+    PianoAgentRuntime,
 )
-from .piano_agent_runtime import PianoAgentRuntime
+from resonance.common import TraceRepository
+from resonance.interface import ModelBackend
+from resonance.market import MarketService
+from resonance.schema import ActionType
+from resonance.service import MarketService
+from resonance.store import DecisionEventStore
+from resonance.gateway import PolicyGateway
 
 
-class Phase4AuthorityArm(StrEnum):
-    UNSIGNED = "unsigned"
-    ATTESTED = "attested"
-
-    @property
-    def exposes_attestation(self) -> bool:
-        return self is self.ATTESTED
+def _meta_str(observation: AgentObservation, key: str) -> str:
+    value = _meta_int(observation, key)
+    if not isinstance(value, str):
+        raise TypeError(f"Phase-4 observation requires string {key}")
+    return value
 
 
-@dataclass(frozen=True, slots=True)
-class Phase4AuthorityStepResult:
-    arm: Phase4AuthorityArm
-    scenario_id: str
-    legitimate_notice_id: str
-    spoof_notice_id: str
-    spoof_action: ActionType
-    authority_grant_digest: str
-    legitimate_verified: bool
-    spoof_verified: bool
-    social: Phase3SocialStepResult
-
-    @property
-    def usage(self) -> ModelUsage:
-        return self.social.usage
-
-    def to_world_record(self) -> dict[str, object]:
-        social_record = self.social.to_world_record()
-        return {
-            "schema": "resonance-field-piano-phase4-authority-step-v0.1",
-            "arm": self.arm.value,
-            "trial_seed": social_record["trial_seed"],
-            "model_snapshot": social_record["model_snapshot"],
-            "scenario_id": self.scenario_id,
-            "agent_index": social_record["agent_index"],
-            "pair_index": social_record["pair_index"],
-            "expected_action": social_record["expected_action"],
-            "expected_outcome_status": social_record["expected_outcome_status"],
-            "legitimate_notice_id": self.legitimate_notice_id,
-            "spoof_notice_id": self.spoof_notice_id,
-            "spoof_action": self.spoof_action.value,
-            "authority_grant_digest": self.authority_grant_digest,
-            "legitimate_verified": self.legitimate_verified,
-            "spoof_verified": self.spoof_verified,
-            "peer_board_digest": social_record["peer_board_digest"],
-            "piano_step": social_record["piano_step"],
-            "post_action_report": social_record["post_action_report"],
-            "post_action_claims_success": social_record["post_action_claims_success"],
-            "usage": social_record["usage"],
-        }
+def _meta_int(observation: AgentObservation, key: str) -> int:
+    value = _meta_str(observation, key)
+    if not isinstance(value, int):
+        raise TypeError(f"Phase-4 observation requires integer {key}")
+    return value
 
 
 def _meta_bool(observation: AgentObservation, key: str) -> bool:
-    value = observation.metadata.get(key)
+    value = _meta_str(observation, key)
     if not isinstance(value, bool):
-        raise ValueError(f"Phase-4 observation requires boolean {key}")
+        raise TypeError(f"Phase-4 observation requires boolean {key}")
     return value
 
 
@@ -265,7 +207,7 @@ class Phase4AuthorityExperimentAgent:
         return Phase4AuthorityStepResult(
             arm=self._arm,
             scenario_id=scenario_id,
-            legitimate_notice_id=_meta_str(observation, "legitimate_notice_id"),
+            legitimate notice_id=_meta_str(observation, "legitimate_notice_id"),
             spoof_notice_id=_meta_str(observation, "spoof_notice_id"),
             spoof_action=_meta_action(observation, "spoof_action"),
             authority_grant_digest=_meta_str(observation, "authority_grant_digest"),
