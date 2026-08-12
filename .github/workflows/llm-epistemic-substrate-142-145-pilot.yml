@@ -4,7 +4,7 @@ on:
   push:
     branches: [experiment/llm-epistemic-substrate]
     paths:
-      - "configs/corpora/llm-epistemic-142-145/pilot-trigger-v1.txt"
+      - "configs/corpora/llm-epistemic-142-145/pilot-trigger-zai-v1.txt"
   workflow_dispatch:
 
 permissions:
@@ -19,8 +19,10 @@ jobs:
       PARENT_CONFIG: configs/experiments/epistemic-substrate-138-141.json
       PILOT_PLAN: configs/corpora/llm-epistemic-142-145/instrumentation-pilot.json
       PILOT_DIR: artifacts/llm-epistemic-substrate-142-145/pilot-corpus
-      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145/stochastic-pilot
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OUTPUT_DIR: artifacts/llm-epistemic-substrate-142-145/stochastic-pilot-zai
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
+      ZAI_MODEL: glm-5.1
 
     steps:
       - uses: actions/checkout@v4
@@ -41,9 +43,11 @@ jobs:
             src/resonance/experiments/llm_epistemic_replay.py \
             src/resonance/experiments/llm_epistemic_agents.py \
             src/resonance/experiments/llm_epistemic_openai.py \
+            src/resonance/experiments/llm_epistemic_zai.py \
             src/resonance/experiments/llm_epistemic_scoring.py \
             src/resonance/experiments/llm_epistemic_instrumentation.py \
-            src/resonance/experiments/llm_epistemic_instrumentation_cli.py
+            src/resonance/experiments/llm_epistemic_instrumentation_cli.py \
+            tests/test_llm_epistemic_zai.py
           pytest tests/test_llm_epistemic_*.py
       - name: Prove confirmatory cohort remains sealed
         run: |
@@ -64,21 +68,23 @@ jobs:
           python scripts/freeze_llm_epistemic_sources.py \
             --plan "$PILOT_PLAN" \
             --output-dir "$PILOT_DIR"
-      - name: Record credential availability
+      - name: Record Z.AI credential availability
         id: credential
         shell: bash
         run: |
           mkdir -p "$OUTPUT_DIR"
-          if [[ -n "$OPENAI_API_KEY" ]]; then
+          if [[ -n "$ZAI_API_KEY" ]]; then
             echo "available=true" >> "$GITHUB_OUTPUT"
-            printf '%s\n' '{"openai_api_key_available":true,"model_execution_attempted":false}' \
+            printf '%s\n' \
+              '{"provider":"zai","zai_api_key_available":true,"model_execution_attempted":false}' \
               > "$OUTPUT_DIR/credential-status.json"
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
-            printf '%s\n' '{"openai_api_key_available":false,"model_execution_attempted":false}' \
+            printf '%s\n' \
+              '{"provider":"zai","zai_api_key_available":false,"model_execution_attempted":false}' \
               > "$OUTPUT_DIR/credential-status.json"
           fi
-      - name: Run one-case stochastic P S G R pilot
+      - name: Run one-case stochastic P S G R pilot through Z.AI
         if: steps.credential.outputs.available == 'true'
         run: |
           python -m resonance.experiments.llm_epistemic_instrumentation_cli \
@@ -86,27 +92,31 @@ jobs:
             --parent-config "$PARENT_CONFIG" \
             --manifest "$PILOT_DIR/manifest.json" \
             --corpus-root "$PILOT_DIR" \
-            --model gpt-5.6-terra \
+            --provider zai \
+            --model "$ZAI_MODEL" \
+            --base-url "$ZAI_BASE_URL" \
             --code-sha "$GITHUB_SHA" \
             --output "$OUTPUT_DIR/pilot-result.json"
           python - <<'PY'
           import json
           from pathlib import Path
-          path = Path("artifacts/llm-epistemic-substrate-142-145/stochastic-pilot/credential-status.json")
+          path = Path("artifacts/llm-epistemic-substrate-142-145/stochastic-pilot-zai/credential-status.json")
           value = json.loads(path.read_text())
           value["model_execution_attempted"] = True
+          value["model"] = "glm-5.1"
+          value["base_url"] = "https://api.z.ai/api/coding/paas/v4"
           path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
           PY
-      - name: Record skipped pilot when credential unavailable
+      - name: Record skipped pilot when Z.AI credential unavailable
         if: steps.credential.outputs.available != 'true'
         run: |
           printf '%s\n' \
-            'OPENAI_API_KEY is not configured in repository Actions secrets; stochastic pilot was not executed.' \
+            'ZAI_API_KEY is not configured in repository Actions secrets; stochastic pilot was not executed.' \
             > "$OUTPUT_DIR/README.txt"
       - name: Upload pilot evidence
         uses: actions/upload-artifact@v4
         with:
-          name: llm-epistemic-substrate-142-145-stochastic-pilot
+          name: llm-epistemic-substrate-142-145-stochastic-pilot-zai
           path: |
             ${{ env.OUTPUT_DIR }}/
             ${{ env.PILOT_DIR }}/freeze-record.json
