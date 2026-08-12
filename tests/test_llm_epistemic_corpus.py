@@ -1,5 +1,6 @@
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
 from resonance.experiments.llm_epistemic_corpus import (
@@ -101,6 +102,25 @@ def test_manifest_round_trip_loader_preserves_canonical_hash(tmp_path: Path) -> 
 
     assert loaded.sha256() == manifest.sha256()
     assert loaded.cases_for_instrumentation() == manifest.cases_for_instrumentation()
+
+
+def test_producer_deposit_floor_is_prospective_and_round_trips(tmp_path: Path) -> None:
+    legacy = _case("instrumentation")
+    assert "minimum_events_per_producer" not in legacy.canonical_mapping()
+
+    guarded = replace(legacy, minimum_events_per_producer=1)
+    manifest = CorpusManifest(
+        manifest_version="1.0",
+        sources=tuple(_source(index) for index in range(1, 5)),
+        cases=(guarded,),
+    )
+    path = tmp_path / "guarded.json"
+    path.write_text(manifest.canonical_bytes().decode())
+
+    loaded = load_corpus_manifest(path)
+
+    assert loaded.cases[0].minimum_events_per_producer == 1
+    assert loaded.sha256() == manifest.sha256()
 
 
 def test_verify_source_file_checks_content_hash(tmp_path: Path) -> None:
