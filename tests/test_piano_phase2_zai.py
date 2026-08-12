@@ -1,7 +1,6 @@
 import json
 
 import pytest
-
 from resonance.experiments.piano_phase2 import ModelRequest
 from resonance.experiments.piano_phase2_zai import ZAIChatCompletionsBackend
 
