@@ -108,7 +108,7 @@ The campaign records evidence coverage, contradiction-resolution F1, bridge reca
 
 Secondary endpoints cannot rescue a failed primary result.
 
-## Confirmatory contrasts
+## Confirmatory contrasts and inference
 
 The frozen paired contrasts are:
 
@@ -117,9 +117,23 @@ The frozen paired contrasts are:
 3. R − G: incremental benefit of field dynamics over a static provenance graph.
 4. R − P: total substrate effect.
 
-All contrasts are paired by world seed. Family-wise alpha is 0.05 with Holm correction. Effect intervals use a 10,000-resample paired bootstrap at 95% confidence.
+Each contrast is evaluated on both primary endpoints, producing one family of **8 primary hypothesis tests**. Family-wise alpha is 0.05 and all eight raw p-values are corrected together with Holm's procedure.
 
-The total-effect success gate additionally requires R − P to be at least +0.10 absolute on both transfer accuracy and collective emergence ratio.
+For each paired contrast and endpoint:
+
+- the effect estimate is the mean within-world treatment-minus-control difference;
+- the 95% effect interval is a paired percentile bootstrap with 10,000 resamples; and
+- the raw two-sided p-value is a paired sign-flip randomization test with 100,000 resamples.
+
+Randomization is deterministic. The frozen campaign randomization seed is `138141`; independent per-test bootstrap and sign-flip streams are derived from that seed plus the endpoint/contrast label through SHA-256.
+
+The campaign-level success rule is deliberately stronger than simple monotonicity. Both R − P primary effects must simultaneously satisfy all three conditions:
+
+1. absolute effect at least +0.10;
+2. Holm-adjusted p-value below 0.05; and
+3. 95% paired-bootstrap lower bound above zero.
+
+Failure of either primary R − P endpoint means the campaign does not meet the preregistered success criterion. Secondary endpoints and intermediate contrasts cannot rescue that failure.
 
 ## Quality gates
 
@@ -139,6 +153,8 @@ Instrumentation failures may be repaired only before confirmatory execution and 
 Instrumentation uses seeds 3101–3108 and is non-inferential. Confirmatory execution uses 64 paired worlds, seeds 3201–3264. The same confirmatory world seed will be run through all four arms.
 
 The instrumentation CLI and workflow enumerate only the instrumentation cohort. They write `inferential: false` and `confirmatory_seeds_evaluated: false` into the evidence artifact.
+
+The sealed confirmatory CLI additionally requires the literal seal `OPEN-138-141-CONFIRMATORY` and a validated instrumentation artifact whose campaign name, configuration hash, and instrumentation seed cohort exactly match the current frozen configuration. It refuses evidence that is inferential, failed instrumentation gates, or claims that confirmatory seeds were previously evaluated.
 
 No confirmatory seed may be replaced after outcome inspection.
 
@@ -160,12 +176,12 @@ These changes are instrumentation fixes and benchmark-definition refinements. Re
 
 ## Interpretation rule
 
-A positive monotone pattern P ≤ S ≤ G ≤ R is informative, but monotonicity alone is not the success criterion. The preregistered paired contrasts, multiplicity correction, quality gates, and minimum R − P total effects control the decision.
+A positive monotone pattern P ≤ S ≤ G ≤ R is informative, but monotonicity alone is not the success criterion. The preregistered eight-test Holm family, paired inference, quality gates, and dual-primary R − P success rule control the decision.
 
 A null result means that, under deterministic equal-capability agents and the frozen benchmark, the added substrate structure did not create the preregistered persistent collective capability. A later stochastic LLM/web replication may test external validity but may not retroactively rescue Experiments 138–141.
 
 ## Current execution boundary
 
-The branch now contains the deterministic world generator, immutable observation schedule, four substrate adapters, transfer evaluator, frozen configuration loader, mechanical tests, and an instrumentation-only CLI/workflow.
+The branch now contains the deterministic world generator, immutable observation schedule, four substrate adapters, transfer evaluator, frozen configuration loader, mechanical tests, frozen confirmatory statistics, an instrumentation-only CLI/workflow, and a sealed confirmatory CLI.
 
-Confirmatory statistical execution is intentionally not exposed by the current workflow. It should be added only after the draft PR is green and the instrumentation evidence artifact passes the frozen hard gates without further protocol changes.
+Confirmatory execution is not invoked by the instrumentation workflow. The 64-world cohort may be opened only after this exact code/configuration/documentation state passes the repository CI and the read-only instrumentation gate, and after a matching validated instrumentation artifact exists for the same configuration hash.
