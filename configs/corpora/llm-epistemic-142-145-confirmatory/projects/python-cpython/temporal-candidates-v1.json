@@ -14,7 +14,7 @@
     {
       "candidate_id": "cpython-tc-multiprocessing-start-method",
       "canonical_target_subject": "multiprocessing start method",
-      "eligibility": "eligible_unranked",
+      "eligibility": "eligible_unranked_source_bytes_frozen",
       "temporal_gap_days": 674.6351041666667,
       "question_draft": "For current CPython multiprocessing defaults, give four values in order: the default start method on POSIX systems that support forkserver and are not macOS; the default start method on macOS; the POSIX default that Python 3.14 replaced; and the implementation capability flag that gates use of forkserver.",
       "canonical_answer_draft": "forkserver; spawn; fork; reduction.HAVE_SEND_HANDLE",
@@ -29,6 +29,19 @@
       "minimum_temporal_conflict_keys": 1,
       "required_source_count": 3,
       "producer_count": 4,
+      "freeze_audit": {
+        "workflow_run_id": 31648892469,
+        "workflow_head_sha": "803475f8baa3c435daa564ff432818f7b20320d3",
+        "artifact_id": 9161808192,
+        "artifact_digest": "sha256:36f52bf0510cbb59401af799dbd5b4faac16613c46a6135b32819e1e23b8dc6a",
+        "acquisition_plan_sha256": "2dc577815acc766389d546e12f36118782ea9b9aab0bc71828be2ed384b011af",
+        "source_count": 4,
+        "science_diff_guard_passed": true,
+        "git_blob_verification_passed": true,
+        "treatment_execution": false,
+        "evaluator_execution": false,
+        "confirmatory_outcomes_observed": false
+      },
       "sources": [
         {
           "source_id_draft": "cpython-multiprocessing-docs-313",
@@ -37,6 +50,8 @@
           "commit_sha": "60403a5409ff2c3f3b07dd2ca91a7a3e096839c7",
           "path": "Doc/library/multiprocessing.rst",
           "git_blob_sha": "80d6e4dae24463bcc5e9fda39b7020f91b881a78",
+          "sha256": "8b1499ffc14c92c3c76730a40d330e4deb1508c5235a18e5dff5118695ccf6ee",
+          "bytes": 114718,
           "evidence_observed_at": "2024-10-07T05:02:14Z",
           "source_fact": "POSIX except macOS currently defaults to fork; macOS defaults to spawn; the default will change away from fork in Python 3.14."
         },
@@ -47,6 +62,8 @@
           "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
           "path": "Doc/library/multiprocessing.rst",
           "git_blob_sha": "bedea46cb16d60d58a797d16743c914617571f98",
+          "sha256": "b693971bcbc774dabed58b11ab8d6941c7852a9e0d976bc630bf96aae4de92b1",
+          "bytes": 124421,
           "evidence_observed_at": "2026-08-12T20:16:47Z",
           "source_fact": "fork is no longer the default anywhere; forkserver is the POSIX default; spawn remains the macOS default."
         },
@@ -57,6 +74,8 @@
           "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
           "path": "Lib/multiprocessing/context.py",
           "git_blob_sha": "45c393798deaca2449f6b27d6d21bd0918b49217",
+          "sha256": "6f293b2f2ce6d5f95bbd67c60062cd69d54e714a865167555135eb0220fe3f6e",
+          "bytes": 12445,
           "evidence_observed_at": "2026-08-12T20:16:47Z",
           "source_fact": "The default context is forkserver when reduction.HAVE_SEND_HANDLE is true and sys.platform is not darwin; otherwise it is spawn."
         },
@@ -67,6 +86,8 @@
           "commit_sha": "bc31217fe432b5ede1485bec2b62b2c67a48eee4",
           "path": "Doc/whatsnew/3.14.rst",
           "git_blob_sha": "64c6888d99477022bdbb75bf514ea78326e37f6b",
+          "sha256": "19befc9293186034ceed535c6d580b469d4e6beeb4b26d7f4801807b42090b43",
+          "bytes": 132509,
           "evidence_observed_at": "2026-08-12T20:16:47Z",
           "source_fact": "Python 3.14 changed Unix-other-than-macOS multiprocessing default from fork to forkserver; spawn remains default on macOS."
         }
