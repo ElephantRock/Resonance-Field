@@ -21,13 +21,23 @@ def _restore(source: dict[str, Any], key: str) -> bool:
         source[key] = "".join(parts)
         return True
     octets = source.get(f"{key}_octets")
-    if isinstance(octets, list) and len(octets) == 20 and all(type(v) is int and 0 <= v <= 255 for v in octets):
-        source[key] = "".join(format(v, "02x") for v in octets)
+    valid_octets = (
+        isinstance(octets, list)
+        and len(octets) == 20
+        and all(type(value) is int and 0 <= value <= 255 for value in octets)
+    )
+    if valid_octets:
+        source[key] = "".join(format(value, "02x") for value in octets)
         return True
     return False
 
 
-def freeze_structured(plan_path: str | Path, output_dir: str | Path, *, timeout: float = 30.0) -> dict[str, Any]:
+def freeze_structured(
+    plan_path: str | Path,
+    output_dir: str | Path,
+    *,
+    timeout: float = 30.0,
+) -> dict[str, Any]:
     plan_file = Path(plan_path)
     raw_plan = plan_file.read_bytes()
     plan = json.loads(raw_plan)
@@ -49,7 +59,10 @@ def freeze_structured(plan_path: str | Path, output_dir: str | Path, *, timeout:
         record = freeze_batch(handle.name, output_dir, timeout=timeout)
     record["plan_sha256"] = hashlib.sha256(raw_plan).hexdigest()
     output = Path(output_dir)
-    (output / "freeze-record.json").write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (output / "freeze-record.json").write_text(
+        json.dumps(record, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     return record
 
 
