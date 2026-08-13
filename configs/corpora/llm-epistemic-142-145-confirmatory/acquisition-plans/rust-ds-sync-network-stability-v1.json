@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"rust-ds-sync-network-stability",
+  "acquired_at":"2026-08-13T05:20:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"rust-ds-oncelock-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/sync/once_lock.rs","git_blob_sha":"4b41fc4587829e24b95f2877dd64ad21cee844e3","media_type":"text/x-rust","title":"Rust std OnceLock source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-lazylock-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/sync/lazy_lock.rs","git_blob_sha":"9bb25287275b2fdbfff84654d0d8134126e0c350","media_type":"text/x-rust","title":"Rust std LazyLock source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-tcp-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/net/tcp.rs","git_blob_sha":"00f802e5d915513c1b0e30af360240499e80b7b7","media_type":"text/x-rust","title":"Rust std TCP source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-udp-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/net/udp.rs","git_blob_sha":"4aa77fc9c1fe9e85dec183755868667c5893fb5a","media_type":"text/x-rust","title":"Rust std UDP source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

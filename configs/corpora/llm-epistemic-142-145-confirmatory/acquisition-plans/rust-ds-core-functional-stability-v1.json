@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"rust-ds-core-functional-stability",
+  "acquired_at":"2026-08-13T05:20:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"rust-ds-array-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/core/src/array/mod.rs","git_blob_sha":"63a99349d7c9a9ef2bfb4e80c73695c090246b40","media_type":"text/x-rust","title":"Rust core array source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-iterator-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/core/src/iter/traits/iterator.rs","git_blob_sha":"3867a44099f6d72672fa3298714db593dbd63df9","media_type":"text/x-rust","title":"Rust core Iterator source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-option-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/core/src/option.rs","git_blob_sha":"5d86f851dbd1dab94f0fc2fcd117a7151bdc0db4","media_type":"text/x-rust","title":"Rust core Option source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-result-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/core/src/result.rs","git_blob_sha":"b257cd8c82a0ef853f5ed222c78a9fea4c2b674c","media_type":"text/x-rust","title":"Rust core Result source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}
