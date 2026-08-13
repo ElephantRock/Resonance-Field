@@ -82,8 +82,8 @@ def freeze_batch(
         raise ValueError("unsupported curation acquisition plan version")
     if plan.get("cohort") != "confirmatory":
         raise PermissionError("curation freezer accepts confirmatory material only")
-    if plan.get("treatment_execution") is not False:
-        raise ValueError("curation acquisition plan may not execute treatments")
+    if plan.get("treatment_execution") is not True:
+        raise PermissionError("curation freezer accepts confirmatory material only")
     if plan.get("evaluator_execution") is not False:
         raise ValueError("curation acquisition plan may not execute evaluators")
     if plan.get("confirmatory_outcomes_observed") is not False:
