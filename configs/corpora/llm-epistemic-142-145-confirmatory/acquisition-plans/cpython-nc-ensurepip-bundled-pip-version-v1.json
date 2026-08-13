@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-nc-ensurepip-bundled-pip-version",
+  "acquired_at": "2026-08-13T04:45:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-nc-ensurepip-code-before",
+      "repository": "python/cpython",
+      "commit_sha": "f33a5f5261652d29d185aff10854b72d7c90f199",
+      "path": "Lib/ensurepip/__init__.py",
+      "git_blob_sha": "bd73ddb95cd07f70de43fea678ff5ba266a3261f",
+      "media_type": "text/x-python",
+      "title": "CPython ensurepip implementation immediately before pip 26.2.1 bump",
+      "evidence_observed_at": "2026-08-05T05:52:35Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-ensurepip-code-after",
+      "repository": "python/cpython",
+      "commit_sha": "b7cd0abd75318e2a41009f7240749f933562a6ca",
+      "path": "Lib/ensurepip/__init__.py",
+      "git_blob_sha": "bc2fb742cb9cfcad824a46161920f04c5d3da35f",
+      "media_type": "text/x-python",
+      "title": "CPython ensurepip implementation after pip 26.2.1 bump",
+      "evidence_observed_at": "2026-08-05T05:55:52Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-ensurepip-doc-after",
+      "repository": "python/cpython",
+      "commit_sha": "b7cd0abd75318e2a41009f7240749f933562a6ca",
+      "path": "Doc/library/ensurepip.rst",
+      "git_blob_sha": "e0d77229b11802f8ba2c3711eece6eeaec6e64e5",
+      "media_type": "text/x-rst",
+      "title": "CPython ensurepip documentation at pip 26.2.1 bump",
+      "evidence_observed_at": "2026-08-05T05:55:52Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-ensurepip-news-after",
+      "repository": "python/cpython",
+      "commit_sha": "b7cd0abd75318e2a41009f7240749f933562a6ca",
+      "path": "Misc/NEWS.d/next/Library/2026-08-04-19-03-20.gh-issue-155063.gN_mCU.rst",
+      "git_blob_sha": "fdb03c907a581ca3a1d131ca4c87b80489e05108",
+      "media_type": "text/x-rst",
+      "title": "CPython ensurepip pip 26.2.1 bump news entry",
+      "evidence_observed_at": "2026-08-05T05:55:52Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}
