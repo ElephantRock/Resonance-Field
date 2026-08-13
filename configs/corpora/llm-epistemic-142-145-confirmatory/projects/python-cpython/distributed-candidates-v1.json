@@ -1,0 +1,104 @@
+{
+  "ledger_version": "1.0",
+  "project": "python/cpython",
+  "upstream_project_id": "python/cpython",
+  "upstream_organization_id": "python",
+  "domain_id": "programming_languages_and_runtimes",
+  "challenge_type": "distributed_synthesis",
+  "selection_status": "discovery_screen_closed_four_eligible_ranked_and_selected",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "eligible candidates ordered by canonical target subject, then newest required-source path, commit time, and SHA; first four fill ds-01..04",
+  "common_freeze_audit": {
+    "workflow_run_id": 31666902009,
+    "workflow_head_sha": "4c0d647d341b907ff122fd85f72e6fa2434c2269",
+    "artifact_id": 9168253441,
+    "artifact_digest": "sha256:3379cfc4265268963e37296e88e494fbc858fe2452d3df7849faf8d60ab6bf0d",
+    "source_count": 16,
+    "unique_source_sha256_count": 16,
+    "global_selected_plus_candidate_source_count": 32,
+    "global_selected_plus_candidate_unique_source_sha256_count": 32,
+    "science_diff_guard_passed": true,
+    "git_blob_verification_passed": true,
+    "treatment_execution": false,
+    "evaluator_execution": false,
+    "confirmatory_outcomes_observed": false
+  },
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "cpython-ds-compression-api-defaults",
+      "canonical_target_subject": "compression API defaults",
+      "selected_case_id": "plr-cpython-ds-01",
+      "question": "Across current CPython standard-library compression APIs, give four defaults in order: bz2.BZ2Compressor compresslevel; lzma.LZMACompressor format; zipfile.ZipFile compression; and zlib.compress level.",
+      "canonical_answer": "9; FORMAT_XZ; ZIP_STORED; Z_DEFAULT_COMPRESSION",
+      "ordered_required_slots": [["9"], ["FORMAT_XZ", "lzma.FORMAT_XZ"], ["ZIP_STORED", "zipfile.ZIP_STORED"], ["Z_DEFAULT_COMPRESSION", "-1"]],
+      "acquisition_plan_sha256": "0777666959b140129ff7c5f602cbe3bfe11c4f450ba50496ab7d77374cb46ed1",
+      "source_integrity": [
+        {"source_id":"cpython-ds-bz2-docs-current","git_blob_sha":"6c20e9c94a3eaeeefb7d6d0791f57c1dca7038c7","sha256":"5fa8d75e3328a4dd9f6820845b8ee18ae0a5d2faf06c9fd8ae745b31c993d10d","bytes":12998,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-lzma-docs-current","git_blob_sha":"580829cfbb46e0712928dbe43b579a04d28b9546","sha256":"a108d1fa694c39fd890dbbfa3d244df5da6c4f12c6062721ee7b590a3a2980ca","bytes":19620,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-zipfile-docs-current","git_blob_sha":"65bc54e3856a94580efe6665818f179db0dc129b","sha256":"eebdf7cf81b5df175afe25e655a44ab2b79b08437dae17c52667c64a6906c8e1","bytes":41908,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-zlib-docs-current","git_blob_sha":"f043915c0f4b94ed7fcd62e5a77c380513db981b","sha256":"cba66c3971a3dfbd21d69677c0ce16b0215de3bb3155d96499e8e74c2d37c0cf","bytes":18261,"evidence_observed_at":"2026-08-13T00:12:39Z"}
+      ],
+      "producer_allocation": [["producer-cpython-ds-bz2",["cpython-ds-bz2-docs-current"]],["producer-cpython-ds-lzma",["cpython-ds-lzma-docs-current"]],["producer-cpython-ds-zipfile",["cpython-ds-zipfile-docs-current"]],["producer-cpython-ds-zlib",["cpython-ds-zlib-docs-current"]]],
+      "required_source_ids": ["cpython-ds-bz2-docs-current","cpython-ds-lzma-docs-current","cpython-ds-zipfile-docs-current","cpython-ds-zlib-docs-current"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "cpython-ds-filesystem-helper-defaults",
+      "canonical_target_subject": "filesystem helper defaults",
+      "selected_case_id": "plr-cpython-ds-02",
+      "question": "Across current CPython filesystem helpers, give four defaults in order: tempfile.TemporaryFile mode; shutil.copytree dirs_exist_ok; pathlib.Path.glob case_sensitive; and glob.glob include_hidden.",
+      "canonical_answer": "w+b; False; None; False",
+      "ordered_required_slots": [["w+b", "'w+b'", "\"w+b\""], ["False", "false"], ["None", "none"], ["False", "false"]],
+      "acquisition_plan_sha256": "2fbecced259b9f436c46e788d9302c7790cb4e2f110a55fe75a77a581bea4198",
+      "source_integrity": [
+        {"source_id":"cpython-ds-tempfile-docs-current","git_blob_sha":"9b89cb92594ea61b685d9853c95eec0359a04db9","sha256":"c0dd7ccbad30e869b4425ae508c36924122b51c09f356b3f4b58282e70ee2568","bytes":20849,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-shutil-docs-current","git_blob_sha":"2822e979990c4de1faeaf048b8b640077a31b9ff","sha256":"b9eea47e3d9b57183f34aabd2ad78356d62a6bd0e0bb8ad589d7639735b62804","bytes":37317,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-pathlib-docs-current","git_blob_sha":"ab92c142c37a4f6cfd52b5c675d838de2076e633","sha256":"2ce805990a2f9f7a9e8194c518cc1a8ff8fc46d538080160ee33a3d981476900","bytes":68675,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-glob-docs-current","git_blob_sha":"bbeb808159d446be69c0fe6cf9d4d03b0d0eba7d","sha256":"2538975acb9b335b912a984268130750911d6f89c643598833caa8885c298369","bytes":7714,"evidence_observed_at":"2026-08-13T00:12:39Z"}
+      ],
+      "producer_allocation": [["producer-cpython-ds-tempfile",["cpython-ds-tempfile-docs-current"]],["producer-cpython-ds-shutil",["cpython-ds-shutil-docs-current"]],["producer-cpython-ds-pathlib",["cpython-ds-pathlib-docs-current"]],["producer-cpython-ds-glob",["cpython-ds-glob-docs-current"]]],
+      "required_source_ids": ["cpython-ds-tempfile-docs-current","cpython-ds-shutil-docs-current","cpython-ds-pathlib-docs-current","cpython-ds-glob-docs-current"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "cpython-ds-network-client-defaults",
+      "canonical_target_subject": "network client defaults",
+      "selected_case_id": "plr-cpython-ds-03",
+      "question": "Across current CPython networking APIs, give four defaults in order: socket.socket address family; http.client.HTTPConnection blocksize; urllib.request.urlopen timeout behavior when timeout is omitted; and ssl.create_default_context purpose.",
+      "canonical_answer": "AF_INET; 8192; global default timeout; Purpose.SERVER_AUTH",
+      "ordered_required_slots": [["AF_INET", "socket.AF_INET"], ["8192"], ["global default timeout", "global default timeout setting", "socket global default timeout", "_GLOBAL_DEFAULT_TIMEOUT"], ["Purpose.SERVER_AUTH", "SERVER_AUTH"]],
+      "acquisition_plan_sha256": "b0172085a06f7183f9c056cb724f21d763df444ff9b781c846d39743d5204f1f",
+      "source_integrity": [
+        {"source_id":"cpython-ds-socket-docs-current","git_blob_sha":"836aa91bb0885b16735e589bc447843b0f025d03","sha256":"6cc3541f8676aa2330869f6ddee8278970933a289c427d0e2eda87a237a50011","bytes":91897,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-http-client-docs-current","git_blob_sha":"98ea09d8f72d8b6993db76be669258e00aa73bd9","sha256":"ace4c09b7277e9c24d79ef60a7021e9fa1e0d9a1e88fb6c484793ca0345f52ff","bytes":23874,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-urllib-request-docs-current","git_blob_sha":"95e4d2627c8b23b34dd5f4469313b39511a97a62","sha256":"75afeccd57a6d43eef24a9f0bf4b86c0cd29eff29e8e6258ae92d5230bacbe37","bytes":58746,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-ssl-docs-current","git_blob_sha":"66fe6c7aee486269c249da2e42f8f713327a736b","sha256":"03ffe0e51c2036bd582a89d31e75a77097ff98f7768022122fbdbe46d6cb50b0","bytes":113371,"evidence_observed_at":"2026-08-13T00:12:39Z"}
+      ],
+      "producer_allocation": [["producer-cpython-ds-socket",["cpython-ds-socket-docs-current"]],["producer-cpython-ds-http-client",["cpython-ds-http-client-docs-current"]],["producer-cpython-ds-urllib-request",["cpython-ds-urllib-request-docs-current"]],["producer-cpython-ds-ssl",["cpython-ds-ssl-docs-current"]]],
+      "required_source_ids": ["cpython-ds-socket-docs-current","cpython-ds-http-client-docs-current","cpython-ds-urllib-request-docs-current","cpython-ds-ssl-docs-current"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "cpython-ds-serialization-api-defaults",
+      "canonical_target_subject": "serialization API defaults",
+      "selected_case_id": "plr-cpython-ds-04",
+      "question": "Across current CPython serialization APIs, give four defaults in order: json.dump ensure_ascii; pickle.dump protocol argument; marshal.dump allow_code; and csv.reader dialect.",
+      "canonical_answer": "True; None; True; excel",
+      "ordered_required_slots": [["True", "true"], ["None", "none"], ["True", "true"], ["excel", "'excel'", "\"excel\""]],
+      "acquisition_plan_sha256": "dc49e32d85d431b56a9961505770b61abe3babb1acbda3e9142c95a9da2e352c",
+      "source_integrity": [
+        {"source_id":"cpython-ds-json-docs-current","git_blob_sha":"383ccad9df041b5aeaa740a849014f2bb1723d21","sha256":"38c2439f388374770f158fdc3e02cf374f2389e96ad3260ab0705c65125ffb04","bytes":31743,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-pickle-docs-current","git_blob_sha":"8eadc2cf2b1ef0da91e7368875508aa0a9cd7282","sha256":"784536af1ccee6faf442d815ac52566fb179e2f93a2b8b12393dae3d6582365d","bytes":49645,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-marshal-docs-current","git_blob_sha":"4fe34f0a3a3f9118444ea29d89b89e5644e3ab53","sha256":"f7ceb46ea8e85176f2ee8465e7403a957d2fedec42a83d41785259f4f4e47ffe","bytes":8025,"evidence_observed_at":"2026-08-13T00:12:39Z"},
+        {"source_id":"cpython-ds-csv-docs-current","git_blob_sha":"81949261c563d045c7b40ec70685c42d2383bb1a","sha256":"af7cd95a21855c3c6ed334baee4c999afee4b8f86242dc7dd10cf4da50397dee","bytes":25340,"evidence_observed_at":"2026-08-13T00:12:39Z"}
+      ],
+      "producer_allocation": [["producer-cpython-ds-json",["cpython-ds-json-docs-current"]],["producer-cpython-ds-pickle",["cpython-ds-pickle-docs-current"]],["producer-cpython-ds-marshal",["cpython-ds-marshal-docs-current"]],["producer-cpython-ds-csv",["cpython-ds-csv-docs-current"]]],
+      "required_source_ids": ["cpython-ds-json-docs-current","cpython-ds-pickle-docs-current","cpython-ds-marshal-docs-current","cpython-ds-csv-docs-current"],
+      "minimum_events_per_producer": 1
+    }
+  ],
+  "rejected_inspections": []
+}
