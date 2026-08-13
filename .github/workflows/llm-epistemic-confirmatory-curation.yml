@@ -81,6 +81,9 @@ jobs:
           shopt -s nullglob
           for plan in "$PLAN_ROOT"/*.json; do
             name="$(basename "$plan" .json)"
+            if [[ "$name" == *candidate-ledger* ]]; then
+              continue
+            fi
             python tools/confirmatory_curation/freeze_batch_normalized.py \
               --plan "$plan" \
               --output-dir "$OUTPUT_ROOT/$name"
