@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-nc-argument-clinic-default-groups",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-nc-clinic-parser-before",
+      "repository": "python/cpython",
+      "commit_sha": "b7cd0abd75318e2a41009f7240749f933562a6ca",
+      "path": "Tools/clinic/libclinic/clanguage.py",
+      "git_blob_sha": "7f02c7790f015aafab3200f294b060f0a32afd2b",
+      "media_type": "text/x-python",
+      "title": "Argument Clinic parser generator immediately before optional-default fix",
+      "evidence_observed_at": "2026-08-05T05:55:52Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-clinic-generated-test-after",
+      "repository": "python/cpython",
+      "commit_sha": "caac9278306d3cb96b22f51f5003e20b7a6aa18c",
+      "path": "Lib/test/clinic.test.c",
+      "git_blob_sha": "870e4f6956ce4fd4424b61792c3366a9cc5f77ed",
+      "media_type": "text/x-c",
+      "title": "Argument Clinic generated test after optional-default fix",
+      "evidence_observed_at": "2026-08-05T06:21:21Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-clinic-tests-after",
+      "repository": "python/cpython",
+      "commit_sha": "caac9278306d3cb96b22f51f5003e20b7a6aa18c",
+      "path": "Lib/test/test_clinic.py",
+      "git_blob_sha": "a9b3273ae2d7e133c86a66aa08138fc8433cebb2",
+      "media_type": "text/x-python",
+      "title": "Argument Clinic behavioral tests after optional-default fix",
+      "evidence_observed_at": "2026-08-05T06:21:21Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-clinic-news-after",
+      "repository": "python/cpython",
+      "commit_sha": "caac9278306d3cb96b22f51f5003e20b7a6aa18c",
+      "path": "Misc/NEWS.d/next/Tools-Demos/2026-08-04-17-12-33.gh-issue-64502.Qv7mLp.rst",
+      "git_blob_sha": "da9647d1fdd369b788d66f6bdc562489a1b148da",
+      "media_type": "text/x-rst",
+      "title": "Argument Clinic optional-default fix news entry",
+      "evidence_observed_at": "2026-08-05T06:21:21Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

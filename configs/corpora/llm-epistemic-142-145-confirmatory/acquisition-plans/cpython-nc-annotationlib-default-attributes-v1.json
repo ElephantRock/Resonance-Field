@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-nc-annotationlib-default-attributes",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-nc-annotationlib-doc-before",
+      "repository": "python/cpython",
+      "commit_sha": "7ebe773160327026ba5393b27e2e2860db4d08b2",
+      "path": "Doc/library/annotationlib.rst",
+      "git_blob_sha": "af28fe0e2fde2f83268c27d8a8ac1e3fc1571c7d",
+      "media_type": "text/x-rst",
+      "title": "CPython annotationlib documentation immediately before defaults mapping correction",
+      "evidence_observed_at": "2026-07-21T12:07:17Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-annotationlib-doc-after",
+      "repository": "python/cpython",
+      "commit_sha": "dc72be1923a37042aee60354059e43d472de7803",
+      "path": "Doc/library/annotationlib.rst",
+      "git_blob_sha": "a90754620b59fdf937883b121d09113e4369def5",
+      "media_type": "text/x-rst",
+      "title": "CPython annotationlib documentation after defaults mapping correction",
+      "evidence_observed_at": "2026-07-21T12:45:42Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-annotationlib-implementation-after",
+      "repository": "python/cpython",
+      "commit_sha": "dc72be1923a37042aee60354059e43d472de7803",
+      "path": "Lib/annotationlib.py",
+      "git_blob_sha": "8204c762cce8a2b7c448ebacd2cbdcba54fdec09",
+      "media_type": "text/x-python",
+      "title": "CPython annotationlib implementation at mapping correction",
+      "evidence_observed_at": "2026-07-21T12:45:42Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-annotationlib-tests-after",
+      "repository": "python/cpython",
+      "commit_sha": "dc72be1923a37042aee60354059e43d472de7803",
+      "path": "Lib/test/test_annotationlib.py",
+      "git_blob_sha": "5087c3ca425f1fc8d44c051c9bb52e7a7f955100",
+      "media_type": "text/x-python",
+      "title": "CPython annotationlib tests at mapping correction",
+      "evidence_observed_at": "2026-07-21T12:45:42Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}
