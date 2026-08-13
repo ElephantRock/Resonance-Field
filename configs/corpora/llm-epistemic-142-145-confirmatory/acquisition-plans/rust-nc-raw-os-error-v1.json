@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-nc-raw-os-error",
+  "acquired_at": "2026-08-13T07:08:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "rust-nc-raw-os-error-before",
+      "repository": "rust-lang/rust",
+      "commit_sha": "1ed2df61a19042f231709eb05d032ae9e2cb2084",
+      "path": "library/core/src/io/error.rs",
+      "git_blob_sha": "61abdb16d07da33e1af2d7efcc5643c67ea029e9",
+      "media_type": "text/x-rust",
+      "title": "core RawOsError definition immediately before 16-bit specialization",
+      "evidence_observed_at": "2026-08-04T13:20:56Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-raw-os-error-after",
+      "repository": "rust-lang/rust",
+      "commit_sha": "bbc212a14319e7a71f612eec4b1fd16989a62311",
+      "path": "library/core/src/io/error.rs",
+      "git_blob_sha": "502817c70bb3cede9e91d7a737390c415f69ce9e",
+      "media_type": "text/x-rust",
+      "title": "core RawOsError definition after 16-bit specialization",
+      "evidence_observed_at": "2026-08-05T10:12:01Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-raw-os-error-test-after",
+      "repository": "rust-lang/rust",
+      "commit_sha": "bbc212a14319e7a71f612eec4b1fd16989a62311",
+      "path": "library/coretests/tests/io/error.rs",
+      "git_blob_sha": "62f6f6cace8b39284eb4cefcdb86433208e114fb",
+      "media_type": "text/x-rust",
+      "title": "core RawOsError FFI-guarantee regression test after specialization",
+      "evidence_observed_at": "2026-08-05T10:12:01Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-c-int-definition-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "library/core/src/ffi/primitives.rs",
+      "git_blob_sha": "11dad9a65470c126e1976efa4b9c7fef6c04e92f",
+      "media_type": "text/x-rust",
+      "title": "Current core C FFI primitive definitions for AVR and MSP430 c_int",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    }
+  ]
+}
