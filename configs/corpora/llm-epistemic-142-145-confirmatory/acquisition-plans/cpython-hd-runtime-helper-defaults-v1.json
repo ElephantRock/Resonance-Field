@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-hd-runtime-helper-defaults",
+  "acquired_at": "2026-08-13T05:20:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"cpython-hd-subprocess-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/subprocess.rst","git_blob_sha":"2a31213560c92d35c628f02e01a31f4bda29775b","media_type":"text/x-rst","title":"CPython current subprocess documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-threading-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/threading.rst","git_blob_sha":"5d9a7b6314b16685d582e4ae4b57351e42f09e17","media_type":"text/x-rst","title":"CPython current threading documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-signal-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/signal.rst","git_blob_sha":"12ad45f557e6db55fb968a560c0a2db5e550785a","media_type":"text/x-rst","title":"CPython current signal documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-contextlib-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/contextlib.rst","git_blob_sha":"666f85997448881b9d18b877e76cacce2271eea1","media_type":"text/x-rst","title":"CPython current contextlib documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-sched-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/sched.rst","git_blob_sha":"037e27f031d0c826491600192589e3133c2d9b6f","media_type":"text/x-rst","title":"CPython current sched documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-atexit-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/atexit.rst","git_blob_sha":"b5caf5502d0e1c6b1eea02bfb1bf65dfe8eb2c38","media_type":"text/x-rst","title":"CPython current atexit documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-traceback-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/traceback.rst","git_blob_sha":"aa48cea357cfd3448801b83e30707f0579ae1734","media_type":"text/x-rst","title":"CPython current traceback documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-faulthandler-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/faulthandler.rst","git_blob_sha":"905e1acd433617d9dd7acda7af2a680986cb8545","media_type":"text/x-rst","title":"CPython current faulthandler documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-hd-collection-helper-defaults",
+  "acquired_at": "2026-08-13T05:20:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"cpython-hd-queue-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/queue.rst","git_blob_sha":"79da2a3db719e78e05120f955e172bc98af80127","media_type":"text/x-rst","title":"CPython current queue documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-functools-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/functools.rst","git_blob_sha":"debb7a7c3c2cc0e7db0d033951d6783d503f950e","media_type":"text/x-rst","title":"CPython current functools documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-bisect-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/bisect.rst","git_blob_sha":"39ab75c0904df9c811f03c9eb579c094c2e4b6ad","media_type":"text/x-rst","title":"CPython current bisect documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-heapq-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/heapq.rst","git_blob_sha":"26cffa7c643028a955bdac538ee391f3698c445a","media_type":"text/x-rst","title":"CPython current heapq documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-collections-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/collections.rst","git_blob_sha":"599a898eb2cef8313882bcced788d02d59b8a2d4","media_type":"text/x-rst","title":"CPython current collections documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-copy-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/copy.rst","git_blob_sha":"39fc7800d03a91638b6fff2ac200cfe422b65d0a","media_type":"text/x-rst","title":"CPython current copy documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-weakref-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/weakref.rst","git_blob_sha":"7cc0c33fda353c462368a1fb18c69285b3a3fcc3","media_type":"text/x-rst","title":"CPython current weakref documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-operator-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/operator.rst","git_blob_sha":"3d1c8cda13be38155670b93f0a9d1721450538ef","media_type":"text/x-rst","title":"CPython current operator documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"}
+  ]
+}

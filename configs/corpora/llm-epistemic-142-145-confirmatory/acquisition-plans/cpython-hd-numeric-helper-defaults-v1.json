@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-hd-numeric-helper-defaults",
+  "acquired_at": "2026-08-13T05:20:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"cpython-hd-math-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/math.rst","git_blob_sha":"efe411e5a43f27d01ba655056a003f1084d8fd44","media_type":"text/x-rst","title":"CPython current math documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-statistics-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/statistics.rst","git_blob_sha":"dba0e26787d951653f66aa5e3329815cecb2baca","media_type":"text/x-rst","title":"CPython current statistics documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-random-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/random.rst","git_blob_sha":"73a37e189ddf2a8b063edc72adcfc8432e0779a3","media_type":"text/x-rst","title":"CPython current random documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-fractions-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/fractions.rst","git_blob_sha":"b02e7b5b641136d90d082760a0f2ddd441f14bbb","media_type":"text/x-rst","title":"CPython current fractions documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-decimal-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/decimal.rst","git_blob_sha":"ecd973a070b3dffd7c7d318596e9d4f2ba99063e","media_type":"text/x-rst","title":"CPython current decimal documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-cmath-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/cmath.rst","git_blob_sha":"f602003e49b8218aa7993f190cddf41002df1af3","media_type":"text/x-rst","title":"CPython current cmath documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-numbers-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/numbers.rst","git_blob_sha":"0ed24b4e6c5225dae2a54171a7c3357526473057","media_type":"text/x-rst","title":"CPython current numbers documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"},
+    {"source_id":"cpython-hd-itertools-docs-current","repository":"python/cpython","commit_sha":"ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1","path":"Doc/library/itertools.rst","git_blob_sha":"e1730608887b3dd0f45a2be5347ebbec06b4da54","media_type":"text/x-rst","title":"CPython current itertools documentation","evidence_observed_at":"2026-08-12T20:16:47Z","upstream_project_id":"python/cpython","upstream_organization_id":"python"}
+  ]
+}
