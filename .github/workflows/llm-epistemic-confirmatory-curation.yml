@@ -70,6 +70,7 @@ jobs:
         run: |
           python -m py_compile \
             tools/confirmatory_curation/freeze_batch.py \
+            tools/confirmatory_curation/freeze_batch_normalized.py \
             tools/confirmatory_curation/validate_selected.py
       - name: Freeze all declared candidate source batches
         shell: bash
@@ -80,7 +81,7 @@ jobs:
           shopt -s nullglob
           for plan in "$PLAN_ROOT"/*.json; do
             name="$(basename "$plan" .json)"
-            python tools/confirmatory_curation/freeze_batch.py \
+            python tools/confirmatory_curation/freeze_batch_normalized.py \
               --plan "$plan" \
               --output-dir "$OUTPUT_ROOT/$name"
             count=$((count + 1))
