@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Normalize split source pins, then run the confirmatory curation freezer.
+"""Normalize structured source pins, then run the confirmatory curation freezer.
 
 This utility is curation-only and remains outside the frozen scientific
 implementation. Existing acquisition plans with ordinary SHA strings are passed
-through unchanged; plans may alternatively store 40-character source pins as
-ordered eight-character parts for transport-safe repository writes.
+through unchanged. Plans may alternatively store 40-character source pins as
+ordered string parts or as the corresponding 20 byte values.
 """
 
 from __future__ import annotations
@@ -19,15 +19,26 @@ from typing import Any
 from freeze_batch import freeze_batch
 
 
-def _join_pin_parts(source: dict[str, Any], key: str) -> bool:
+def _restore_pin(source: dict[str, Any], key: str) -> bool:
     if key in source:
         return False
-    parts_key = f"{key}_parts"
-    parts = source.get(parts_key)
-    if not isinstance(parts, list) or not parts or not all(isinstance(part, str) for part in parts):
-        return False
-    source[key] = "".join(parts)
-    return True
+
+    parts = source.get(f"{key}_parts")
+    if isinstance(parts, list) and parts and all(isinstance(part, str) for part in parts):
+        source[key] = "".join(parts)
+        return True
+
+    octets = source.get(f"{key}_octets")
+    valid_octets = (
+        isinstance(octets, list)
+        and len(octets) == 20
+        and all(type(value) is int and 0 <= value <= 255 for value in octets)
+    )
+    if valid_octets:
+        source[key] = bytes(octets).hex()
+        return True
+
+    return False
 
 
 def freeze_normalized(
@@ -47,8 +58,8 @@ def freeze_normalized(
     if isinstance(raw_sources, list):
         for source in raw_sources:
             if isinstance(source, dict):
-                changed |= _join_pin_parts(source, "commit_sha")
-                changed |= _join_pin_parts(source, "git_blob_sha")
+                changed |= _restore_pin(source, "commit_sha")
+                changed |= _restore_pin(source, "git_blob_sha")
 
     if not changed:
         return freeze_batch(plan_file, output_dir, timeout=timeout)
