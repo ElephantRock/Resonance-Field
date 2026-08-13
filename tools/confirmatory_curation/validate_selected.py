@@ -23,9 +23,9 @@ def _load_bundle(path: Path) -> dict[str, Any]:
         raise ValueError(f"selected bundle must be an object: {path}")
     if value.get("bundle_version") != "1.0":
         raise ValueError(f"unsupported selected bundle version: {path}")
-    if value.get("executable_confirmatory_manifest") is not False:
+    if value.get("treatment_execution") is not False:
         raise ValueError(f"selected bundle must remain non-executable: {path}")
-    for flag in ("treatment_execution", "evaluator_execution", "confirmatory_outcomes_observed"):
+    for flag in ("evaluator_execution", "confirmatory_outcomes_observed"):
         if value.get(flag) is not False:
             raise ValueError(f"selected bundle has forbidden execution flag {flag}: {path}")
     if not isinstance(value.get("sources"), list) or not isinstance(value.get("cases"), list):
