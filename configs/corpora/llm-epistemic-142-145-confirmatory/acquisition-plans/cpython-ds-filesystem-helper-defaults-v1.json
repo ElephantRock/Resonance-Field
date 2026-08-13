@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-ds-filesystem-helper-defaults",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-ds-tempfile-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/tempfile.rst",
+      "git_blob_sha": "9b89cb92594ea61b685d9853c95eec0359a04db9",
+      "media_type": "text/x-rst",
+      "title": "CPython current tempfile documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-shutil-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/shutil.rst",
+      "git_blob_sha": "2822e979990c4de1faeaf048b8b640077a31b9ff",
+      "media_type": "text/x-rst",
+      "title": "CPython current shutil documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-pathlib-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/pathlib.rst",
+      "git_blob_sha": "ab92c142c37a4f6cfd52b5c675d838de2076e633",
+      "media_type": "text/x-rst",
+      "title": "CPython current pathlib documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-glob-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/glob.rst",
+      "git_blob_sha": "bbeb808159d446be69c0fe6cf9d4d03b0d0eba7d",
+      "media_type": "text/x-rst",
+      "title": "CPython current glob documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-ds-network-client-defaults",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-ds-socket-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/socket.rst",
+      "git_blob_sha": "836aa91bb0885b16735e589bc447843b0f025d03",
+      "media_type": "text/x-rst",
+      "title": "CPython current socket documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-http-client-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/http.client.rst",
+      "git_blob_sha": "98ea09d8f72d8b6993db76be669258e00aa73bd9",
+      "media_type": "text/x-rst",
+      "title": "CPython current http.client documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-urllib-request-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/urllib.request.rst",
+      "git_blob_sha": "95e4d2627c8b23b34dd5f4469313b39511a97a62",
+      "media_type": "text/x-rst",
+      "title": "CPython current urllib.request documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-ssl-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/ssl.rst",
+      "git_blob_sha": "66fe6c7aee486269c249da2e42f8f713327a736b",
+      "media_type": "text/x-rst",
+      "title": "CPython current ssl documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

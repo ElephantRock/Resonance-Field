@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-ds-compression-api-defaults",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-ds-bz2-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/bz2.rst",
+      "git_blob_sha": "6c20e9c94a3eaeeefb7d6d0791f57c1dca7038c7",
+      "media_type": "text/x-rst",
+      "title": "CPython current bz2 documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-lzma-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/lzma.rst",
+      "git_blob_sha": "580829cfbb46e0712928dbe43b579a04d28b9546",
+      "media_type": "text/x-rst",
+      "title": "CPython current lzma documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-zipfile-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/zipfile.rst",
+      "git_blob_sha": "65bc54e3856a94580efe6665818f179db0dc129b",
+      "media_type": "text/x-rst",
+      "title": "CPython current zipfile documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-zlib-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/zlib.rst",
+      "git_blob_sha": "f043915c0f4b94ed7fcd62e5a77c380513db981b",
+      "media_type": "text/x-rst",
+      "title": "CPython current zlib documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}
