@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "pip-hd-command-classes-a",
+  "acquired_at": "2026-08-14T02:32:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"pip-hd-01-cache-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/cache.py","git_blob_sha":"232ace8d40d9d8bda15cae103c182006b1913db5","media_type":"text/x-python","title":"pip cache command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-debug-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/debug.py","git_blob_sha":"4e8178d0a529be13904d661d36d7bbe38dd02993","media_type":"text/x-python","title":"pip debug command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-check-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/check.py","git_blob_sha":"516757eead7ad90f375cc3b9117328b73e13ee16","media_type":"text/x-python","title":"pip check command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-download-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/download.py","git_blob_sha":"8b349829603817b8abb11aaf4b24f6c4725b7237","media_type":"text/x-python","title":"pip download command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-completion-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/completion.py","git_blob_sha":"7ba205d726339f38cd758a120e60a4297254f0a7","media_type":"text/x-python","title":"pip completion command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-freeze-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/freeze.py","git_blob_sha":"ab501db56290b73d0fa12f0f1e06e09dfa5948c2","media_type":"text/x-python","title":"pip freeze command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-configuration-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/configuration.py","git_blob_sha":"4fa860ff9bb5bc78fd98aa3fe5c2e184afc81110","media_type":"text/x-python","title":"pip configuration command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-hash-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/hash.py","git_blob_sha":"271a4c91a7f759272424e051862dee0a33a91d1a","media_type":"text/x-python","title":"pip hash command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"}
+  ]
+}
