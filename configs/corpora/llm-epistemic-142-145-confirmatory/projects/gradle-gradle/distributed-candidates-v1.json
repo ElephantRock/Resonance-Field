@@ -1,0 +1,83 @@
+{
+  "ledger_version": "1.0",
+  "project": "gradle/gradle",
+  "upstream_project_id": "gradle/gradle",
+  "upstream_organization_id": "gradle",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "distributed_synthesis",
+  "upstream_snapshot": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+  "upstream_evidence_observed_at": "2026-08-14T11:46:55Z",
+  "selection_status": "prospective_subject_screen_frozen_before_gradle_source_acquisition",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Candidate subjects and canonical answers are frozen before Gradle source acquisition. Candidates are evaluated in listed rank order. The first four eligible candidates fill bpd-gradle-ds-01..04. Eligibility requires four unique current Gradle-authored authoritative source files, one required source per producer, exact answer support, and no exact source-byte reuse with any previously selected confirmatory case. A candidate may be rejected only for a source-integrity or frozen-design eligibility failure; treatment or evaluator outcomes may not be observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "ranked_candidates": [
+    {
+      "rank": 1,
+      "candidate_id": "gradle-ds-plugin-impl-application-java-library-platform",
+      "canonical_target_subject": "plugin implementation mappings: application, java, java-library, java-platform",
+      "question": "Across the pinned authoritative Gradle plugin registration sources for org.gradle.application, org.gradle.java, org.gradle.java-library, and org.gradle.java-platform, give each implementation class in that order.",
+      "canonical_answer": "org.gradle.api.plugins.ApplicationPlugin; org.gradle.api.plugins.JavaPlugin; org.gradle.api.plugins.JavaLibraryPlugin; org.gradle.api.plugins.JavaPlatformPlugin",
+      "ordered_required_slots": [
+        ["org.gradle.api.plugins.ApplicationPlugin"],
+        ["org.gradle.api.plugins.JavaPlugin"],
+        ["org.gradle.api.plugins.JavaLibraryPlugin"],
+        ["org.gradle.api.plugins.JavaPlatformPlugin"]
+      ],
+      "required_source_count": 4
+    },
+    {
+      "rank": 2,
+      "candidate_id": "gradle-ds-plugin-impl-antlr-groovy-test-fixtures-scala",
+      "canonical_target_subject": "plugin implementation mappings: antlr, groovy, java-test-fixtures, scala",
+      "question": "Across the pinned authoritative Gradle plugin registration sources for org.gradle.antlr, org.gradle.groovy, org.gradle.java-test-fixtures, and org.gradle.scala, give each implementation class in that order.",
+      "canonical_answer": "org.gradle.api.plugins.antlr.AntlrPlugin; org.gradle.api.plugins.GroovyPlugin; org.gradle.api.plugins.JavaTestFixturesPlugin; org.gradle.api.plugins.scala.ScalaPlugin",
+      "ordered_required_slots": [
+        ["org.gradle.api.plugins.antlr.AntlrPlugin"],
+        ["org.gradle.api.plugins.GroovyPlugin"],
+        ["org.gradle.api.plugins.JavaTestFixturesPlugin"],
+        ["org.gradle.api.plugins.scala.ScalaPlugin"]
+      ],
+      "required_source_count": 4
+    },
+    {
+      "rank": 3,
+      "candidate_id": "gradle-ds-plugin-impl-ivy-maven-signing-distribution",
+      "canonical_target_subject": "plugin implementation mappings: ivy-publish, maven-publish, signing, distribution",
+      "question": "Across the pinned authoritative Gradle plugin registration sources for org.gradle.ivy-publish, org.gradle.maven-publish, org.gradle.signing, and org.gradle.distribution, give each implementation class in that order.",
+      "canonical_answer": "org.gradle.api.publish.ivy.plugins.IvyPublishPlugin; org.gradle.api.publish.maven.plugins.MavenPublishPlugin; org.gradle.plugins.signing.SigningPlugin; org.gradle.api.distribution.plugins.DistributionPlugin",
+      "ordered_required_slots": [
+        ["org.gradle.api.publish.ivy.plugins.IvyPublishPlugin"],
+        ["org.gradle.api.publish.maven.plugins.MavenPublishPlugin"],
+        ["org.gradle.plugins.signing.SigningPlugin"],
+        ["org.gradle.api.distribution.plugins.DistributionPlugin"]
+      ],
+      "required_source_count": 4
+    },
+    {
+      "rank": 4,
+      "candidate_id": "gradle-ds-plugin-impl-base-java-base-reporting-project-report",
+      "canonical_target_subject": "plugin implementation mappings: base, java-base, reporting-base, project-report",
+      "question": "Across the pinned authoritative Gradle plugin registration sources for org.gradle.base, org.gradle.java-base, org.gradle.reporting-base, and org.gradle.project-report, give each implementation class in that order.",
+      "canonical_answer": "org.gradle.api.plugins.BasePlugin; org.gradle.api.plugins.JavaBasePlugin; org.gradle.api.plugins.ReportingBasePlugin; org.gradle.api.plugins.ProjectReportsPlugin",
+      "ordered_required_slots": [
+        ["org.gradle.api.plugins.BasePlugin"],
+        ["org.gradle.api.plugins.JavaBasePlugin"],
+        ["org.gradle.api.plugins.ReportingBasePlugin"],
+        ["org.gradle.api.plugins.ProjectReportsPlugin"]
+      ],
+      "required_source_count": 4
+    },
+    {
+      "rank": 5,
+      "candidate_id": "gradle-ds-archive-default-extensions-ear-jar-war-zip",
+      "canonical_target_subject": "archive task default extensions: Ear, Jar, War, Zip",
+      "question": "Across the pinned Gradle archive task implementation sources for Ear, Jar, War, and Zip, give each default archive extension in that order.",
+      "canonical_answer": "ear; jar; war; zip",
+      "ordered_required_slots": [["ear"],["jar"],["war"],["zip"]],
+      "required_source_count": 4
+    }
+  ]
+}
