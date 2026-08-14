@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "gradle-nc-implementation-class-packaging-development-plugins",
+  "acquired_at": "2026-08-14T21:18:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "gradle-nc-ear-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/jvm/ear/src/main/resources/META-INF/gradle-plugins/org.gradle.ear.properties",
+      "git_blob_sha": "19f1fed9cacda7b329ccaaf98ccd94fc44add292",
+      "media_type": "text/plain",
+      "title": "Current Gradle EAR plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-war-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/jvm/war/src/main/resources/META-INF/gradle-plugins/org.gradle.war.properties",
+      "git_blob_sha": "453ead85e9cd43ab8221a5a790468ea2b013199a",
+      "media_type": "text/plain",
+      "title": "Current Gradle WAR plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-java-gradle-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/extensibility/plugin-development/src/main/resources/META-INF/gradle-plugins/org.gradle.java-gradle-plugin.properties",
+      "git_blob_sha": "33f8021aa97b887d2ea4db61656d1c2c1f4eb1c6",
+      "media_type": "text/plain",
+      "title": "Current Gradle Java Gradle Plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-build-init-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/software/build-init/src/main/resources/META-INF/gradle-plugins/org.gradle.build-init.properties",
+      "git_blob_sha": "7025b446f408262aec0f40d0722bb0a84d8f5cb1",
+      "media_type": "text/plain",
+      "title": "Current Gradle Build Init plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "gradle-nc-implementation-class-ide-plugins",
+  "acquired_at": "2026-08-14T21:18:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "gradle-nc-idea-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/ide/ide-plugins/src/main/resources/META-INF/gradle-plugins/org.gradle.idea.properties",
+      "git_blob_sha": "26c69765c2a6b7f80885fb8b26eab1a03b8831e9",
+      "media_type": "text/plain",
+      "title": "Current Gradle IDEA plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-eclipse-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/ide/ide-plugins/src/main/resources/META-INF/gradle-plugins/org.gradle.eclipse.properties",
+      "git_blob_sha": "be1544dbc7b97f18b7ac0ca853fd55f98baaf112",
+      "media_type": "text/plain",
+      "title": "Current Gradle Eclipse plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-visual-studio-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/ide/ide-native/src/main/resources/META-INF/gradle-plugins/org.gradle.visual-studio.properties",
+      "git_blob_sha": "4bcff949c0b4f9f9f2a4fe0f7dbc4b742d270a7b",
+      "media_type": "text/plain",
+      "title": "Current Gradle Visual Studio plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-xcode-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/ide/ide-native/src/main/resources/META-INF/gradle-plugins/org.gradle.xcode.properties",
+      "git_blob_sha": "ae77148ea3aa5625c252ecc88b70b4ccbae9565e",
+      "media_type": "text/plain",
+      "title": "Current Gradle Xcode plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    }
+  ]
+}

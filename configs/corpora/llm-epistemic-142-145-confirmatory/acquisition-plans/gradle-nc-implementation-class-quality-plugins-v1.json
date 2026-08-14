@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "gradle-nc-implementation-class-quality-plugins",
+  "acquired_at": "2026-08-14T21:18:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "gradle-nc-checkstyle-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/jvm/code-quality/src/main/resources/META-INF/gradle-plugins/org.gradle.checkstyle.properties",
+      "git_blob_sha": "e8de0c697f48b282fd68be6e6055d2c146501427",
+      "media_type": "text/plain",
+      "title": "Current Gradle Checkstyle plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-codenarc-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/jvm/code-quality/src/main/resources/META-INF/gradle-plugins/org.gradle.codenarc.properties",
+      "git_blob_sha": "fd73c5587842aec26cb45dd389272add634aab2b",
+      "media_type": "text/plain",
+      "title": "Current Gradle CodeNarc plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-pmd-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/jvm/code-quality/src/main/resources/META-INF/gradle-plugins/org.gradle.pmd.properties",
+      "git_blob_sha": "24639921eb907beea6131686c514879f2f93f319",
+      "media_type": "text/plain",
+      "title": "Current Gradle PMD plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    },
+    {
+      "source_id": "gradle-nc-jacoco-plugin-descriptor",
+      "repository": "gradle/gradle",
+      "commit_sha": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+      "path": "platforms/jvm/jacoco/src/main/resources/META-INF/gradle-plugins/org.gradle.jacoco.properties",
+      "git_blob_sha": "6d7104230a4c9fa00b6f445564e6b7e592443ff1",
+      "media_type": "text/plain",
+      "title": "Current Gradle JaCoCo plugin descriptor",
+      "evidence_observed_at": "2026-08-14T11:46:55Z",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle"
+    }
+  ]
+}
