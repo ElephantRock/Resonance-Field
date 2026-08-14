@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "pip-hd-model-classes",
+  "acquired_at": "2026-08-14T02:32:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"pip-hd-03-format-control","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/format_control.py","git_blob_sha":"9f07e3f34993379fb06378442a82438e057ebe30","media_type":"text/x-python","title":"pip FormatControl model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-link","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/link.py","git_blob_sha":"cbbe945c17ebacbe6914da526de6b06ac620c68d","media_type":"text/x-python","title":"pip Link model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-installation-report","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/installation_report.py","git_blob_sha":"145e2cf8e5722c724f054289089afdae6ed694c0","media_type":"text/x-python","title":"pip InstallationReport model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-scheme","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/scheme.py","git_blob_sha":"5ed705717c26cb942df0db821a33481d1fae8e40","media_type":"text/x-python","title":"pip Scheme model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-search-scope","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/search_scope.py","git_blob_sha":"b3aaa18e616c3e76441729885aaf9eca3bacf8c5","media_type":"text/x-python","title":"pip SearchScope model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-selection-preferences","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/selection_prefs.py","git_blob_sha":"3473031926fa8dd95d789874392d22871be07337","media_type":"text/x-python","title":"pip SelectionPreferences model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-target-python","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/target_python.py","git_blob_sha":"8c38392d8bbf21b2102123b87d67df86b94ddc5f","media_type":"text/x-python","title":"pip TargetPython model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-03-wheel-model","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/models/wheel.py","git_blob_sha":"fbd4902dc715f8b3753894a9703450d1b1089c18","media_type":"text/x-python","title":"pip Wheel model module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"}
+  ]
+}
