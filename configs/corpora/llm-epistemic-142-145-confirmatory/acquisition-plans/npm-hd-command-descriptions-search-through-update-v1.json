@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "npm-hd-command-descriptions-d",
+  "acquired_at": "2026-08-14T17:10:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"npm-hd-04-search","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/search.js","git_blob_sha":"8b6c01e3930d81e4f414ded62b1fd5645c68d088","media_type":"text/javascript","title":"npm search command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-start","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/start.js","git_blob_sha":"54818c5be4da6116d818438e1758ee10c10263bc","media_type":"text/javascript","title":"npm start command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-stop","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/stop.js","git_blob_sha":"e6e9c9afca1ddef7fc6c83465b90e2df1b6c56bd","media_type":"text/javascript","title":"npm stop command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-team","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/team.js","git_blob_sha":"2cac0fb24660c29a9ea3d4e9321a144b321095db","media_type":"text/javascript","title":"npm team command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-token","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/token.js","git_blob_sha":"8f54e9d8725dfbefe29775650bcd8762e541f07c","media_type":"text/javascript","title":"npm token command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-uninstall","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/uninstall.js","git_blob_sha":"eb595c26a45baefaa1881ad64d2fa4bfa5336b2d","media_type":"text/javascript","title":"npm uninstall command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-unpublish","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/unpublish.js","git_blob_sha":"fc390a2b9edff7bc225e4b3531b0610d279f0c92","media_type":"text/javascript","title":"npm unpublish command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-04-update","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/update.js","git_blob_sha":"64c2c5128bb049441e312f7336a530a2b3786335","media_type":"text/javascript","title":"npm update command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"}
+  ]
+}
