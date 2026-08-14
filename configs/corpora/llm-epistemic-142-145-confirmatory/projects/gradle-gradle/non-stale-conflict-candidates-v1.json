@@ -10,6 +10,7 @@
   "selection_status": "prospective_subject_screen_frozen_before_gradle_nc_source_acquisition",
   "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
   "selection_rule": "Candidate semantic subjects and ordered answers are frozen before exact Gradle source acquisition. Candidates are evaluated in listed rank order. The first four eligible candidates fill bpd-gradle-nc-01..04. Eligibility requires four unique current Gradle-authored human-authored primary sources at the frozen upstream snapshot, one source per producer, all four sources exposing the same exact metadata key with context-specific conflicting values, exact support for the ordered answer, no temporal transition requirement, and no exact source-byte reuse with any previously selected confirmatory case. Rejection is permitted only for frozen source-integrity/design failures; treatment or evaluator outcomes may not be observed or used.",
+  "pre_acquisition_correction": "The rank-4 JvmTestSuitePlugin package name was corrected from org.gradle.api.plugins.jvm.JvmTestSuitePlugin to org.gradle.api.plugins.JvmTestSuitePlugin during source-location screening and before any Gradle NC acquisition plan or source freeze was created.",
   "treatment_execution": false,
   "evaluator_execution": false,
   "confirmatory_outcomes_observed": false,
@@ -50,17 +51,8 @@
       "canonical_target_subject": "current implementation-class conflicts across JVM/aggregation/catalog/lifecycle plugins",
       "shared_conflict_key": "implementation-class",
       "question": "For the pinned current Gradle plugin descriptors for org.gradle.jvm-test-suite, org.gradle.test-report-aggregation, org.gradle.version-catalog, and org.gradle.lifecycle-base, give the implementation-class value in that order.",
-      "canonical_answer": "org.gradle.api.plugins.jvm.JvmTestSuitePlugin; org.gradle.api.plugins.TestReportAggregationPlugin; org.gradle.api.plugins.catalog.VersionCatalogPlugin; org.gradle.language.base.plugins.LifecycleBasePlugin",
-      "ordered_required_slots": [["org.gradle.api.plugins.jvm.JvmTestSuitePlugin"],["org.gradle.api.plugins.TestReportAggregationPlugin"],["org.gradle.api.plugins.catalog.VersionCatalogPlugin"],["org.gradle.language.base.plugins.LifecycleBasePlugin"]],
-      "required_source_count": 4
-    },
-    {
-      "rank": 5,
-      "candidate_id": "gradle-nc-implementation-class-wrapper-help-diagnostics-plugins",
-      "canonical_target_subject": "current implementation-class conflicts across wrapper/help/diagnostics plugins",
-      "shared_conflict_key": "implementation-class",
-      "question": "For four current Gradle core utility plugin descriptors exposing implementation-class, give their values in ledger order.",
-      "canonical_answer_status": "resolve_only_if_rank_1_through_4_ineligible",
+      "canonical_answer": "org.gradle.api.plugins.JvmTestSuitePlugin; org.gradle.api.plugins.TestReportAggregationPlugin; org.gradle.api.plugins.catalog.VersionCatalogPlugin; org.gradle.language.base.plugins.LifecycleBasePlugin",
+      "ordered_required_slots": [["org.gradle.api.plugins.JvmTestSuitePlugin"],["org.gradle.api.plugins.TestReportAggregationPlugin"],["org.gradle.api.plugins.catalog.VersionCatalogPlugin"],["org.gradle.language.base.plugins.LifecycleBasePlugin"]],
       "required_source_count": 4
     }
   ]
