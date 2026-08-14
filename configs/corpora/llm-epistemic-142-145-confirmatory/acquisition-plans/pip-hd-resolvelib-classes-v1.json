@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "pip-hd-resolvelib-classes",
+  "acquired_at": "2026-08-14T02:32:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"pip-hd-04-link-candidate","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/candidates.py","git_blob_sha":"b8b853cb761215b810750b295bfb0ed86e39f698","media_type":"text/x-python","title":"pip resolvelib candidates module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-base","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/base.py","git_blob_sha":"9d7518383d37e7593c13e810fb61605e4ca795e2","media_type":"text/x-python","title":"pip resolvelib base module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-factory","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/factory.py","git_blob_sha":"c9fb839d4a0ff83d1b0cabe84ef056c8c3ad7cac","media_type":"text/x-python","title":"pip resolvelib factory module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-found-candidates","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/found_candidates.py","git_blob_sha":"67016735890609a4501f018f08a8cd12ca4f85b1","media_type":"text/x-python","title":"pip resolvelib found candidates module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-provider","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/provider.py","git_blob_sha":"766fa8480da1dbd81c22a2a276720fc3307cdcd2","media_type":"text/x-python","title":"pip resolvelib provider module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-reporter","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/reporter.py","git_blob_sha":"de0deb26b4354017722a218b67c97d01517f4582","media_type":"text/x-python","title":"pip resolvelib reporter module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-resolver","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/resolver.py","git_blob_sha":"6e49c9efe92bce8e91020e3d4b3d1f77f089ba12","media_type":"text/x-python","title":"pip resolvelib resolver module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-04-requirements","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/resolution/resolvelib/requirements.py","git_blob_sha":"9c5e23374110b369ca5cab5fcc02ff09286b89da","media_type":"text/x-python","title":"pip resolvelib requirements module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"}
+  ]
+}
