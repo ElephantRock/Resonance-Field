@@ -1,0 +1,20 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "pip-hd-command-classes-clean",
+  "selection_ledger": "projects/pypa-pip/high-load-distractor-candidates-v2.json",
+  "acquired_at": "2026-08-14T04:37:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"pip-hd-01-check-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/check.py","git_blob_sha":"516757eead7ad90f375cc3b9117328b73e13ee16","media_type":"text/x-python","title":"pip check command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-download-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/download.py","git_blob_sha":"8b349829603817b8abb11aaf4b24f6c4725b7237","media_type":"text/x-python","title":"pip download command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-completion-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/completion.py","git_blob_sha":"7ba205d726339f38cd758a120e60a4297254f0a7","media_type":"text/x-python","title":"pip completion command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-index-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/index.py","git_blob_sha":"e444b9a746b88c2608464852744ff38dff500cc8","media_type":"text/x-python","title":"pip index command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-configuration-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/configuration.py","git_blob_sha":"4fa860ff9bb5bc78fd98aa3fe5c2e184afc81110","media_type":"text/x-python","title":"pip configuration command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-lock-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/lock.py","git_blob_sha":"73df8649a88a3e4b7ec8a85ab2e20af5218f1d1a","media_type":"text/x-python","title":"pip lock command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-debug-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/debug.py","git_blob_sha":"4e8178d0a529be13904d661d36d7bbe38dd02993","media_type":"text/x-python","title":"pip debug command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-01-wheel-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/wheel.py","git_blob_sha":"ee25b8265d461def73fa3439029a03856b39196b","media_type":"text/x-python","title":"pip wheel command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"}
+  ]
+}
