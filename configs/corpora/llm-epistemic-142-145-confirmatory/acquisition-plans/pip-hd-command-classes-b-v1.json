@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "pip-hd-command-classes-b",
+  "acquired_at": "2026-08-14T02:32:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"pip-hd-02-help-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/help.py","git_blob_sha":"2ae658ff5eb6951ea30948ab425e6125dc41fa34","media_type":"text/x-python","title":"pip help command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-list-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/list.py","git_blob_sha":"3d82d07781ea79d5f633206a8e1e402faf9b226f","media_type":"text/x-python","title":"pip list command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-index-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/index.py","git_blob_sha":"e444b9a746b88c2608464852744ff38dff500cc8","media_type":"text/x-python","title":"pip index command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-lock-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/lock.py","git_blob_sha":"73df8649a88a3e4b7ec8a85ab2e20af5218f1d1a","media_type":"text/x-python","title":"pip lock command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-inspect-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/inspect.py","git_blob_sha":"53b4f006408afc0ebfc5f990f213410302d9ddc2","media_type":"text/x-python","title":"pip inspect command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-show-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/show.py","git_blob_sha":"40601a2b9d98434e96e5f251642137852848f6d4","media_type":"text/x-python","title":"pip show command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-install-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/install.py","git_blob_sha":"e1482b9cd47250f7a615ce49b212de12b3b193bb","media_type":"text/x-python","title":"pip install command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-wheel-command","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/commands/wheel.py","git_blob_sha":"ee25b8265d461def73fa3439029a03856b39196b","media_type":"text/x-python","title":"pip wheel command module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"}
+  ]
+}
