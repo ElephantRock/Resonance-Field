@@ -1,0 +1,67 @@
+{
+  "ledger_version": "1.0",
+  "project": "gradle/gradle",
+  "upstream_project_id": "gradle/gradle",
+  "upstream_organization_id": "gradle",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "non_stale_exact_conflict",
+  "upstream_snapshot": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+  "upstream_evidence_observed_at": "2026-08-14T11:46:55Z",
+  "selection_status": "prospective_subject_screen_frozen_before_gradle_nc_source_acquisition",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Candidate semantic subjects and ordered answers are frozen before exact Gradle source acquisition. Candidates are evaluated in listed rank order. The first four eligible candidates fill bpd-gradle-nc-01..04. Eligibility requires four unique current Gradle-authored human-authored primary sources at the frozen upstream snapshot, one source per producer, all four sources exposing the same exact metadata key with context-specific conflicting values, exact support for the ordered answer, no temporal transition requirement, and no exact source-byte reuse with any previously selected confirmatory case. Rejection is permitted only for frozen source-integrity/design failures; treatment or evaluator outcomes may not be observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "ranked_candidates": [
+    {
+      "rank": 1,
+      "candidate_id": "gradle-nc-implementation-class-quality-plugins",
+      "canonical_target_subject": "current implementation-class conflicts across quality plugins: checkstyle, codenarc, pmd, jacoco",
+      "shared_conflict_key": "implementation-class",
+      "question": "For the pinned current Gradle plugin descriptors for org.gradle.checkstyle, org.gradle.codenarc, org.gradle.pmd, and org.gradle.jacoco, give the implementation-class value in that order.",
+      "canonical_answer": "org.gradle.api.plugins.quality.CheckstylePlugin; org.gradle.api.plugins.quality.CodeNarcPlugin; org.gradle.api.plugins.quality.PmdPlugin; org.gradle.testing.jacoco.plugins.JacocoPlugin",
+      "ordered_required_slots": [["org.gradle.api.plugins.quality.CheckstylePlugin"],["org.gradle.api.plugins.quality.CodeNarcPlugin"],["org.gradle.api.plugins.quality.PmdPlugin"],["org.gradle.testing.jacoco.plugins.JacocoPlugin"]],
+      "required_source_count": 4
+    },
+    {
+      "rank": 2,
+      "candidate_id": "gradle-nc-implementation-class-packaging-development-plugins",
+      "canonical_target_subject": "current implementation-class conflicts across packaging/development plugins: ear, war, java-gradle-plugin, build-init",
+      "shared_conflict_key": "implementation-class",
+      "question": "For the pinned current Gradle plugin descriptors for org.gradle.ear, org.gradle.war, org.gradle.java-gradle-plugin, and org.gradle.build-init, give the implementation-class value in that order.",
+      "canonical_answer": "org.gradle.plugins.ear.EarPlugin; org.gradle.api.plugins.WarPlugin; org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin; org.gradle.buildinit.plugins.BuildInitPlugin",
+      "ordered_required_slots": [["org.gradle.plugins.ear.EarPlugin"],["org.gradle.api.plugins.WarPlugin"],["org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin"],["org.gradle.buildinit.plugins.BuildInitPlugin"]],
+      "required_source_count": 4
+    },
+    {
+      "rank": 3,
+      "candidate_id": "gradle-nc-implementation-class-ide-plugins",
+      "canonical_target_subject": "current implementation-class conflicts across IDE plugins: idea, eclipse, visual-studio, xcode",
+      "shared_conflict_key": "implementation-class",
+      "question": "For the pinned current Gradle plugin descriptors for org.gradle.idea, org.gradle.eclipse, org.gradle.visual-studio, and org.gradle.xcode, give the implementation-class value in that order.",
+      "canonical_answer": "org.gradle.plugins.ide.idea.IdeaPlugin; org.gradle.plugins.ide.eclipse.EclipsePlugin; org.gradle.ide.visualstudio.plugins.VisualStudioPlugin; org.gradle.ide.xcode.plugins.XcodePlugin",
+      "ordered_required_slots": [["org.gradle.plugins.ide.idea.IdeaPlugin"],["org.gradle.plugins.ide.eclipse.EclipsePlugin"],["org.gradle.ide.visualstudio.plugins.VisualStudioPlugin"],["org.gradle.ide.xcode.plugins.XcodePlugin"]],
+      "required_source_count": 4
+    },
+    {
+      "rank": 4,
+      "candidate_id": "gradle-nc-implementation-class-jvm-aggregation-catalog-lifecycle-plugins",
+      "canonical_target_subject": "current implementation-class conflicts across JVM/aggregation/catalog/lifecycle plugins",
+      "shared_conflict_key": "implementation-class",
+      "question": "For the pinned current Gradle plugin descriptors for org.gradle.jvm-test-suite, org.gradle.test-report-aggregation, org.gradle.version-catalog, and org.gradle.lifecycle-base, give the implementation-class value in that order.",
+      "canonical_answer": "org.gradle.api.plugins.jvm.JvmTestSuitePlugin; org.gradle.api.plugins.TestReportAggregationPlugin; org.gradle.api.plugins.catalog.VersionCatalogPlugin; org.gradle.language.base.plugins.LifecycleBasePlugin",
+      "ordered_required_slots": [["org.gradle.api.plugins.jvm.JvmTestSuitePlugin"],["org.gradle.api.plugins.TestReportAggregationPlugin"],["org.gradle.api.plugins.catalog.VersionCatalogPlugin"],["org.gradle.language.base.plugins.LifecycleBasePlugin"]],
+      "required_source_count": 4
+    },
+    {
+      "rank": 5,
+      "candidate_id": "gradle-nc-implementation-class-wrapper-help-diagnostics-plugins",
+      "canonical_target_subject": "current implementation-class conflicts across wrapper/help/diagnostics plugins",
+      "shared_conflict_key": "implementation-class",
+      "question": "For four current Gradle core utility plugin descriptors exposing implementation-class, give their values in ledger order.",
+      "canonical_answer_status": "resolve_only_if_rank_1_through_4_ineligible",
+      "required_source_count": 4
+    }
+  ]
+}
