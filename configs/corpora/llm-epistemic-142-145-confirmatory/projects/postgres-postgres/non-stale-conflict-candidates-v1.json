@@ -1,0 +1,72 @@
+{
+  "ledger_version": "1.0",
+  "project": "postgres/postgres",
+  "upstream_project_id": "postgres/postgres",
+  "upstream_organization_id": "postgres",
+  "domain_id": "database_engines_and_query_systems",
+  "challenge_type": "non_stale_exact_conflict",
+  "selection_status": "prospective_source_semantic_screen_frozen_before_selected_bundle_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Select the four listed eligible candidates in case-slot order. Each selected case must use exactly four unique human-authored PostgreSQL primary sources allocated one per producer, include at least one explicit pre/post semantic conflict, keep all required evidence within the frozen 30-day non-stale window, and expose an exact ordered answer. Selection is based only on source semantics and design validity; treatment/evaluator outcomes are never observed or used, and source-byte reuse with any selected confirmatory case is forbidden.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "postgres-nc-delete-for-portion-wco",
+      "planned_case_id": "dbd-postgres-nc-01",
+      "change_commit": "9924e2d900bf833c1d732d4bf877f51269b03157",
+      "change_observed_at": "2026-08-14T11:47:11Z",
+      "question": "Across the pinned PostgreSQL sources around the WITH CHECK OPTION fix, give four values in order: the pre-fix rewriter gate, the post-fix DELETE predicate, whether out-of-view DELETE FOR PORTION OF leftovers are rejected after the fix, and the expected error phrase.",
+      "canonical_answer": "insert_or_update; CMD_DELETE && parsetree->forPortionOf != NULL; rejected; new row violates check option for view",
+      "ordered_required_slots": [["insert_or_update"],["CMD_DELETE && parsetree->forPortionOf != NULL"],["rejected"],["new row violates check option for view"]],
+      "required_source_ids": ["postgres-nc-01-rewriter-before","postgres-nc-01-rewriter-after","postgres-nc-01-updatable-views-sql","postgres-nc-01-updatable-views-expected"],
+      "producer_allocation": [["producer-postgres-nc-01-1",["postgres-nc-01-rewriter-before"]],["producer-postgres-nc-01-2",["postgres-nc-01-rewriter-after"]],["producer-postgres-nc-01-3",["postgres-nc-01-updatable-views-sql"]],["producer-postgres-nc-01-4",["postgres-nc-01-updatable-views-expected"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "postgres-nc-pgcrypto-ignore-cipher-failure",
+      "planned_case_id": "dbd-postgres-nc-02",
+      "change_commit": "49e795414848bbd1f5122f64c0645827d8d90313",
+      "change_observed_at": "2026-08-10T13:37:50Z",
+      "question": "Across the pinned pgcrypto sources around the recovery-option change, give four values in order: whether the option was recognized before the change, the current option name, the unsupported-Blowfish default error, and the result with the recovery option enabled in the dedicated unsupported-cipher expected output.",
+      "canonical_answer": "absent; ignore-cipher-failure; encrypt error: Cipher cannot be initialized; Secret.",
+      "ordered_required_slots": [["absent"],["ignore-cipher-failure"],["encrypt error: Cipher cannot be initialized"],["Secret."]],
+      "required_source_ids": ["postgres-nc-02-pgp-pgsql-before","postgres-nc-02-pgp-pgsql-after","postgres-nc-02-pgp-decrypt-after","postgres-nc-02-pgp-decrypt-unsupported-expected"],
+      "producer_allocation": [["producer-postgres-nc-02-1",["postgres-nc-02-pgp-pgsql-before"]],["producer-postgres-nc-02-2",["postgres-nc-02-pgp-pgsql-after"]],["producer-postgres-nc-02-3",["postgres-nc-02-pgp-decrypt-after"]],["producer-postgres-nc-02-4",["postgres-nc-02-pgp-decrypt-unsupported-expected"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "postgres-nc-tls-feature-macros",
+      "planned_case_id": "dbd-postgres-nc-03",
+      "change_commit": "1ce49fab6026ba53dbe29576a53e67fe9e1557f7",
+      "change_observed_at": "2026-07-29T19:14:31Z",
+      "question": "Across the pinned server/client OpenSSL mapping sources, give the exact TLS 1.1 feature-test macro in order for server-before, server-after, client-before, and client-after.",
+      "canonical_answer": "TLS1_1_VERSION; OPENSSL_NO_TLS1_1; TLS1_1_VERSION; OPENSSL_NO_TLS1_1",
+      "ordered_required_slots": [["TLS1_1_VERSION"],["OPENSSL_NO_TLS1_1"],["TLS1_1_VERSION"],["OPENSSL_NO_TLS1_1"]],
+      "required_source_ids": ["postgres-nc-03-server-before","postgres-nc-03-server-after","postgres-nc-03-client-before","postgres-nc-03-client-after"],
+      "producer_allocation": [["producer-postgres-nc-03-1",["postgres-nc-03-server-before"]],["producer-postgres-nc-03-2",["postgres-nc-03-server-after"]],["producer-postgres-nc-03-3",["postgres-nc-03-client-before"]],["producer-postgres-nc-03-4",["postgres-nc-03-client-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "postgres-nc-archive-filename-checking",
+      "planned_case_id": "dbd-postgres-nc-04",
+      "change_commit": "dd62a71013c8c4d988624d0424503ec40520760e",
+      "change_observed_at": "2026-08-03T16:25:01Z",
+      "question": "Across the pinned archive-checking sources, give four values in order: the pre-fix parser return type, the post-fix unrecognized return value, the post-fix pg_basebackup acceptance threshold, and the post-fix pg_verifybackup expected suffix return value.",
+      "canonical_answer": "bool; -1; > 0; 0",
+      "ordered_required_slots": [["bool"],["-1"],["> 0"],["0"]],
+      "required_source_ids": ["postgres-nc-04-compression-before","postgres-nc-04-compression-after","postgres-nc-04-basebackup-after","postgres-nc-04-verifybackup-after"],
+      "producer_allocation": [["producer-postgres-nc-04-1",["postgres-nc-04-compression-before"]],["producer-postgres-nc-04-2",["postgres-nc-04-compression-after"]],["producer-postgres-nc-04-3",["postgres-nc-04-basebackup-after"]],["producer-postgres-nc-04-4",["postgres-nc-04-verifybackup-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    }
+  ],
+  "rejected_candidates": [
+    {"candidate_id":"postgres-nc-pgss-version-signedness","reason":"source_diversity_shortfall","note":"The exact semantic change is concentrated in one implementation file; rejected before selection."},
+    {"candidate_id":"postgres-nc-tzload-storage-allocation","reason":"source_diversity_shortfall","note":"The exact semantic change is concentrated in one implementation file; rejected before selection."}
+  ]
+}
