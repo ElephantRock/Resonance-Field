@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-nc-delete-for-portion-wco",
+  "acquired_at":"2026-08-15T03:48:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-nc-01-rewriter-before","repository":"postgres/postgres","commit_sha":"9a08585e8e59068d0ede7d47cd037915a42e1362","path":"src/backend/rewrite/rewriteHandler.c","git_blob_sha":"38f54b57eec10cad7db8d532d10c1dd47668e58a","media_type":"text/plain","title":"PostgreSQL view rewriter immediately before DELETE FOR PORTION WCO fix","evidence_observed_at":"2026-08-14T11:47:11Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-01-rewriter-after","repository":"postgres/postgres","commit_sha":"9924e2d900bf833c1d732d4bf877f51269b03157","path":"src/backend/rewrite/rewriteHandler.c","git_blob_sha":"3e43418e996a84efec9f75687c98f93ae4f0f13a","media_type":"text/plain","title":"PostgreSQL view rewriter after DELETE FOR PORTION WCO fix","evidence_observed_at":"2026-08-14T11:47:11Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-01-updatable-views-sql","repository":"postgres/postgres","commit_sha":"9924e2d900bf833c1d732d4bf877f51269b03157","path":"src/test/regress/sql/updatable_views.sql","git_blob_sha":"3ddb7b43cc86f36e3c02d4a30437badb2826e1a0","media_type":"text/plain","title":"PostgreSQL WCO temporal-leftover regression SQL after fix","evidence_observed_at":"2026-08-14T11:47:11Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-01-updatable-views-expected","repository":"postgres/postgres","commit_sha":"9924e2d900bf833c1d732d4bf877f51269b03157","path":"src/test/regress/expected/updatable_views.out","git_blob_sha":"b4b4e93a7dd6d90d68ae7c4a71bf9a434a705b1f","media_type":"text/plain","title":"PostgreSQL WCO temporal-leftover expected regression output after fix","evidence_observed_at":"2026-08-14T11:47:11Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}
