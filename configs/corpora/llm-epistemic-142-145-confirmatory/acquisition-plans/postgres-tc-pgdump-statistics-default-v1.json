@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-tc-pgdump-statistics-default",
+  "acquired_at":"2026-08-15T12:25:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-tc-04-archiver-before","repository":"postgres/postgres","commit_sha":"4c08ecd1618e3c5da664ba24a4aa7052772c4616","path":"src/bin/pg_dump/pg_backup_archiver.c","git_blob_sha":"afa42337b110fe15f1ef99f3fdbd9f4ff5bad3fe","media_type":"text/plain","title":"PostgreSQL pg_dump archiver before statistics-default reversal","evidence_observed_at":"2025-05-27T18:42:36Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-04-archiver-current","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"src/bin/pg_dump/pg_backup_archiver.c","git_blob_sha":"d7da3fc4325e714df17530e06104865ddb418bde","media_type":"text/plain","title":"Current PostgreSQL pg_dump archiver after statistics-default reversal","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-04-doc-before","repository":"postgres/postgres","commit_sha":"4c08ecd1618e3c5da664ba24a4aa7052772c4616","path":"doc/src/sgml/ref/pg_dump.sgml","git_blob_sha":"c10bca63e55c59bb56f6958d1bfa14f9365add6a","media_type":"text/plain","title":"PostgreSQL pg_dump documentation before statistics-default reversal","evidence_observed_at":"2025-05-27T18:42:36Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-04-doc-current","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"doc/src/sgml/ref/pg_dump.sgml","git_blob_sha":"774be23b4f9506a5e954f6f57209ad5278ddd54d","media_type":"text/plain","title":"Current PostgreSQL pg_dump documentation after statistics-default reversal","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}
