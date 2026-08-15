@@ -1,0 +1,62 @@
+{
+  "ledger_version": "1.0",
+  "project": "postgres/postgres",
+  "upstream_project_id": "postgres/postgres",
+  "upstream_organization_id": "postgres",
+  "domain_id": "database_engines_and_query_systems",
+  "challenge_type": "high_load_distractor_synthesis",
+  "upstream_snapshot": "7e6e294e4e451c55c52caa1ff68df9858912d066",
+  "upstream_evidence_observed_at": "2026-08-14T20:27:16Z",
+  "selection_status": "source_design_screen_frozen_before_selected_bundle_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "The four listed source-design candidates fill dbd-postgres-hd-01..04 in order. Each case uses exactly eight unique current PostgreSQL-authored extension control files, four required plus four distractors, with four producers each receiving one required and one distractor. The ordered answer is the exact default_version declared by the four required control files. Selection uses source/design facts only; no confirmatory treatment or evaluator outcomes may be observed or used; source-byte reuse with any selected confirmatory case is forbidden.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "postgres-hd-extension-versions-a",
+      "planned_case_id": "dbd-postgres-hd-01",
+      "canonical_target_subject": "current PostgreSQL extension default versions A",
+      "question": "Across the pinned PostgreSQL control files, give the exact default_version values in order for amcheck, bloom, pg_trgm, and pageinspect.",
+      "canonical_answer": "1.5; 1.0; 1.6; 1.13",
+      "ordered_required_slots": [["1.5"],["1.0"],["1.6"],["1.13"]],
+      "required_source_ids": ["postgres-hd-01-amcheck","postgres-hd-01-bloom","postgres-hd-01-pg-trgm","postgres-hd-01-pageinspect"],
+      "producer_allocation": [["producer-postgres-hd-01-1",["postgres-hd-01-amcheck","postgres-hd-01-hstore"]],["producer-postgres-hd-01-2",["postgres-hd-01-bloom","postgres-hd-01-tablefunc"]],["producer-postgres-hd-01-3",["postgres-hd-01-pg-trgm","postgres-hd-01-ltree"]],["producer-postgres-hd-01-4",["postgres-hd-01-pageinspect","postgres-hd-01-seg"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "postgres-hd-extension-versions-b",
+      "planned_case_id": "dbd-postgres-hd-02",
+      "canonical_target_subject": "current PostgreSQL extension default versions B",
+      "question": "Across the pinned PostgreSQL control files, give the exact default_version values in order for file_fdw, postgres_fdw, pg_stat_statements, and pg_buffercache.",
+      "canonical_answer": "1.0; 1.3; 1.13; 1.7",
+      "ordered_required_slots": [["1.0"],["1.3"],["1.13"],["1.7"]],
+      "required_source_ids": ["postgres-hd-02-file-fdw","postgres-hd-02-postgres-fdw","postgres-hd-02-pg-stat-statements","postgres-hd-02-pg-buffercache"],
+      "producer_allocation": [["producer-postgres-hd-02-1",["postgres-hd-02-file-fdw","postgres-hd-02-pg-freespacemap"]],["producer-postgres-hd-02-2",["postgres-hd-02-postgres-fdw","postgres-hd-02-pg-prewarm"]],["producer-postgres-hd-02-3",["postgres-hd-02-pg-stat-statements","postgres-hd-02-pg-visibility"]],["producer-postgres-hd-02-4",["postgres-hd-02-pg-buffercache","postgres-hd-02-pg-walinspect"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "postgres-hd-extension-versions-c",
+      "planned_case_id": "dbd-postgres-hd-03",
+      "canonical_target_subject": "current PostgreSQL extension default versions C",
+      "question": "Across the pinned PostgreSQL control files, give the exact default_version values in order for citext, cube, fuzzystrmatch, and intarray.",
+      "canonical_answer": "1.8; 1.5; 1.2; 1.5",
+      "ordered_required_slots": [["1.8"],["1.5"],["1.2"],["1.5"]],
+      "required_source_ids": ["postgres-hd-03-citext","postgres-hd-03-cube","postgres-hd-03-fuzzystrmatch","postgres-hd-03-intarray"],
+      "producer_allocation": [["producer-postgres-hd-03-1",["postgres-hd-03-citext","postgres-hd-03-dict-int"]],["producer-postgres-hd-03-2",["postgres-hd-03-cube","postgres-hd-03-dict-xsyn"]],["producer-postgres-hd-03-3",["postgres-hd-03-fuzzystrmatch","postgres-hd-03-isn"]],["producer-postgres-hd-03-4",["postgres-hd-03-intarray","postgres-hd-03-lo"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "postgres-hd-extension-versions-d",
+      "planned_case_id": "dbd-postgres-hd-04",
+      "canonical_target_subject": "current PostgreSQL extension default versions D",
+      "question": "Across the pinned PostgreSQL control files, give the exact default_version values in order for dblink, earthdistance, intagg, and pgcrypto.",
+      "canonical_answer": "1.2; 1.2; 1.1; 1.4",
+      "ordered_required_slots": [["1.2"],["1.2"],["1.1"],["1.4"]],
+      "required_source_ids": ["postgres-hd-04-dblink","postgres-hd-04-earthdistance","postgres-hd-04-intagg","postgres-hd-04-pgcrypto"],
+      "producer_allocation": [["producer-postgres-hd-04-1",["postgres-hd-04-dblink","postgres-hd-04-sslinfo"]],["producer-postgres-hd-04-2",["postgres-hd-04-earthdistance","postgres-hd-04-pg-surgery"]],["producer-postgres-hd-04-3",["postgres-hd-04-intagg","postgres-hd-04-moddatetime"]],["producer-postgres-hd-04-4",["postgres-hd-04-pgcrypto","postgres-hd-04-btree-gin"]]],
+      "minimum_events_per_producer": 1
+    }
+  ]
+}
