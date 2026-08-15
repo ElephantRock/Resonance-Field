@@ -1,0 +1,62 @@
+{
+  "ledger_version": "1.0",
+  "project": "bazelbuild/bazel",
+  "upstream_project_id": "bazelbuild/bazel",
+  "upstream_organization_id": "bazelbuild",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "high_load_distractor_synthesis",
+  "upstream_snapshot": "e3c62112244d6b041bdfe785a62a1cbf2b90f79e",
+  "upstream_evidence_observed_at": "2026-08-14T23:01:46Z",
+  "selection_status": "prospective_rule_metadata_screen_frozen_before_bazel_high_load_acquisition",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "The four planned candidates fill bpd-bazel-hd-01..04 in listed order. Each case is frozen at exactly eight unique current Bazel-authored source files, four required plus four distractors, with exactly four producers receiving one required and one distractor source each. Required answers are exact source-declared RuleSet dependency lists or rule metadata names. Selection is source/design based only; exact source-byte reuse with any previously selected confirmatory case is disallowed; treatment or evaluator outcomes may not be observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "bazel-hd-ruleset-dependencies",
+      "canonical_target_subject": "current Bazel RuleSet requires dependency lists",
+      "planned_case_id": "bpd-bazel-hd-01",
+      "question": "Across the pinned current Bazel RuleSet sources, give the exact requires() dependency lists in order for CcRules, JavaRules, ObjcRules, and ToolchainRules.",
+      "canonical_answer": "CoreRules.INSTANCE, PlatformRules.INSTANCE; CoreRules.INSTANCE, CcRules.INSTANCE; CoreRules.INSTANCE, CcRules.INSTANCE; CoreRules.INSTANCE, CcRules.INSTANCE, JavaRules.INSTANCE",
+      "ordered_required_slots": [["CoreRules.INSTANCE, PlatformRules.INSTANCE"],["CoreRules.INSTANCE, CcRules.INSTANCE"],["CoreRules.INSTANCE, CcRules.INSTANCE"],["CoreRules.INSTANCE, CcRules.INSTANCE, JavaRules.INSTANCE"]],
+      "required_source_ids": ["bazel-hd-01-cc-rules","bazel-hd-01-java-rules","bazel-hd-01-objc-rules","bazel-hd-01-toolchain-rules"],
+      "producer_allocation": [["producer-bazel-hd-01-1",["bazel-hd-01-cc-rules","bazel-hd-01-generic-rules"]],["producer-bazel-hd-01-2",["bazel-hd-01-java-rules","bazel-hd-01-strategy-module"]],["producer-bazel-hd-01-3",["bazel-hd-01-objc-rules","bazel-hd-01-prerequisite-validator"]],["producer-bazel-hd-01-4",["bazel-hd-01-toolchain-rules","bazel-hd-01-rule-class-provider"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "bazel-hd-platform-rule-names",
+      "canonical_target_subject": "current platform and toolchain RuleDefinition metadata names",
+      "planned_case_id": "bpd-bazel-hd-02",
+      "question": "Across the pinned current Bazel platform RuleDefinition sources, give the exact metadata rule names in order for ConstraintSettingRule, ConstraintValueRule, PlatformRule, and ToolchainRule.",
+      "canonical_answer": "constraint_setting; constraint_value; platform; toolchain",
+      "ordered_required_slots": [["constraint_setting"],["constraint_value"],["platform"],["toolchain"]],
+      "required_source_ids": ["bazel-hd-02-constraint-setting-rule","bazel-hd-02-constraint-value-rule","bazel-hd-02-platform-rule","bazel-hd-02-toolchain-rule"],
+      "producer_allocation": [["producer-bazel-hd-02-1",["bazel-hd-02-constraint-setting-rule","bazel-hd-02-constraint-setting"]],["producer-bazel-hd-02-2",["bazel-hd-02-constraint-value-rule","bazel-hd-02-constraint-value"]],["producer-bazel-hd-02-3",["bazel-hd-02-platform-rule","bazel-hd-02-platform"]],["producer-bazel-hd-02-4",["bazel-hd-02-toolchain-rule","bazel-hd-02-toolchain"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "bazel-hd-general-extra-rule-names",
+      "canonical_target_subject": "current general and extra-action rule metadata names",
+      "planned_case_id": "bpd-bazel-hd-03",
+      "question": "Across the pinned current Bazel rule sources, give the exact declared rule names in order for Alias.AliasRule, ActionListenerRule, ExtraActionRule, and ToolchainType.ToolchainTypeRule.",
+      "canonical_answer": "alias; action_listener; extra_action; toolchain_type",
+      "ordered_required_slots": [["alias"],["action_listener"],["extra_action"],["toolchain_type"]],
+      "required_source_ids": ["bazel-hd-03-alias","bazel-hd-03-action-listener-rule","bazel-hd-03-extra-action-rule","bazel-hd-03-toolchain-type"],
+      "producer_allocation": [["producer-bazel-hd-03-1",["bazel-hd-03-alias","bazel-hd-03-alias-configured-target"]],["producer-bazel-hd-03-2",["bazel-hd-03-action-listener-rule","bazel-hd-03-action-listener"]],["producer-bazel-hd-03-3",["bazel-hd-03-extra-action-rule","bazel-hd-03-extra-action-factory"]],["producer-bazel-hd-03-4",["bazel-hd-03-toolchain-type","bazel-hd-03-late-bound-alias"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "bazel-hd-specialized-rule-names",
+      "canonical_target_subject": "current specialized Bazel native rule names",
+      "planned_case_id": "bpd-bazel-hd-04",
+      "question": "Across the pinned current Bazel specialized rule sources, give the exact declared rule names in order for BazelGenRuleRule, JavaPluginsFlagAliasRule, CcToolchainAliasRule, and CcLibcTopAlias.",
+      "canonical_answer": "genrule; java_plugins_flag_alias; cc_toolchain_alias; cc_libc_top_alias",
+      "ordered_required_slots": [["genrule"],["java_plugins_flag_alias"],["cc_toolchain_alias"],["cc_libc_top_alias"]],
+      "required_source_ids": ["bazel-hd-04-genrule","bazel-hd-04-java-plugins-flag-alias","bazel-hd-04-cc-toolchain-alias","bazel-hd-04-cc-libc-top-alias"],
+      "producer_allocation": [["producer-bazel-hd-04-1",["bazel-hd-04-genrule","bazel-hd-04-genrule-base"]],["producer-bazel-hd-04-2",["bazel-hd-04-java-plugins-flag-alias","bazel-hd-04-config-feature-flag"]],["producer-bazel-hd-04-3",["bazel-hd-04-cc-toolchain-alias","bazel-hd-04-config-rule-classes"]],["producer-bazel-hd-04-4",["bazel-hd-04-cc-libc-top-alias","bazel-hd-04-config-rules"]]],
+      "minimum_events_per_producer": 1
+    }
+  ]
+}
