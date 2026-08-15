@@ -1,0 +1,89 @@
+{
+  "ledger_version": "1.0",
+  "project": "redis/redis",
+  "upstream_project_id": "redis/redis",
+  "upstream_organization_id": "redis",
+  "domain_id": "databases_and_data_systems",
+  "challenge_type": "non_stale_exact_conflict",
+  "selection_status": "prospective_source_semantic_screen_frozen_before_acquisition_plan_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Select the four listed eligible candidates in case-slot order after source-integrity freeze. Each case must use exactly four unique human-authored Redis primary sources allocated one per producer, require all four sources, expose at least one exact near-current semantic conflict, keep required evidence within the frozen 30-day non-stale window, and avoid source-byte reuse with every previously selected confirmatory case. Selection is based only on frozen source semantics and design validity; treatment/evaluator outcomes are never observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "redis-nc-tls-expected-peer-name",
+      "planned_case_id": "dbd-redis-nc-01",
+      "change_commit": "58d0fb9c62e88df331c55dec378cd149909d406b",
+      "change_observed_at": "2026-07-29T08:23:38Z",
+      "question": "Across the near-current Redis TLS peer-name change, give four values in order: whether src/tls.c had peer-name verification support before the change, the current user-facing option name, whether an empty value clears the option, and whether a mismatching certificate SAN leaves the replication link up.",
+      "canonical_answer": "no; tls-expected-peer-name; yes; no",
+      "ordered_required_slots": [["no","absent","false"],["tls-expected-peer-name"],["yes","true"],["no","false","link down"]],
+      "required_sources": [
+        {"source_id":"redis-nc-01-tls-before","commit_sha":"1532257df5e193a1b5c01651ec954d38513815b3","path":"src/tls.c","git_blob_sha":"0537dfef377caaba0994807d10d0197782aed404"},
+        {"source_id":"redis-nc-01-tls-after","commit_sha":"58d0fb9c62e88df331c55dec378cd149909d406b","path":"src/tls.c","git_blob_sha":"c65473cdc779038d0dc05f45bce960d2566768c4"},
+        {"source_id":"redis-nc-01-config-after","commit_sha":"58d0fb9c62e88df331c55dec378cd149909d406b","path":"src/config.c","git_blob_sha":"dfb56449e275885a9ac1670342089837ead70c3a"},
+        {"source_id":"redis-nc-01-tls-test-after","commit_sha":"58d0fb9c62e88df331c55dec378cd149909d406b","path":"tests/unit/tls.tcl","git_blob_sha":"d0720bab1721ea22a801798dc76ecc885a3ec9cc"}
+      ],
+      "producer_allocation": [["producer-redis-nc-01-1",["redis-nc-01-tls-before"]],["producer-redis-nc-01-2",["redis-nc-01-tls-after"]],["producer-redis-nc-01-3",["redis-nc-01-config-after"]],["producer-redis-nc-01-4",["redis-nc-01-tls-test-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "redis-nc-aof-null-module-rewrite",
+      "planned_case_id": "dbd-redis-nc-02",
+      "change_commit": "f5b2cba567c98d880d1f8a918de0b98e2b893e17",
+      "change_observed_at": "2026-07-20T03:05:42Z",
+      "question": "Across the near-current Redis AOF module-rewrite fix, give four values in order: the pre-fix handling of a module aof_rewrite callback, the current handling when that callback is NULL, the Vector Set aof_rewrite callback value, and the regression's expected aof_last_bgrewrite_status.",
+      "canonical_answer": "unconditional call; graceful failure; NULL; err",
+      "ordered_required_slots": [["unconditional call","unconditional","called unconditionally"],["graceful failure","guarded failure","fail gracefully"],["NULL"],["err"]],
+      "required_sources": [
+        {"source_id":"redis-nc-02-aof-before","commit_sha":"799e7c5c24ae5ff96e1550e93fa90f4cc5617730","path":"src/aof.c","git_blob_sha":"cb71bf0707861a6d15c7c2279e717cb7be42ba1e"},
+        {"source_id":"redis-nc-02-aof-after","commit_sha":"f5b2cba567c98d880d1f8a918de0b98e2b893e17","path":"src/aof.c","git_blob_sha":"b68c73918908fecd140d47a042b044705a4e8b35"},
+        {"source_id":"redis-nc-02-vset-after","commit_sha":"f5b2cba567c98d880d1f8a918de0b98e2b893e17","path":"modules/vector-sets/vset.c","git_blob_sha":"65194bfd7b18cbce6cc75bf3482d74da82df4488"},
+        {"source_id":"redis-nc-02-aof-test-after","commit_sha":"f5b2cba567c98d880d1f8a918de0b98e2b893e17","path":"modules/vector-sets/tests/aof_rewrite.py","git_blob_sha":"12204a62ef9c724dc6736c4e97ee352eff9612cf"}
+      ],
+      "producer_allocation": [["producer-redis-nc-02-1",["redis-nc-02-aof-before"]],["producer-redis-nc-02-2",["redis-nc-02-aof-after"]],["producer-redis-nc-02-3",["redis-nc-02-vset-after"]],["producer-redis-nc-02-4",["redis-nc-02-aof-test-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "redis-nc-pubsub-auth-provenance",
+      "planned_case_id": "dbd-redis-nc-03",
+      "change_commit": "43c88eb4519581c7e65d298222d7210c98779b96",
+      "change_observed_at": "2026-08-05T09:43:44Z",
+      "question": "Across the near-current Redis Pub/Sub ACL provenance change, give four values in order: the pre-fix identity field used to filter clients during channel-permission revocation, the current helper that detects subscriptions stamped with an old owner, the current helper that resolves a subscription's effective owner, and whether the regression kills a client that re-authenticates then loses the originating user's channel permission.",
+      "canonical_answer": "c->user; pubsubClientHasStampedOwner; pubsubEntryOwner; yes",
+      "ordered_required_slots": [["c->user"],["pubsubClientHasStampedOwner"],["pubsubEntryOwner"],["yes","true","killed"]],
+      "required_sources": [
+        {"source_id":"redis-nc-03-acl-before","commit_sha":"bf49481ad7cf93d136e7520d321448d9ef65b03a","path":"src/acl.c","git_blob_sha":"3a673e1a26134724785524554969faf7a3e8a37f"},
+        {"source_id":"redis-nc-03-acl-after","commit_sha":"43c88eb4519581c7e65d298222d7210c98779b96","path":"src/acl.c","git_blob_sha":"818451fcbd17860b47549a5a343b0d7e7d527559"},
+        {"source_id":"redis-nc-03-pubsub-after","commit_sha":"43c88eb4519581c7e65d298222d7210c98779b96","path":"src/pubsub.c","git_blob_sha":"4a878a2689dbac4a09777a8f5c039c307d11768a"},
+        {"source_id":"redis-nc-03-acl-test-after","commit_sha":"43c88eb4519581c7e65d298222d7210c98779b96","path":"tests/unit/acl.tcl","git_blob_sha":"5907b96717edc4546964fe308353f77f4d33ae08"}
+      ],
+      "producer_allocation": [["producer-redis-nc-03-1",["redis-nc-03-acl-before"]],["producer-redis-nc-03-2",["redis-nc-03-acl-after"]],["producer-redis-nc-03-3",["redis-nc-03-pubsub-after"]],["producer-redis-nc-03-4",["redis-nc-03-acl-test-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "redis-nc-replication-compression-default-docs",
+      "planned_case_id": "dbd-redis-nc-04",
+      "change_commit": "b8e84a8d39066f5c4bd907c81a17af20c0f3fa88",
+      "change_observed_at": "2026-07-20T08:25:07Z",
+      "question": "Across the near-current Redis replication-compression default correction, give four values in order: whether repl-compression 0 was active in redis.conf before the change, whether it is active after the change, whether the README documented BUILD_COMPRESSION before the change, and the build flag documented after the change.",
+      "canonical_answer": "yes; no; no; BUILD_COMPRESSION=yes",
+      "ordered_required_slots": [["yes","active","true"],["no","commented","false"],["no","absent","false"],["BUILD_COMPRESSION=yes","make BUILD_COMPRESSION=yes"]],
+      "required_sources": [
+        {"source_id":"redis-nc-04-config-before","commit_sha":"82d0e3f85b373ce48845e893d161cc7a9d5a253c","path":"redis.conf","git_blob_sha":"814749de7838b46bc9ac106001e351d020ace9be"},
+        {"source_id":"redis-nc-04-config-after","commit_sha":"b8e84a8d39066f5c4bd907c81a17af20c0f3fa88","path":"redis.conf","git_blob_sha":"36c8f31ee23873824ff167853a65ab21fff852f0"},
+        {"source_id":"redis-nc-04-readme-before","commit_sha":"82d0e3f85b373ce48845e893d161cc7a9d5a253c","path":"README.md","git_blob_sha":"4b1287c5a8335466b7df6c086496258d212998d7"},
+        {"source_id":"redis-nc-04-readme-after","commit_sha":"b8e84a8d39066f5c4bd907c81a17af20c0f3fa88","path":"README.md","git_blob_sha":"1f1c88b7d51a09a3cbeba8eeaa549860e9d39316"}
+      ],
+      "producer_allocation": [["producer-redis-nc-04-1",["redis-nc-04-config-before"]],["producer-redis-nc-04-2",["redis-nc-04-config-after"]],["producer-redis-nc-04-3",["redis-nc-04-readme-before"]],["producer-redis-nc-04-4",["redis-nc-04-readme-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    }
+  ],
+  "rejected_candidates": []
+}
