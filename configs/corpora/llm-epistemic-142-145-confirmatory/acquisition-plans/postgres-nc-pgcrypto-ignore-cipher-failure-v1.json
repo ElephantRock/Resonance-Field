@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-nc-pgcrypto-ignore-cipher-failure",
+  "acquired_at":"2026-08-15T03:48:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-nc-02-pgp-pgsql-before","repository":"postgres/postgres","commit_sha":"d0ecee6de9afec143a4766a72df0d3018a06d662","path":"contrib/pgcrypto/pgp-pgsql.c","git_blob_sha":"d3e7895b0d94e251e06511299d7c7a902f582e18","media_type":"text/plain","title":"pgcrypto SQL option parser immediately before ignore-cipher-failure","evidence_observed_at":"2026-08-10T13:37:50Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-02-pgp-pgsql-after","repository":"postgres/postgres","commit_sha":"49e795414848bbd1f5122f64c0645827d8d90313","path":"contrib/pgcrypto/pgp-pgsql.c","git_blob_sha":"a4b1eac71bf0c34e31253b99d8e9788bfab6dbc7","media_type":"text/plain","title":"pgcrypto SQL option parser after ignore-cipher-failure","evidence_observed_at":"2026-08-10T13:37:50Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-02-pgp-decrypt-after","repository":"postgres/postgres","commit_sha":"49e795414848bbd1f5122f64c0645827d8d90313","path":"contrib/pgcrypto/pgp-decrypt.c","git_blob_sha":"47ae83db789c94476f3a41293f39f07c9f6534c7","media_type":"text/plain","title":"pgcrypto decrypt path after ignore-cipher-failure","evidence_observed_at":"2026-08-10T13:37:50Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-02-pgp-decrypt-unsupported-expected","repository":"postgres/postgres","commit_sha":"49e795414848bbd1f5122f64c0645827d8d90313","path":"contrib/pgcrypto/expected/pgp-decrypt_1.out","git_blob_sha":"df4d28872b58cac1c06d0b5137da20f07ce7f5e5","media_type":"text/plain","title":"pgcrypto unsupported-cipher expected output after recovery option","evidence_observed_at":"2026-08-10T13:37:50Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}
