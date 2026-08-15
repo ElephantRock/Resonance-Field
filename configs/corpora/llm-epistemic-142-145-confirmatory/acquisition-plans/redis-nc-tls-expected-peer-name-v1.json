@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-nc-tls-expected-peer-name",
+  "acquired_at":"2026-08-15T13:15:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-nc-01-tls-before","repository":"redis/redis","commit_sha":"1532257df5e193a1b5c01651ec954d38513815b3","path":"src/tls.c","git_blob_sha":"0537dfef377caaba0994807d10d0197782aed404","media_type":"text/plain","title":"Redis TLS transport before peer-name verification support","evidence_observed_at":"2026-07-29T08:23:38Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-01-tls-after","repository":"redis/redis","commit_sha":"58d0fb9c62e88df331c55dec378cd149909d406b","path":"src/tls.c","git_blob_sha":"c65473cdc779038d0dc05f45bce960d2566768c4","media_type":"text/plain","title":"Redis TLS transport with peer-name verification support","evidence_observed_at":"2026-07-29T08:23:38Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-01-config-after","repository":"redis/redis","commit_sha":"58d0fb9c62e88df331c55dec378cd149909d406b","path":"src/config.c","git_blob_sha":"dfb56449e275885a9ac1670342089837ead70c3a","media_type":"text/plain","title":"Redis configuration registration for tls-expected-peer-name","evidence_observed_at":"2026-07-29T08:23:38Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-01-tls-test-after","repository":"redis/redis","commit_sha":"58d0fb9c62e88df331c55dec378cd149909d406b","path":"tests/unit/tls.tcl","git_blob_sha":"d0720bab1721ea22a801798dc76ecc885a3ec9cc","media_type":"text/plain","title":"Redis TLS peer-name regression coverage","evidence_observed_at":"2026-07-29T08:23:38Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

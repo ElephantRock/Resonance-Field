@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-nc-aof-null-module-rewrite",
+  "acquired_at":"2026-08-15T13:15:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-nc-02-aof-before","repository":"redis/redis","commit_sha":"799e7c5c24ae5ff96e1550e93fa90f4cc5617730","path":"src/aof.c","git_blob_sha":"cb71bf0707861a6d15c7c2279e717cb7be42ba1e","media_type":"text/plain","title":"Redis AOF module rewrite before NULL callback guard","evidence_observed_at":"2026-07-20T03:05:42Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-02-aof-after","repository":"redis/redis","commit_sha":"f5b2cba567c98d880d1f8a918de0b98e2b893e17","path":"src/aof.c","git_blob_sha":"b68c73918908fecd140d47a042b044705a4e8b35","media_type":"text/plain","title":"Redis AOF module rewrite after NULL callback guard","evidence_observed_at":"2026-07-20T03:05:42Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-02-vset-after","repository":"redis/redis","commit_sha":"f5b2cba567c98d880d1f8a918de0b98e2b893e17","path":"modules/vector-sets/vset.c","git_blob_sha":"65194bfd7b18cbce6cc75bf3482d74da82df4488","media_type":"text/plain","title":"Redis Vector Set module type with NULL aof_rewrite callback","evidence_observed_at":"2026-07-20T03:05:42Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-02-aof-test-after","repository":"redis/redis","commit_sha":"f5b2cba567c98d880d1f8a918de0b98e2b893e17","path":"modules/vector-sets/tests/aof_rewrite.py","git_blob_sha":"12204a62ef9c724dc6736c4e97ee352eff9612cf","media_type":"text/plain","title":"Redis Vector Set AOF graceful-failure regression","evidence_observed_at":"2026-07-20T03:05:42Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

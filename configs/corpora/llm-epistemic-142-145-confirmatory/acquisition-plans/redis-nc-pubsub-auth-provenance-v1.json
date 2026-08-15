@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-nc-pubsub-auth-provenance",
+  "acquired_at":"2026-08-15T13:15:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-nc-03-acl-before","repository":"redis/redis","commit_sha":"bf49481ad7cf93d136e7520d321448d9ef65b03a","path":"src/acl.c","git_blob_sha":"3a673e1a26134724785524554969faf7a3e8a37f","media_type":"text/plain","title":"Redis ACL revocation before Pub/Sub subscription provenance","evidence_observed_at":"2026-08-05T09:43:44Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-03-acl-after","repository":"redis/redis","commit_sha":"43c88eb4519581c7e65d298222d7210c98779b96","path":"src/acl.c","git_blob_sha":"818451fcbd17860b47549a5a343b0d7e7d527559","media_type":"text/plain","title":"Redis ACL revocation with stamped Pub/Sub owner detection","evidence_observed_at":"2026-08-05T09:43:44Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-03-pubsub-after","repository":"redis/redis","commit_sha":"43c88eb4519581c7e65d298222d7210c98779b96","path":"src/pubsub.c","git_blob_sha":"4a878a2689dbac4a09777a8f5c039c307d11768a","media_type":"text/plain","title":"Redis Pub/Sub effective owner and provenance helpers","evidence_observed_at":"2026-08-05T09:43:44Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-nc-03-acl-test-after","repository":"redis/redis","commit_sha":"43c88eb4519581c7e65d298222d7210c98779b96","path":"tests/unit/acl.tcl","git_blob_sha":"5907b96717edc4546964fe308353f77f4d33ae08","media_type":"text/plain","title":"Redis ACL Pub/Sub provenance regression coverage","evidence_observed_at":"2026-08-05T09:43:44Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}
