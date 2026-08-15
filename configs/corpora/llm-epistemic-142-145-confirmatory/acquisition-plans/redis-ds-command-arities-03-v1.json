@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-ds-command-arities-03",
+  "acquired_at":"2026-08-15T12:55:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-ds-03-hget","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/hget.json","git_blob_sha":"a041143ec86372dd45fee299e3532679e80aede3","media_type":"application/json","title":"Redis HGET command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-03-hset","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/hset.json","git_blob_sha":"8180972277630eaa7b97f78f409741bb74a091e3","media_type":"application/json","title":"Redis HSET command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-03-hdel","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/hdel.json","git_blob_sha":"11da02d3bb4ad84de7832eb10352dddb937f167f","media_type":"application/json","title":"Redis HDEL command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-03-hlen","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/hlen.json","git_blob_sha":"d4c13ac1166c2a82c65bb7eb0be2a249a0cf02e2","media_type":"application/json","title":"Redis HLEN command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

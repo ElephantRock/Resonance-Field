@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-ds-command-arities-02",
+  "acquired_at":"2026-08-15T12:55:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-ds-02-incr","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/incr.json","git_blob_sha":"f33ec02b4251351b41dfd0943a9c2805a493b97f","media_type":"application/json","title":"Redis INCR command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-02-decr","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/decr.json","git_blob_sha":"0841928a503dd9174419538034e83b3b44953134","media_type":"application/json","title":"Redis DECR command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-02-append","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/append.json","git_blob_sha":"a8ec6bf82e7e152457b68c42c1f2142c2aaa41a1","media_type":"application/json","title":"Redis APPEND command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-02-strlen","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/strlen.json","git_blob_sha":"395a02dfa34963ab3683d28b58fe380413f2fdb3","media_type":"application/json","title":"Redis STRLEN command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}
