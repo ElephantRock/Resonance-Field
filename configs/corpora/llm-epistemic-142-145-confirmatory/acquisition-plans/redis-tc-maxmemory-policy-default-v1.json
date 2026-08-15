@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-tc-maxmemory-policy-default",
+  "acquired_at":"2026-08-15T14:05:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-tc-02-config-before","repository":"redis/redis","commit_sha":"a98369929e250e94240f719abcf1d6e1255202a9","path":"redis.conf","git_blob_sha":"f40d53e4d8496728cbe68ca126337c4e9d439cbd","media_type":"text/plain","title":"Redis configuration template before maxmemory-policy default change","evidence_observed_at":"2014-03-20T16:56:27Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-02-config-current","repository":"redis/redis","commit_sha":"ba99faa230643931f91d2d5d68a0393e25fa07f5","path":"redis.conf","git_blob_sha":"943dbd56f7486c9b55e90c0f9bc277c44e8d9b0a","media_type":"text/plain","title":"Current Redis configuration template with noeviction default","evidence_observed_at":"2026-07-18T00:30:19Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-02-internal-before","repository":"redis/redis","commit_sha":"a98369929e250e94240f719abcf1d6e1255202a9","path":"src/redis.h","git_blob_sha":"c14a2960779a4467bda85a12eb46750c60c86ad3","media_type":"text/plain","title":"Redis internal maxmemory policy default before noeviction","evidence_observed_at":"2014-03-20T16:56:27Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-02-internal-current","repository":"redis/redis","commit_sha":"ba99faa230643931f91d2d5d68a0393e25fa07f5","path":"src/config.c","git_blob_sha":"5b2603093ada4a36c9ba4b8d09f8471ae51cb1e1","media_type":"text/plain","title":"Current Redis internal maxmemory policy default","evidence_observed_at":"2026-07-18T00:30:19Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

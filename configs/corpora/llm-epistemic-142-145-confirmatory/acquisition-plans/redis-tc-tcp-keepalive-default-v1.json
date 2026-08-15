@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-tc-tcp-keepalive-default",
+  "acquired_at":"2026-08-15T14:05:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-tc-03-internal-before","repository":"redis/redis","commit_sha":"7e220a964afdcb18bb660e898bc74a727a2a5848","path":"src/server.h","git_blob_sha":"9d3fc2d3330e21aae123c4fd6411ff0e28e4a64c","media_type":"text/plain","title":"Redis internal TCP keepalive default before correction","evidence_observed_at":"2016-07-01T13:26:55Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-03-internal-current","repository":"redis/redis","commit_sha":"d099c105811350bbe6a23e221d865ba58749ef2c","path":"src/config.c","git_blob_sha":"e02cd64e5b9fe6716a369115992b487a4674ea3c","media_type":"text/plain","title":"Current Redis internal TCP keepalive default","evidence_observed_at":"2026-01-22T07:40:57Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-03-config-before","repository":"redis/redis","commit_sha":"7e220a964afdcb18bb660e898bc74a727a2a5848","path":"redis.conf","git_blob_sha":"67cd502455146cbb38d74356954702778deed817","media_type":"text/plain","title":"Redis configuration template with 300-second TCP keepalive before internal correction","evidence_observed_at":"2016-07-01T13:26:55Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-03-config-current","repository":"redis/redis","commit_sha":"d099c105811350bbe6a23e221d865ba58749ef2c","path":"redis.conf","git_blob_sha":"30a3d8b574fb325bdbb65bf489177d452286b9fd","media_type":"text/plain","title":"Current Redis configuration template with 300-second TCP keepalive","evidence_observed_at":"2026-01-22T07:40:57Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}
