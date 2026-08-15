@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-nc-tls-feature-macros",
+  "acquired_at":"2026-08-15T03:48:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-nc-03-server-before","repository":"postgres/postgres","commit_sha":"54dee94e6a71817877dfdeb2c2c811330e58e754","path":"src/backend/libpq/be-secure-openssl.c","git_blob_sha":"71e20e058eb12c2f7be13763e48994abe2dde25b","media_type":"text/plain","title":"PostgreSQL backend TLS mapping before feature-macro fix","evidence_observed_at":"2026-07-29T19:14:31Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-03-server-after","repository":"postgres/postgres","commit_sha":"1ce49fab6026ba53dbe29576a53e67fe9e1557f7","path":"src/backend/libpq/be-secure-openssl.c","git_blob_sha":"0476470084586da6735791b39021355d53adac7e","media_type":"text/plain","title":"PostgreSQL backend TLS mapping after feature-macro fix","evidence_observed_at":"2026-07-29T19:14:31Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-03-client-before","repository":"postgres/postgres","commit_sha":"54dee94e6a71817877dfdeb2c2c811330e58e754","path":"src/interfaces/libpq/fe-secure-openssl.c","git_blob_sha":"de65486d20483e1ab6ad1030c732967f4b40b61f","media_type":"text/plain","title":"PostgreSQL libpq TLS mapping before feature-macro fix","evidence_observed_at":"2026-07-29T19:14:31Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-03-client-after","repository":"postgres/postgres","commit_sha":"1ce49fab6026ba53dbe29576a53e67fe9e1557f7","path":"src/interfaces/libpq/fe-secure-openssl.c","git_blob_sha":"91c1fa9bb95ce11e4e873221c04efc208385b382","media_type":"text/plain","title":"PostgreSQL libpq TLS mapping after feature-macro fix","evidence_observed_at":"2026-07-29T19:14:31Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}
