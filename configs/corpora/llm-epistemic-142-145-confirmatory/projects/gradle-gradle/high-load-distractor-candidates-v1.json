@@ -1,0 +1,62 @@
+{
+  "ledger_version": "1.0",
+  "project": "gradle/gradle",
+  "upstream_project_id": "gradle/gradle",
+  "upstream_organization_id": "gradle",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "high_load_distractor_synthesis",
+  "upstream_snapshot": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+  "upstream_evidence_observed_at": "2026-08-14T11:46:55Z",
+  "selection_status": "prospective_native_plugin_descriptor_screen_frozen_before_gradle_high_load_acquisition",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Eligible candidates are ordered lexically by canonical_target_subject; the first four fill bpd-gradle-hd-01..04. Each case is frozen at exactly eight unique current Gradle native plugin descriptor sources, four required plus four distractors, with exactly four producers receiving one required and one distractor source each. Selection is source/design based only; treatment or evaluator outcomes may not be observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "gradle-hd-native-plugin-descriptors-a",
+      "canonical_target_subject": "native plugin descriptor implementation mappings group A assembler through c-lang",
+      "planned_case_id": "bpd-gradle-hd-01",
+      "question": "Across the pinned current Gradle native plugin descriptors, give the exact implementation classes in order for org.gradle.assembler-lang, org.gradle.assembler, org.gradle.binary-base, and org.gradle.c-lang.",
+      "canonical_answer": "org.gradle.language.assembler.plugins.AssemblerLangPlugin; org.gradle.language.assembler.plugins.AssemblerPlugin; org.gradle.platform.base.plugins.BinaryBasePlugin; org.gradle.language.c.plugins.CLangPlugin",
+      "ordered_required_slots": [["org.gradle.language.assembler.plugins.AssemblerLangPlugin"],["org.gradle.language.assembler.plugins.AssemblerPlugin"],["org.gradle.platform.base.plugins.BinaryBasePlugin"],["org.gradle.language.c.plugins.CLangPlugin"]],
+      "required_source_ids": ["gradle-hd-01-assembler-lang","gradle-hd-01-assembler","gradle-hd-01-binary-base","gradle-hd-01-c-lang"],
+      "producer_allocation": [["producer-gradle-hd-01-1",["gradle-hd-01-assembler-lang","gradle-hd-01-c"]],["producer-gradle-hd-01-2",["gradle-hd-01-assembler","gradle-hd-01-component-base"]],["producer-gradle-hd-01-3",["gradle-hd-01-binary-base","gradle-hd-01-component-model-base"]],["producer-gradle-hd-01-4",["gradle-hd-01-c-lang","gradle-hd-01-component-reporting-tasks"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "gradle-hd-native-plugin-descriptors-b",
+      "canonical_target_subject": "native plugin descriptor implementation mappings group B cpp through cunit",
+      "planned_case_id": "bpd-gradle-hd-02",
+      "question": "Across the pinned current Gradle native plugin descriptors, give the exact implementation classes in order for org.gradle.cpp-lang, org.gradle.cpp, org.gradle.cunit-test-suite, and org.gradle.cunit.",
+      "canonical_answer": "org.gradle.language.cpp.plugins.CppLangPlugin; org.gradle.language.cpp.plugins.CppPlugin; org.gradle.nativeplatform.test.cunit.plugins.CUnitPlugin; org.gradle.nativeplatform.test.cunit.plugins.CUnitConventionPlugin",
+      "ordered_required_slots": [["org.gradle.language.cpp.plugins.CppLangPlugin"],["org.gradle.language.cpp.plugins.CppPlugin"],["org.gradle.nativeplatform.test.cunit.plugins.CUnitPlugin"],["org.gradle.nativeplatform.test.cunit.plugins.CUnitConventionPlugin"]],
+      "required_source_ids": ["gradle-hd-02-cpp-lang","gradle-hd-02-cpp","gradle-hd-02-cunit-test-suite","gradle-hd-02-cunit"],
+      "producer_allocation": [["producer-gradle-hd-02-1",["gradle-hd-02-cpp-lang","gradle-hd-02-google-test-test-suite"]],["producer-gradle-hd-02-2",["gradle-hd-02-cpp","gradle-hd-02-google-test"]],["producer-gradle-hd-02-3",["gradle-hd-02-cunit-test-suite","gradle-hd-02-language-base"]],["producer-gradle-hd-02-4",["gradle-hd-02-cunit","gradle-hd-02-native-component-model"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "gradle-hd-native-plugin-descriptors-c",
+      "canonical_target_subject": "native plugin descriptor implementation mappings group C objective-c through objective-cpp",
+      "planned_case_id": "bpd-gradle-hd-03",
+      "question": "Across the pinned current Gradle native plugin descriptors, give the exact implementation classes in order for org.gradle.objective-c-lang, org.gradle.objective-c, org.gradle.objective-cpp-lang, and org.gradle.objective-cpp.",
+      "canonical_answer": "org.gradle.language.objectivec.plugins.ObjectiveCLangPlugin; org.gradle.language.objectivec.plugins.ObjectiveCPlugin; org.gradle.language.objectivecpp.plugins.ObjectiveCppLangPlugin; org.gradle.language.objectivecpp.plugins.ObjectiveCppPlugin",
+      "ordered_required_slots": [["org.gradle.language.objectivec.plugins.ObjectiveCLangPlugin"],["org.gradle.language.objectivec.plugins.ObjectiveCPlugin"],["org.gradle.language.objectivecpp.plugins.ObjectiveCppLangPlugin"],["org.gradle.language.objectivecpp.plugins.ObjectiveCppPlugin"]],
+      "required_source_ids": ["gradle-hd-03-objective-c-lang","gradle-hd-03-objective-c","gradle-hd-03-objective-cpp-lang","gradle-hd-03-objective-cpp"],
+      "producer_allocation": [["producer-gradle-hd-03-1",["gradle-hd-03-objective-c-lang","gradle-hd-03-windows-resource-script"]],["producer-gradle-hd-03-2",["gradle-hd-03-objective-c","gradle-hd-03-windows-resources"]],["producer-gradle-hd-03-3",["gradle-hd-03-objective-cpp-lang","gradle-hd-03-cpp-application"]],["producer-gradle-hd-03-4",["gradle-hd-03-objective-cpp","gradle-hd-03-cpp-library"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "gradle-hd-native-plugin-descriptors-d",
+      "canonical_target_subject": "native plugin descriptor implementation mappings group D swift through clang",
+      "planned_case_id": "bpd-gradle-hd-04",
+      "question": "Across the pinned current Gradle native plugin descriptors, give the exact implementation classes in order for org.gradle.swift-application, org.gradle.swift-library, org.gradle.swiftpm-export, and org.gradle.clang-compiler.",
+      "canonical_answer": "org.gradle.language.swift.plugins.SwiftApplicationPlugin; org.gradle.language.swift.plugins.SwiftLibraryPlugin; org.gradle.swiftpm.plugins.SwiftPackageManagerExportPlugin; org.gradle.nativeplatform.toolchain.plugins.ClangCompilerPlugin",
+      "ordered_required_slots": [["org.gradle.language.swift.plugins.SwiftApplicationPlugin"],["org.gradle.language.swift.plugins.SwiftLibraryPlugin"],["org.gradle.swiftpm.plugins.SwiftPackageManagerExportPlugin"],["org.gradle.nativeplatform.toolchain.plugins.ClangCompilerPlugin"]],
+      "required_source_ids": ["gradle-hd-04-swift-application","gradle-hd-04-swift-library","gradle-hd-04-swiftpm-export","gradle-hd-04-clang-compiler"],
+      "producer_allocation": [["producer-gradle-hd-04-1",["gradle-hd-04-swift-application","gradle-hd-04-gcc-compiler"]],["producer-gradle-hd-04-2",["gradle-hd-04-swift-library","gradle-hd-04-microsoft-visual-cpp-compiler"]],["producer-gradle-hd-04-3",["gradle-hd-04-swiftpm-export","gradle-hd-04-native-component"]],["producer-gradle-hd-04-4",["gradle-hd-04-clang-compiler","gradle-hd-04-standard-tool-chains"]]],
+      "minimum_events_per_producer": 1
+    }
+  ]
+}
