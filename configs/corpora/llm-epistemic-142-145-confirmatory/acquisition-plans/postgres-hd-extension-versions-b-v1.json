@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "postgres-hd-extension-versions-b",
+  "acquired_at": "2026-08-15T03:22:17Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"postgres-hd-02-file-fdw","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/file_fdw/file_fdw.control","git_blob_sha":"f0fccab53bccc812fe602029f705ad30f83078c7","media_type":"text/plain","title":"PostgreSQL file_fdw extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-postgres-fdw","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/postgres_fdw/postgres_fdw.control","git_blob_sha":"ae2963d480d3a0eb8499d9c69475eeb3b02b6f13","media_type":"text/plain","title":"PostgreSQL postgres_fdw extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-pg-stat-statements","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_stat_statements/pg_stat_statements.control","git_blob_sha":"2eee0ceffa894f14e78bee6c8ac38beff263ee31","media_type":"text/plain","title":"PostgreSQL pg_stat_statements extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-pg-buffercache","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_buffercache/pg_buffercache.control","git_blob_sha":"11499550945ee4f62beca8fb1b373b9f0b12e3d0","media_type":"text/plain","title":"PostgreSQL pg_buffercache extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-pg-freespacemap","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_freespacemap/pg_freespacemap.control","git_blob_sha":"1992320691b27956a2d2202f7d3ce1d53f2d07e5","media_type":"text/plain","title":"PostgreSQL pg_freespacemap extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-pg-prewarm","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_prewarm/pg_prewarm.control","git_blob_sha":"40e3add4810f4ba702e58cda5c9a713b8c9eb8a1","media_type":"text/plain","title":"PostgreSQL pg_prewarm extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-pg-visibility","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_visibility/pg_visibility.control","git_blob_sha":"3cffa08b015ed8757fc361b4fb3b9c3dda424e39","media_type":"text/plain","title":"PostgreSQL pg_visibility extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-02-pg-walinspect","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_walinspect/pg_walinspect.control","git_blob_sha":"efa3cb2cfe51e889341885362e2387fa6b568483","media_type":"text/plain","title":"PostgreSQL pg_walinspect extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}
