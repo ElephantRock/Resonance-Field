@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "bazel-tc-coverage-defaults",
+  "acquired_at": "2026-08-15T02:27:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "bazel-tc-02-test-config-before",
+      "repository": "bazelbuild/bazel",
+      "commit_sha": "e247932023e1ad82e1278d27072234e5a6029a4e",
+      "path": "src/main/java/com/google/devtools/build/lib/analysis/test/TestConfiguration.java",
+      "git_blob_sha": "e35512869d7d454d9c73a26de0aaf3bfeacc4354",
+      "media_type": "text/plain",
+      "title": "Bazel coverage option defaults before default enablement",
+      "evidence_observed_at": "2025-10-07T00:00:00Z",
+      "upstream_project_id": "bazelbuild/bazel",
+      "upstream_organization_id": "bazelbuild"
+    },
+    {
+      "source_id": "bazel-tc-02-coverage-doc-before",
+      "repository": "bazelbuild/bazel",
+      "commit_sha": "e247932023e1ad82e1278d27072234e5a6029a4e",
+      "path": "site/en/configure/coverage.md",
+      "git_blob_sha": "d73edf89570273cb721003fac3f78653c8ba8de5",
+      "media_type": "text/plain",
+      "title": "Bazel coverage guide before coverage defaults were enabled",
+      "evidence_observed_at": "2025-10-07T00:00:00Z",
+      "upstream_project_id": "bazelbuild/bazel",
+      "upstream_organization_id": "bazelbuild"
+    },
+    {
+      "source_id": "bazel-tc-02-coverage-cc-after",
+      "repository": "bazelbuild/bazel",
+      "commit_sha": "8e68c24713f7d9b83d4eb364a64c8d6df26b261c",
+      "path": "src/test/shell/bazel/bazel_coverage_cc_test_gcc.sh",
+      "git_blob_sha": "4402f3e24daa95b99fcd521ec2b4207aa675a9ac",
+      "media_type": "text/plain",
+      "title": "Bazel C++ coverage regression after default enablement",
+      "evidence_observed_at": "2026-07-29T00:00:00Z",
+      "upstream_project_id": "bazelbuild/bazel",
+      "upstream_organization_id": "bazelbuild"
+    },
+    {
+      "source_id": "bazel-tc-02-remote-coverage-after",
+      "repository": "bazelbuild/bazel",
+      "commit_sha": "8e68c24713f7d9b83d4eb364a64c8d6df26b261c",
+      "path": "src/test/shell/bazel/remote/build_without_the_bytes_test.sh",
+      "git_blob_sha": "07e3a8d5f911b1c773d63d48731279e4a0fbc31f",
+      "media_type": "text/plain",
+      "title": "Bazel remote coverage regression after default enablement",
+      "evidence_observed_at": "2026-07-29T00:00:00Z",
+      "upstream_project_id": "bazelbuild/bazel",
+      "upstream_organization_id": "bazelbuild"
+    }
+  ]
+}
