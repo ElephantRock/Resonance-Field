@@ -1,0 +1,59 @@
+{
+  "acquired_at": "2026-08-13T07:20:00Z",
+  "candidate_id": "rust-nc-clippy-nightly-channel",
+  "cohort": "confirmatory",
+  "confirmatory_outcomes_observed": false,
+  "evaluator_execution": false,
+  "plan_version": "1.0",
+  "sources": [
+    {
+      "commit_sha": "ae45457594a670c59cd4d5591eaa243d9a3d44d5",
+      "evidence_observed_at": "2026-08-07T06:00:49Z",
+      "git_blob_sha": "d6306869ba743b08e6878ffd8f3f9fb5b5a31fa1",
+      "media_type": "text/plain",
+      "path": "src/tools/clippy/rust-toolchain.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-clippy-toolchain-before",
+      "title": "Clippy toolchain pin before nightly update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "619c577512193efdb085d64932f08b7502f79022",
+      "evidence_observed_at": "2026-08-07T11:51:25Z",
+      "git_blob_sha": "3248684c4f59f1cb04d71c4fed5144426cbe1bde",
+      "media_type": "text/plain",
+      "path": "src/tools/clippy/rust-toolchain.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-clippy-toolchain-after",
+      "title": "Clippy toolchain pin after nightly update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "ae45457594a670c59cd4d5591eaa243d9a3d44d5",
+      "evidence_observed_at": "2026-08-07T06:00:49Z",
+      "git_blob_sha": "06e64040888d421ce52b9ca4ac580e9abe21ccf4",
+      "media_type": "text/markdown",
+      "path": "src/tools/clippy/clippy_utils/README.md",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-clippy-readme-before",
+      "title": "Clippy utils README before nightly update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "619c577512193efdb085d64932f08b7502f79022",
+      "evidence_observed_at": "2026-08-07T11:51:25Z",
+      "git_blob_sha": "9aa097f8863ece3550b7216c2282ed197d599224",
+      "media_type": "text/markdown",
+      "path": "src/tools/clippy/clippy_utils/README.md",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-clippy-readme-after",
+      "title": "Clippy utils README after nightly update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    }
+  ],
+  "treatment_execution": false
+}

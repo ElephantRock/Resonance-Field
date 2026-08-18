@@ -1,0 +1,72 @@
+{
+  "ledger_version": "1.0",
+  "project": "gradle/gradle",
+  "upstream_project_id": "gradle/gradle",
+  "upstream_organization_id": "gradle",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "temporal_update_conflict",
+  "upstream_snapshot": "9e4b9c2284039e0e1a424864a07a5bd777755988",
+  "upstream_evidence_observed_at": "2026-08-14T11:46:55Z",
+  "selection_status": "prospective_subject_screen_frozen_before_gradle_temporal_source_acquisition",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Candidate semantic subjects and ordered answers are frozen before exact Gradle temporal source acquisition. Candidates are evaluated in listed rank order. The first four eligible candidates fill bpd-gradle-tc-01..04. Eligibility requires four unique Gradle-authored pinned source snapshots, at least three required producer allocations, exact support for the ordered answer, at least one required evidence state separated from another by 180 days or more, a genuine stale-versus-current semantic conflict, and no exact source-byte reuse with any previously selected confirmatory case. Rejection is permitted only for frozen source-integrity/design failures; treatment or evaluator outcomes may not be observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "ranked_candidates": [
+    {
+      "rank": 1,
+      "candidate_id": "gradle-tc-daemon-jvm-minimum",
+      "canonical_target_subject": "Gradle Daemon minimum JVM across Gradle 9.0",
+      "question": "Across the Gradle 9.0 runtime-requirement change, give four values in order: the current minimum JVM version required to run the Gradle Daemon; the minimum supported by Gradle 8.x; the minimum JVM version that can still launch the wrapper/command-line launcher; and the mechanism used to target lower JVM versions for compilation/testing.",
+      "canonical_answer": "17; 8; 8; Toolchains",
+      "ordered_required_slots": [["17"],["8"],["8"],["Toolchains","toolchains"]],
+      "required_source_count": 3
+    },
+    {
+      "rank": 2,
+      "candidate_id": "gradle-tc-kotlin-gradle-plugin-minimum",
+      "canonical_target_subject": "minimum supported Kotlin Gradle Plugin version across Gradle 9.0",
+      "question": "Across the Gradle 9.0 Kotlin Gradle Plugin compatibility change, give four values in order: the current minimum supported Kotlin Gradle Plugin version; the Gradle 8.x minimum; the first Gradle 8.x release whose embedded Kotlin is new enough for plugins built with Gradle 9.x; and the Gradle major line recommended for building a plugin that must support older Gradle consumers.",
+      "canonical_answer": "2.0.0; 1.6.10; 8.11; Gradle 8.x",
+      "ordered_required_slots": [["2.0.0"],["1.6.10"],["8.11"],["Gradle 8.x","8.x"]],
+      "required_source_count": 3
+    },
+    {
+      "rank": 3,
+      "candidate_id": "gradle-tc-android-gradle-plugin-minimum",
+      "canonical_target_subject": "minimum supported Android Gradle Plugin version across Gradle 9.0",
+      "question": "Across the Gradle 9.0 Android Gradle Plugin compatibility change, give four values in order: the current minimum supported Android Gradle Plugin version; the Gradle 8.x minimum; the Gradle release where the new minimum begins; and the stated reason older versions are unsupported.",
+      "canonical_answer": "8.4.0; 7.3.0; 9.0.0; removed Gradle APIs",
+      "ordered_required_slots": [["8.4.0"],["7.3.0"],["9.0.0","9.0"],["removed Gradle APIs","Gradle APIs that have been removed"]],
+      "required_source_count": 3
+    },
+    {
+      "rank": 4,
+      "candidate_id": "gradle-tc-gradle-enterprise-plugin-minimum",
+      "canonical_target_subject": "minimum supported Gradle Enterprise Plugin version across Gradle 9.0",
+      "question": "Across the Gradle 9.0 Gradle Enterprise Plugin compatibility change, give four values in order: the current minimum supported Gradle Enterprise Plugin version; the Gradle 8.x minimum; the Gradle release where the new minimum begins; and the plugin family the migration guide recommends instead when upgrading.",
+      "canonical_answer": "3.13.1; 3.0; 9.0.0; Develocity Plugin",
+      "ordered_required_slots": [["3.13.1"],["3.0"],["9.0.0","9.0"],["Develocity Plugin","Develocity"]],
+      "required_source_count": 3
+    },
+    {
+      "rank": 5,
+      "candidate_id": "gradle-tc-configuration-cache-input-serialization",
+      "canonical_target_subject": "Configuration Cache undeclared-input tracking across Gradle 8.4",
+      "question": "Across the Gradle 8.4 Configuration Cache input-tracking change, give four values in order: whether undeclared inputs encountered during task-graph serialization are tracked now; whether they correctly invalidated the cache before 8.4; the Gradle version where the new behavior begins; and the property/value that temporarily restores the previous behavior.",
+      "canonical_answer": "yes; no; 8.4; org.gradle.configuration-cache.inputs.unsafe.ignore.in-serialization=true",
+      "ordered_required_slots": [["yes","tracked"],["no","did not invalidate"],["8.4"],["org.gradle.configuration-cache.inputs.unsafe.ignore.in-serialization=true"]],
+      "required_source_count": 3
+    },
+    {
+      "rank": 6,
+      "candidate_id": "gradle-tc-build-events-listener-provider",
+      "canonical_target_subject": "Configuration Cache BuildEventsListenerRegistry provider handling across Gradle 9.0",
+      "question": "Across the Gradle 9.0 Configuration Cache BuildEventsListenerRegistry change, give four values in order: the current result of passing an unsupported provider to onTaskCompletion; the pre-9.0 behavior; the Gradle property/value that temporarily restores the old behavior; and the provider kind explicitly supported through BuildService registration.",
+      "canonical_answer": "error; silently discarded; org.gradle.configuration-cache.unsafe.ignore.unsupported-build-events-listeners=true; BuildService",
+      "ordered_required_slots": [["error"],["silently discarded","discarded"],["org.gradle.configuration-cache.unsafe.ignore.unsupported-build-events-listeners=true"],["BuildService"]],
+      "required_source_count": 3
+    }
+  ]
+}

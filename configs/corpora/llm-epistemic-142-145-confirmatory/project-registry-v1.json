@@ -1,0 +1,329 @@
+{
+  "registry_version": "1.0",
+  "campaign": "llm-epistemic-substrate-142-145-v0.1",
+  "status": "pre_source_curation_allocation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "allocation_rule": {
+    "domains": 8,
+    "projects_per_domain": 4,
+    "cases_per_project": 16,
+    "cases_per_challenge_per_project": 4,
+    "total_projects": 32,
+    "total_cases": 512,
+    "planned_source_snapshots_per_project": 80,
+    "planned_total_source_snapshots": 2560,
+    "challenge_order": [
+      "distributed_synthesis",
+      "non_stale_exact_conflict",
+      "temporal_update_conflict",
+      "high_load_distractor_synthesis"
+    ],
+    "case_slot_rule": "{domain_code}-{project_code}-{challenge_code}-{01..04}",
+    "source_reuse_across_cases": false,
+    "project_reallocation_after_case_outcomes": false
+  },
+  "projects": [
+    {
+      "domain_id": "programming_languages_and_runtimes",
+      "domain_code": "plr",
+      "project_code": "cpython",
+      "repository": "python/cpython",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "programming_languages_and_runtimes",
+      "domain_code": "plr",
+      "project_code": "rust",
+      "repository": "rust-lang/rust",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "programming_languages_and_runtimes",
+      "domain_code": "plr",
+      "project_code": "go",
+      "repository": "golang/go",
+      "upstream_project_id": "golang/go",
+      "upstream_organization_id": "golang",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "programming_languages_and_runtimes",
+      "domain_code": "plr",
+      "project_code": "openjdk",
+      "repository": "openjdk/jdk",
+      "upstream_project_id": "openjdk/jdk",
+      "upstream_organization_id": "openjdk",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "build_package_and_dependency_tooling",
+      "domain_code": "bpd",
+      "project_code": "pip",
+      "repository": "pypa/pip",
+      "upstream_project_id": "pypa/pip",
+      "upstream_organization_id": "pypa",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "build_package_and_dependency_tooling",
+      "domain_code": "bpd",
+      "project_code": "npm",
+      "repository": "npm/cli",
+      "upstream_project_id": "npm/cli",
+      "upstream_organization_id": "npm",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "build_package_and_dependency_tooling",
+      "domain_code": "bpd",
+      "project_code": "gradle",
+      "repository": "gradle/gradle",
+      "upstream_project_id": "gradle/gradle",
+      "upstream_organization_id": "gradle",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "build_package_and_dependency_tooling",
+      "domain_code": "bpd",
+      "project_code": "bazel",
+      "repository": "bazelbuild/bazel",
+      "upstream_project_id": "bazelbuild/bazel",
+      "upstream_organization_id": "bazelbuild",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "databases_and_data_systems",
+      "domain_code": "dbd",
+      "project_code": "postgres",
+      "repository": "postgres/postgres",
+      "upstream_project_id": "postgres/postgres",
+      "upstream_organization_id": "postgres",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "databases_and_data_systems",
+      "domain_code": "dbd",
+      "project_code": "redis",
+      "repository": "redis/redis",
+      "upstream_project_id": "redis/redis",
+      "upstream_organization_id": "redis",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "databases_and_data_systems",
+      "domain_code": "dbd",
+      "project_code": "mongodb",
+      "repository": "mongodb/mongo",
+      "upstream_project_id": "mongodb/mongo",
+      "upstream_organization_id": "mongodb",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "databases_and_data_systems",
+      "domain_code": "dbd",
+      "project_code": "duckdb",
+      "repository": "duckdb/duckdb",
+      "upstream_project_id": "duckdb/duckdb",
+      "upstream_organization_id": "duckdb",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "distributed_cloud_and_container_systems",
+      "domain_code": "dcc",
+      "project_code": "kubernetes",
+      "repository": "kubernetes/kubernetes",
+      "upstream_project_id": "kubernetes/kubernetes",
+      "upstream_organization_id": "kubernetes",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "distributed_cloud_and_container_systems",
+      "domain_code": "dcc",
+      "project_code": "containerd",
+      "repository": "containerd/containerd",
+      "upstream_project_id": "containerd/containerd",
+      "upstream_organization_id": "containerd",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "distributed_cloud_and_container_systems",
+      "domain_code": "dcc",
+      "project_code": "moby",
+      "repository": "moby/moby",
+      "upstream_project_id": "moby/moby",
+      "upstream_organization_id": "moby",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "distributed_cloud_and_container_systems",
+      "domain_code": "dcc",
+      "project_code": "helm",
+      "repository": "helm/helm",
+      "upstream_project_id": "helm/helm",
+      "upstream_organization_id": "helm",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "networking_protocols_and_internet_standards",
+      "domain_code": "net",
+      "project_code": "curl",
+      "repository": "curl/curl",
+      "upstream_project_id": "curl/curl",
+      "upstream_organization_id": "curl",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "networking_protocols_and_internet_standards",
+      "domain_code": "net",
+      "project_code": "openssh",
+      "repository": "openssh/openssh-portable",
+      "upstream_project_id": "openssh/openssh-portable",
+      "upstream_organization_id": "openssh",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "networking_protocols_and_internet_standards",
+      "domain_code": "net",
+      "project_code": "nghttp2",
+      "repository": "nghttp2/nghttp2",
+      "upstream_project_id": "nghttp2/nghttp2",
+      "upstream_organization_id": "nghttp2",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "networking_protocols_and_internet_standards",
+      "domain_code": "net",
+      "project_code": "cares",
+      "repository": "c-ares/c-ares",
+      "upstream_project_id": "c-ares/c-ares",
+      "upstream_organization_id": "c-ares",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "operating_systems_and_system_utilities",
+      "domain_code": "osu",
+      "project_code": "systemd",
+      "repository": "systemd/systemd",
+      "upstream_project_id": "systemd/systemd",
+      "upstream_organization_id": "systemd",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "operating_systems_and_system_utilities",
+      "domain_code": "osu",
+      "project_code": "utillinux",
+      "repository": "util-linux/util-linux",
+      "upstream_project_id": "util-linux/util-linux",
+      "upstream_organization_id": "util-linux",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "operating_systems_and_system_utilities",
+      "domain_code": "osu",
+      "project_code": "htop",
+      "repository": "htop-dev/htop",
+      "upstream_project_id": "htop-dev/htop",
+      "upstream_organization_id": "htop-dev",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "operating_systems_and_system_utilities",
+      "domain_code": "osu",
+      "project_code": "fish",
+      "repository": "fish-shell/fish-shell",
+      "upstream_project_id": "fish-shell/fish-shell",
+      "upstream_organization_id": "fish-shell",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "scientific_computing_and_data_formats",
+      "domain_code": "sci",
+      "project_code": "numpy",
+      "repository": "numpy/numpy",
+      "upstream_project_id": "numpy/numpy",
+      "upstream_organization_id": "numpy",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "scientific_computing_and_data_formats",
+      "domain_code": "sci",
+      "project_code": "scipy",
+      "repository": "scipy/scipy",
+      "upstream_project_id": "scipy/scipy",
+      "upstream_organization_id": "scipy",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "scientific_computing_and_data_formats",
+      "domain_code": "sci",
+      "project_code": "pandas",
+      "repository": "pandas-dev/pandas",
+      "upstream_project_id": "pandas-dev/pandas",
+      "upstream_organization_id": "pandas-dev",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "scientific_computing_and_data_formats",
+      "domain_code": "sci",
+      "project_code": "arrow",
+      "repository": "apache/arrow",
+      "upstream_project_id": "apache/arrow",
+      "upstream_organization_id": "apache",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "hardware_compilers_and_accelerator_toolchains",
+      "domain_code": "hca",
+      "project_code": "llvm",
+      "repository": "llvm/llvm-project",
+      "upstream_project_id": "llvm/llvm-project",
+      "upstream_organization_id": "llvm",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "hardware_compilers_and_accelerator_toolchains",
+      "domain_code": "hca",
+      "project_code": "cuda",
+      "repository": "NVIDIA/cuda-samples",
+      "upstream_project_id": "NVIDIA/cuda-samples",
+      "upstream_organization_id": "NVIDIA",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "hardware_compilers_and_accelerator_toolchains",
+      "domain_code": "hca",
+      "project_code": "vulkan",
+      "repository": "KhronosGroup/Vulkan-Headers",
+      "upstream_project_id": "KhronosGroup/Vulkan-Headers",
+      "upstream_organization_id": "KhronosGroup",
+      "planned_cases": 16
+    },
+    {
+      "domain_id": "hardware_compilers_and_accelerator_toolchains",
+      "domain_code": "hca",
+      "project_code": "gcc",
+      "repository": "gcc-mirror/gcc",
+      "upstream_project_id": "gcc-mirror/gcc",
+      "upstream_organization_id": "gcc-mirror",
+      "planned_cases": 16
+    }
+  ],
+  "curation_constraints": {
+    "project_case_cap": 16,
+    "organization_case_cap": 32,
+    "minimum_distinct_projects": 32,
+    "minimum_distinct_organizations": 16,
+    "exact_source_sha_reuse_cap": 1,
+    "required_evidence_producer_count_minimum": 3,
+    "accepted_answer_and_scoring_slots_frozen_before_any_producer_execution": true,
+    "source_commits_and_blob_shas_pinned_before_seal": true,
+    "no_confirmatory_model_calls_during_curation": true
+  }
+}

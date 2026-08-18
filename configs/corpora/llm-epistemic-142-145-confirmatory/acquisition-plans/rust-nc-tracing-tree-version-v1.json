@@ -1,0 +1,59 @@
+{
+  "acquired_at": "2026-08-13T07:20:00Z",
+  "candidate_id": "rust-nc-tracing-tree-version",
+  "cohort": "confirmatory",
+  "confirmatory_outcomes_observed": false,
+  "evaluator_execution": false,
+  "plan_version": "1.0",
+  "sources": [
+    {
+      "commit_sha": "b74fcad1aabc935c8c5130860b11b50834b90b6d",
+      "evidence_observed_at": "2026-08-04T09:10:30Z",
+      "git_blob_sha": "d407351fd23dc7eea8e05f942893da23ac331833",
+      "media_type": "text/plain",
+      "path": "compiler/rustc_log/Cargo.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-tracing-toml-before",
+      "title": "rustc_log Cargo.toml before tracing-tree update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "fe6a1d0c6eb0443e6185d1624cab49b7591d9eaa",
+      "evidence_observed_at": "2026-08-04T09:10:31Z",
+      "git_blob_sha": "0e17378ecfc3dee28ca7fb7921bdf84c3f75b7f5",
+      "media_type": "text/plain",
+      "path": "compiler/rustc_log/Cargo.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-tracing-toml-after",
+      "title": "rustc_log Cargo.toml after tracing-tree update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "b74fcad1aabc935c8c5130860b11b50834b90b6d",
+      "evidence_observed_at": "2026-08-04T09:10:30Z",
+      "git_blob_sha": "0addc566d6bdd482f8b153d6803945af24b76f9c",
+      "media_type": "text/plain",
+      "path": "Cargo.lock",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-tracing-lock-before",
+      "title": "Root Cargo.lock before tracing-tree update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "fe6a1d0c6eb0443e6185d1624cab49b7591d9eaa",
+      "evidence_observed_at": "2026-08-04T09:10:31Z",
+      "git_blob_sha": "76b17e02c2359193dab986a6e6bdb81c95a273e3",
+      "media_type": "text/plain",
+      "path": "Cargo.lock",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-tracing-lock-after",
+      "title": "Root Cargo.lock after tracing-tree update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    }
+  ],
+  "treatment_execution": false
+}

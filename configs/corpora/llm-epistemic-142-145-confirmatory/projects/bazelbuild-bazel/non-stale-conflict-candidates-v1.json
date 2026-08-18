@@ -1,0 +1,107 @@
+{
+  "ledger_version": "1.0",
+  "project": "bazelbuild/bazel",
+  "upstream_project_id": "bazelbuild/bazel",
+  "upstream_organization_id": "bazelbuild",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "non_stale_exact_conflict",
+  "upstream_snapshot": "e3c62112244d6b041bdfe785a62a1cbf2b90f79e",
+  "upstream_evidence_observed_at": "2026-08-14T23:01:46Z",
+  "selection_status": "selected_four_after_source_integrity_freeze",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Candidate subjects and canonical answers were frozen before Bazel non-stale-conflict source acquisition. Candidates were evaluated in listed rank order. The first four eligible candidates fill bpd-bazel-nc-01..04. Eligibility requires four unique Bazel-authored authoritative source files, at least three human-authored primary or normative required sources spanning at least three producer allocations, an exact same-key conflicting claim with required-evidence span no greater than 30 days, exact ordered-answer support, and no exact source-byte reuse with any previously selected confirmatory case. A candidate may be rejected only for a source-integrity or frozen-design eligibility failure; treatment or evaluator outcomes may not be observed or used.",
+  "common_freeze_audit": {
+    "head_sha": "423fd966dc41ed2128d52afcbce952cdde3ffffa",
+    "curation_run_id": 31858821164,
+    "artifact_id": 9239876567,
+    "artifact_digest": "sha256:3602098a6fcfc748923b469533b578295040a5d845a4095c4ebcfbfcfcbf8f91",
+    "frozen_science_guard": "PASS",
+    "git_blob_verification": "PASS",
+    "selected_design_validator": "PASS"
+  },
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "rank": 1,
+      "candidate_id": "bazel-nc-coverage-remote-defaults",
+      "canonical_target_subject": "remote coverage flag defaults",
+      "selected_case_id": "bpd-bazel-nc-01",
+      "question": "Across the pinned Bazel coverage option sources around the July 2026 default flip, give four values in order: the current default for --experimental_fetch_all_coverage_outputs; its immediately prior default; the current default for --experimental_split_coverage_postprocessing; and its immediately prior default.",
+      "canonical_answer": "true; false; true; false",
+      "ordered_required_slots": [["true"], ["false"], ["true"], ["false"]],
+      "acquisition_plan_sha256": "b321eec22c02331c3712a6b976ace3ed48b8f26d9cfb83816813807ddbeb5f5d",
+      "required_source_ids": ["bazel-nc-01-test-config-before", "bazel-nc-01-test-config-after", "bazel-nc-01-flag-constants", "bazel-nc-01-execlog-regression"],
+      "source_integrity": [
+        ["bazel-nc-01-test-config-before", "be5c86214130499361ac63a0496319690fa72db08261f382d12e49ef77d0b0aa"],
+        ["bazel-nc-01-test-config-after", "aced77e2181378f43e18206c3e766acc2ffbd96399905a0700d72041c66e24e7"],
+        ["bazel-nc-01-flag-constants", "626f40e6de2d0f069b481e9f5da3cb11759ad3a59d766e9e2b421d385834c303"],
+        ["bazel-nc-01-execlog-regression", "643d68359e0cff3cdea1e52bd408b72f1b4f82547760461b32fddf8f2cda82b2"]
+      ],
+      "producer_allocation": [["producer-bazel-nc-01-1", ["bazel-nc-01-test-config-before"]], ["producer-bazel-nc-01-2", ["bazel-nc-01-test-config-after"]], ["producer-bazel-nc-01-3", ["bazel-nc-01-flag-constants"]], ["producer-bazel-nc-01-4", ["bazel-nc-01-execlog-regression"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "rank": 2,
+      "candidate_id": "bazel-nc-aquery-test-suite-expansion",
+      "canonical_target_subject": "aquery test-suite expansion default",
+      "selected_case_id": "bpd-bazel-nc-02",
+      "question": "Across the pinned Bazel query sources around the August 2026 aquery fix, give four values in order: the current effective aquery expand_test_suites value; the immediately prior effective aquery value; the native LoadingOptions declared default; and the current cquery effective override.",
+      "canonical_answer": "false; true; true; false",
+      "ordered_required_slots": [["false"], ["true"], ["true"], ["false"]],
+      "acquisition_plan_sha256": "d8ab56af183f83c774f05666f617dde4a4d3679889babfaa81d109b02e11cf50",
+      "required_source_ids": ["bazel-nc-02-aquery-before", "bazel-nc-02-aquery-after", "bazel-nc-02-loading-options", "bazel-nc-02-cquery-command"],
+      "source_integrity": [
+        ["bazel-nc-02-aquery-before", "a6d771a4d76b272365515950f40438dafdde94219a52792e32eaebbb443c0d06"],
+        ["bazel-nc-02-aquery-after", "52e3d5fb7b2cb98874bc525b963ea72e8645f3461d517e2b7e590d08c88ab010"],
+        ["bazel-nc-02-loading-options", "c37bb90c235f737bc57bceeda01d32da2298f3ec76c3a73768e4b8318a42f4a1"],
+        ["bazel-nc-02-cquery-command", "8bc7db61bc7d38abeac707cd278e0266c5cfd652095ee10fca78887720adde49"]
+      ],
+      "producer_allocation": [["producer-bazel-nc-02-1", ["bazel-nc-02-aquery-before"]], ["producer-bazel-nc-02-2", ["bazel-nc-02-aquery-after"]], ["producer-bazel-nc-02-3", ["bazel-nc-02-loading-options"]], ["producer-bazel-nc-02-4", ["bazel-nc-02-cquery-command"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "rank": 3,
+      "candidate_id": "bazel-nc-test-tmpdir-empty",
+      "canonical_target_subject": "test_tmpdir empty-value semantics",
+      "selected_case_id": "bpd-bazel-nc-03",
+      "question": "Across the pinned Bazel test temporary-directory sources around the July 2026 empty-value fix, give four values in order: the current --test_tmpdir converter; the immediately prior converter; the current behavior of an explicit empty --test_tmpdir=; and the prior workspace-relative result.",
+      "canonical_answer": "EmptyToNullPathFragmentConverter; PathFragmentConverter; default execroot temp directory; _tmp",
+      "ordered_required_slots": [["EmptyToNullPathFragmentConverter", "OptionsUtils.EmptyToNullPathFragmentConverter"], ["PathFragmentConverter", "OptionsUtils.PathFragmentConverter"], ["default execroot temp directory", "default execroot temporary directory"], ["_tmp", "workspace _tmp"]],
+      "acquisition_plan_sha256": "6bb55823d3b6c63501332dc367d8b8074be38787782f7865d37d997160e36969",
+      "required_source_ids": ["bazel-nc-03-execution-options-before", "bazel-nc-03-execution-options-after", "bazel-nc-03-test-strategy", "bazel-nc-03-shell-regression"],
+      "source_integrity": [
+        ["bazel-nc-03-execution-options-before", "a0df6d01197debceabc7928068d3e9c467e0b427d65611d5fd22923c9b94a8ea"],
+        ["bazel-nc-03-execution-options-after", "adba7624fa9e123aea86acc1dda3b518889a0eca811c7539d022a902ee05eaaf"],
+        ["bazel-nc-03-test-strategy", "12df5eb0f856c429bd4226970aa9aebc34cf189c921f428d5ecea11cabdfd006"],
+        ["bazel-nc-03-shell-regression", "52aafd63900c2f6a4956a91ed04d7ae8713e6f8ca391b89eda5a805e22c453fb"]
+      ],
+      "producer_allocation": [["producer-bazel-nc-03-1", ["bazel-nc-03-execution-options-before"]], ["producer-bazel-nc-03-2", ["bazel-nc-03-execution-options-after"]], ["producer-bazel-nc-03-3", ["bazel-nc-03-test-strategy"]], ["producer-bazel-nc-03-4", ["bazel-nc-03-shell-regression"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "rank": 4,
+      "candidate_id": "bazel-nc-execution-graph-change-pruned",
+      "canonical_target_subject": "execution graph change-pruned action inclusion",
+      "selected_case_id": "bpd-bazel-nc-04",
+      "question": "Across the pinned Bazel execution-graph sources around the July 2026 default-enable change, give four values in order: whether change-pruned actions are currently included; the immediately prior option default; the current graveyard flag default; and the current semantic effect of that flag.",
+      "canonical_answer": "true; false; true; no-op",
+      "ordered_required_slots": [["true", "included"], ["false"], ["true"], ["no-op", "NO_OP"]],
+      "acquisition_plan_sha256": "a54c5c345a7ca59a34287cccc12a14a5a2989a905c52598aa6e64924913c163b",
+      "required_source_ids": ["bazel-nc-04-execution-graph-before", "bazel-nc-04-execution-graph-after", "bazel-nc-04-graveyard-option", "bazel-nc-04-execution-graph-test"],
+      "source_integrity": [
+        ["bazel-nc-04-execution-graph-before", "bade3c8cfc5b07c119f4eb09f438d8e95aa7db373d30516031a7498a8bbb5063"],
+        ["bazel-nc-04-execution-graph-after", "bfafb2a9fe2034e0cd33483bcc7e45b8df4acde7abb266679b44983bed001cac"],
+        ["bazel-nc-04-graveyard-option", "fab08e8553d56e6dc39ef5aa932e7a60287b1ea8bff760d2c5fd0ba5206de5d1"],
+        ["bazel-nc-04-execution-graph-test", "94e1b5029d37331404f3f7f3af07de121117e71825bb0565f8a2468698178324"]
+      ],
+      "producer_allocation": [["producer-bazel-nc-04-1", ["bazel-nc-04-execution-graph-before"]], ["producer-bazel-nc-04-2", ["bazel-nc-04-execution-graph-after"]], ["producer-bazel-nc-04-3", ["bazel-nc-04-graveyard-option"]], ["producer-bazel-nc-04-4", ["bazel-nc-04-execution-graph-test"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    }
+  ]
+}

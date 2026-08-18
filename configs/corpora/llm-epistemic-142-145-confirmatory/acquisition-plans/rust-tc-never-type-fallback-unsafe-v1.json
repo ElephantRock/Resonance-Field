@@ -1,0 +1,15 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-tc-never-type-fallback-unsafe",
+  "acquired_at": "2026-08-13T07:46:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"rust-tc-never-impl-warn","repository":"rust-lang/rust","commit_sha":"18c248b6564ea750321cf9765f700def4265e490","path":"compiler/rustc_lint_defs/src/builtin.rs","git_blob_sha":"e270cbe610772d5cb7ea9a1e5a237fc6c9389afc","media_type":"text/x-rust","title":"Rust never-type unsafe fallback lint while generically warn-by-default","evidence_observed_at":"2024-06-28T20:23:43Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-never-impl-deny","repository":"rust-lang/rust","commit_sha":"82b0cd8beeabd5e086d39f7398b4ca72cc1da23c","path":"compiler/rustc_lint_defs/src/builtin.rs","git_blob_sha":"47bdfbc7f3833836cc9330a6c24deebd6ac6397d","media_type":"text/x-rust","title":"Rust never-type unsafe fallback lint after all-edition deny transition","evidence_observed_at":"2025-10-17T16:09:33Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-never-test-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"tests/ui/never_type/fallback_change/lint-never-type-fallback-flowing-into-unsafe.rs","git_blob_sha":"744fff4194cbbf34d2ff3804484c859484d482be","media_type":"text/x-rust","title":"Current Rust never-type unsafe fallback UI test","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-never-fallback-impl-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"compiler/rustc_hir_typeck/src/fallback.rs","git_blob_sha":"44906cb330c0cbc18da08319adaaf5add5519575","media_type":"text/x-rust","title":"Current Rust type fallback implementation","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

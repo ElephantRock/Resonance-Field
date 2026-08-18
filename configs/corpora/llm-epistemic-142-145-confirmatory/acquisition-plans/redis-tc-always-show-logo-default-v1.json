@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-tc-always-show-logo-default",
+  "acquired_at":"2026-08-15T14:05:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-tc-01-config-before","repository":"redis/redis","commit_sha":"9ef8d2f67155d6aa69b8344fc0b63e6dab8ce9f8","path":"redis.conf","git_blob_sha":"35ee752e1cd9cb8c60769636610036d311c0231b","media_type":"text/plain","title":"Redis configuration template before always-show-logo correction","evidence_observed_at":"2020-09-03T05:47:29Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-01-config-current","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"redis.conf","git_blob_sha":"bbb7cd24c5636305716c1cf080a4263e86869a9d","media_type":"text/plain","title":"Current Redis configuration template with always-show-logo disabled","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-01-internal-before","repository":"redis/redis","commit_sha":"9ef8d2f67155d6aa69b8344fc0b63e6dab8ce9f8","path":"src/config.c","git_blob_sha":"0e1aa01e94b2a187ec82ae7712fde5e0be4287a0","media_type":"text/plain","title":"Redis internal configuration before always-show-logo template correction","evidence_observed_at":"2020-09-03T05:47:29Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-tc-01-internal-current","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/config.c","git_blob_sha":"3568c5c58ce09e2778dc3105fdea9ab8a48bd577","media_type":"text/plain","title":"Current Redis internal configuration for always-show-logo","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

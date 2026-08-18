@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-ds-serialization-api-defaults",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-ds-json-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/json.rst",
+      "git_blob_sha": "383ccad9df041b5aeaa740a849014f2bb1723d21",
+      "media_type": "text/x-rst",
+      "title": "CPython current json documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-pickle-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/pickle.rst",
+      "git_blob_sha": "8eadc2cf2b1ef0da91e7368875508aa0a9cd7282",
+      "media_type": "text/x-rst",
+      "title": "CPython current pickle documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-marshal-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/marshal.rst",
+      "git_blob_sha": "4fe34f0a3a3f9118444ea29d89b89e5644e3ab53",
+      "media_type": "text/x-rst",
+      "title": "CPython current marshal documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-ds-csv-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/csv.rst",
+      "git_blob_sha": "81949261c563d045c7b40ec70685c42d2383bb1a",
+      "media_type": "text/x-rst",
+      "title": "CPython current csv documentation",
+      "evidence_observed_at": "2026-08-13T00:12:39Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

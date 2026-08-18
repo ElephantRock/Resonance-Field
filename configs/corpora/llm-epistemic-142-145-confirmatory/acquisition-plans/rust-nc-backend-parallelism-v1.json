@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-nc-backend-parallelism",
+  "acquired_at": "2026-08-13T07:08:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "rust-nc-backend-config-before",
+      "repository": "rust-lang/rust",
+      "commit_sha": "7c329d6c76e11ca40c5673818ab0439c1be8962c",
+      "path": "compiler/rustc_session/src/config.rs",
+      "git_blob_sha": "022784b56d4ce2283e72a3c13d45841cef86eff3",
+      "media_type": "text/x-rust",
+      "title": "rustc jobs configuration immediately before available-parallelism default",
+      "evidence_observed_at": "2026-08-03T05:44:16Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-backend-config-after",
+      "repository": "rust-lang/rust",
+      "commit_sha": "496056fb26fec158af8c045c0aefd813d82b9f9f",
+      "path": "compiler/rustc_session/src/config.rs",
+      "git_blob_sha": "1cfd03288a4170747462cb0d77610ce05d1477c5",
+      "media_type": "text/x-rust",
+      "title": "rustc jobs configuration after available-parallelism default",
+      "evidence_observed_at": "2026-08-03T09:17:47Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-backend-cli-docs-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "src/doc/rustc/src/command-line-arguments.md",
+      "git_blob_sha": "52dc58f65bb8b955825f7380be55b85cd8aec399",
+      "media_type": "text/markdown",
+      "title": "Current rustc jobs command-line documentation",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-backend-jobs-test-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "tests/ui/compile-flags/jobs/jobs-pass.rs",
+      "git_blob_sha": "194ef3380772c3f7ec724596428c36404e7ad937",
+      "media_type": "text/x-rust",
+      "title": "Current rustc jobs flag regression test",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    }
+  ]
+}

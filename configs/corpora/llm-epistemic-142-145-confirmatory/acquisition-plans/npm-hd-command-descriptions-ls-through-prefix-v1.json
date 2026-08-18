@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "npm-hd-command-descriptions-b",
+  "acquired_at": "2026-08-14T17:10:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"npm-hd-02-ls","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/ls.js","git_blob_sha":"ac0f4817efec890edf506761f15b73c38d20260f","media_type":"text/javascript","title":"npm ls command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-org","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/org.js","git_blob_sha":"4ece9e19d60bc483eb4f88a82ec02fce2ddb43ab","media_type":"text/javascript","title":"npm org command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-outdated","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/outdated.js","git_blob_sha":"714b3ab64da4de5e7aa5a047385a149906de253e","media_type":"text/javascript","title":"npm outdated command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-owner","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/owner.js","git_blob_sha":"e7540c9bf7b800f3cdf9e1a47fdd955703008ec8","media_type":"text/javascript","title":"npm owner command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-pack","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/pack.js","git_blob_sha":"97ff48a6b2e64f6083c9ab298d4bf67b35e9e276","media_type":"text/javascript","title":"npm pack command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-ping","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/ping.js","git_blob_sha":"3388ba1aa378e023096b851c36f0f619c9eb55f8","media_type":"text/javascript","title":"npm ping command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-pkg","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/pkg.js","git_blob_sha":"a47c7695c3d5e923393b52debc21e5ff10c90514","media_type":"text/javascript","title":"npm pkg command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-02-prefix","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/prefix.js","git_blob_sha":"907ed5af2c1799caa8db08d399c6004ea612a179","media_type":"text/javascript","title":"npm prefix command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"}
+  ]
+}

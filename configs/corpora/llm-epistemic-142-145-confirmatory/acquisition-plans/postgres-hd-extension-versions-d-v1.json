@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "postgres-hd-extension-versions-d",
+  "acquired_at": "2026-08-15T03:22:17Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"postgres-hd-04-dblink","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/dblink/dblink.control","git_blob_sha":"bdd17d28a4b5e56fefa00a5ea59819a978c45976","media_type":"text/plain","title":"PostgreSQL dblink extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-earthdistance","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/earthdistance/earthdistance.control","git_blob_sha":"de2465d487e2eeb756710ac1fa0c45b3c4e2e5fe","media_type":"text/plain","title":"PostgreSQL earthdistance extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-intagg","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/intagg/intagg.control","git_blob_sha":"a733bbfc1d2d7b3e2cc9cd2ad5807a9225decfe9","media_type":"text/plain","title":"PostgreSQL intagg extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-pgcrypto","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pgcrypto/pgcrypto.control","git_blob_sha":"fcdd0b46f5b2da35b1bff19264fdaad623a09d79","media_type":"text/plain","title":"PostgreSQL pgcrypto extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-sslinfo","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/sslinfo/sslinfo.control","git_blob_sha":"c7754f924cf440d9111c5b376ea88c2df85434bc","media_type":"text/plain","title":"PostgreSQL sslinfo extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-pg-surgery","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_surgery/pg_surgery.control","git_blob_sha":"2bcdad1e3f7fea9522ba6aae7830c9755df8c07e","media_type":"text/plain","title":"PostgreSQL pg_surgery extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-moddatetime","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/spi/moddatetime.control","git_blob_sha":"93dfac589a34bbe4e08688567ea04e49402e4ffb","media_type":"text/plain","title":"PostgreSQL moddatetime extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-04-btree-gin","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/btree_gin/btree_gin.control","git_blob_sha":"0c77c81727117a0ab0f013152e077151f25102ca","media_type":"text/plain","title":"PostgreSQL btree_gin extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-ds-command-arities-01",
+  "acquired_at":"2026-08-15T12:55:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-ds-01-get","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/get.json","git_blob_sha":"693c1ac8231b44221357161d23c201911253b536","media_type":"application/json","title":"Redis GET command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-01-set","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/set.json","git_blob_sha":"ba5bf9d6b995e244abdbffd2bfff6daeac053350","media_type":"application/json","title":"Redis SET command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-01-del","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/del.json","git_blob_sha":"2727b536c22a60efdec2c03b42f5a6167428a7ba","media_type":"application/json","title":"Redis DEL command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-01-exists","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/exists.json","git_blob_sha":"8b108bca2aa41b14dcf20a649f3b907292df884f","media_type":"application/json","title":"Redis EXISTS command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

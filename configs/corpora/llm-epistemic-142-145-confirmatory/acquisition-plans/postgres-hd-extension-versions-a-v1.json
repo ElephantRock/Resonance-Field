@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "postgres-hd-extension-versions-a",
+  "acquired_at": "2026-08-15T03:22:17Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"postgres-hd-01-amcheck","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/amcheck/amcheck.control","git_blob_sha":"c8ba6d7c9bc363dfcd6fe60bab9562e4e7b1b52f","media_type":"text/plain","title":"PostgreSQL amcheck extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-bloom","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/bloom/bloom.control","git_blob_sha":"4d4124b3b05e4cc54c24414ee0c1a2101dd02c32","media_type":"text/plain","title":"PostgreSQL bloom extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-pg-trgm","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pg_trgm/pg_trgm.control","git_blob_sha":"1d6a9ddf259944cff08191edad2f2b44d399352f","media_type":"text/plain","title":"PostgreSQL pg_trgm extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-pageinspect","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/pageinspect/pageinspect.control","git_blob_sha":"cfc87feac034a1f08cbede7c3803b7c387b15629","media_type":"text/plain","title":"PostgreSQL pageinspect extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-hstore","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/hstore/hstore.control","git_blob_sha":"89e3c746c461d189551069cfc4554b73810991aa","media_type":"text/plain","title":"PostgreSQL hstore extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-tablefunc","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/tablefunc/tablefunc.control","git_blob_sha":"7b25d1617023c5e55c78da4810ef38078f2638ab","media_type":"text/plain","title":"PostgreSQL tablefunc extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-ltree","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/ltree/ltree.control","git_blob_sha":"c2cbeda96c73439b3033bcb00547fcd9bca8cd5f","media_type":"text/plain","title":"PostgreSQL ltree extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-01-seg","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/seg/seg.control","git_blob_sha":"e2c6a4750fccdb605fb94b573b58136c833b3b6a","media_type":"text/plain","title":"PostgreSQL seg extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}

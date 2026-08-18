@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"rust-ds-alloc-collections-stability",
+  "acquired_at":"2026-08-13T05:20:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"rust-ds-vec-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/alloc/src/vec/mod.rs","git_blob_sha":"a619aa6e5427bf6a4c9ce83af9fb603c2a4c617f","media_type":"text/x-rust","title":"Rust alloc Vec source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-string-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/alloc/src/string.rs","git_blob_sha":"cc321660e6ea45ec15e22a0b8d82257947340e3a","media_type":"text/x-rust","title":"Rust alloc String source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-vecdeque-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/alloc/src/collections/vec_deque/mod.rs","git_blob_sha":"940fce73779384138bf6b8a64aeaed466ab3915a","media_type":"text/x-rust","title":"Rust alloc VecDeque source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-binaryheap-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/alloc/src/collections/binary_heap/mod.rs","git_blob_sha":"98192e1fb5b01207b83a1aa668a02c4ffdb427f9","media_type":"text/x-rust","title":"Rust alloc BinaryHeap source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

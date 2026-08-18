@@ -1,0 +1,127 @@
+{
+  "ledger_version": "1.0",
+  "project": "python/cpython",
+  "upstream_project_id": "python/cpython",
+  "upstream_organization_id": "python",
+  "domain_id": "programming_languages_and_runtimes",
+  "challenge_type": "non_stale_exact_conflict",
+  "selection_status": "discovery_screen_closed_four_eligible_ranked_and_selected",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "eligible candidates ordered by canonical target subject; prefer explicit same-key before/after value changes that maximize probability of satisfying the frozen exact (subject,predicate) collision gate; first four fill nc-01..04",
+  "common_freeze_audit": {
+    "workflow_run_id": 31668081140,
+    "workflow_head_sha": "066b5a696bdd230d9f2df92ec36d805eef25928b",
+    "artifact_id": 9168679991,
+    "artifact_digest": "sha256:1fba91a61dc2afe53f4884bebb8cafaf2a6c3737b78413c59e20e57ac69f4cc7",
+    "declared_plan_count": 13,
+    "candidate_and_selected_source_count": 52,
+    "candidate_and_selected_unique_source_sha256_count": 52,
+    "science_diff_guard_passed": true,
+    "git_blob_verification_passed": true,
+    "treatment_execution": false,
+    "evaluator_execution": false,
+    "confirmatory_outcomes_observed": false
+  },
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "cpython-nc-annotationlib-default-attributes",
+      "canonical_target_subject": "annotationlib defaults mapping",
+      "selected_case_id": "plr-cpython-nc-01",
+      "question": "For the annotationlib function-wrapping defaults mapping corrected in July 2026, give four values in order: current attribute used for positional defaults; current attribute used for keyword-only defaults; immediately prior documentation's positional-default attribute; and immediately prior documentation's keyword-only-default attribute.",
+      "canonical_answer": "__defaults__; __kwdefaults__; __kwdefaults__; __defaults__",
+      "ordered_required_slots": [["__defaults__"], ["__kwdefaults__"], ["__kwdefaults__"], ["__defaults__"]],
+      "acquisition_plan_sha256": "28d5905850be265a19e9f652568461f80c125f310abff018379a3e789dc32172",
+      "source_integrity": [
+        {"source_id":"cpython-nc-annotationlib-doc-before","git_blob_sha":"af28fe0e2fde2f83268c27d8a8ac1e3fc1571c7d","sha256":"1cdafc09934f31a6b83a5d6be98d3d21cba0564211ad440192eda65861397993","bytes":31811,"evidence_observed_at":"2026-07-21T12:07:17Z"},
+        {"source_id":"cpython-nc-annotationlib-doc-after","git_blob_sha":"a90754620b59fdf937883b121d09113e4369def5","sha256":"3315da571abc3a703b62ed0b7f7a3dce60d5e6702e15904010a9b2468f5734ec","bytes":31811,"evidence_observed_at":"2026-07-21T12:45:42Z"},
+        {"source_id":"cpython-nc-annotationlib-implementation-after","git_blob_sha":"8204c762cce8a2b7c448ebacd2cbdcba54fdec09","sha256":"55d940f24fed9e81bd071e9f9095eafbf16bb2a47766fe973af1d9ace1602f98","bytes":43582,"evidence_observed_at":"2026-07-21T12:45:42Z"},
+        {"source_id":"cpython-nc-annotationlib-tests-after","git_blob_sha":"5087c3ca425f1fc8d44c051c9bb52e7a7f955100","sha256":"5ee4cc37e64a1e06f162777f31ecc3cb6032981575a800aaa51f37331e7e6987","bytes":82827,"evidence_observed_at":"2026-07-21T12:45:42Z"}
+      ],
+      "required_source_ids": ["cpython-nc-annotationlib-doc-before","cpython-nc-annotationlib-doc-after","cpython-nc-annotationlib-implementation-after"],
+      "producer_allocation": [["producer-cpython-nc-annotation-before",["cpython-nc-annotationlib-doc-before"]],["producer-cpython-nc-annotation-after",["cpython-nc-annotationlib-doc-after"]],["producer-cpython-nc-annotation-impl",["cpython-nc-annotationlib-implementation-after"]],["producer-cpython-nc-annotation-tests",["cpython-nc-annotationlib-tests-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "cpython-nc-emscripten-default-version",
+      "canonical_target_subject": "emscripten version default",
+      "selected_case_id": "plr-cpython-nc-02",
+      "question": "For CPython's Emscripten platform configuration around the 6.0.6 bump, give three values in order: current configured Emscripten version; immediately prior configured version; and the CPython support tier stated by the accompanying Emscripten README.",
+      "canonical_answer": "6.0.6; 6.0.5; 3",
+      "ordered_required_slots": [["6.0.6"], ["6.0.5"], ["3", "tier 3"]],
+      "acquisition_plan_sha256": "2d7f8374fde22ca5d49e1ff9adad14e18c39f2b68f0c38e906c2610403197d95",
+      "source_integrity": [
+        {"source_id":"cpython-nc-emscripten-config-before","git_blob_sha":"9c6d01e8655207ebf6fbf30159262f709e13b126","sha256":"6d73160264b76dcdd69556c12982bd8a815c540909c991906c6085992165f3f6","bytes":798,"evidence_observed_at":"2026-08-05T19:57:06Z"},
+        {"source_id":"cpython-nc-emscripten-config-after","git_blob_sha":"285e17a997b1e7583d4d8ae692bdcbf6ebec2642","sha256":"0bfadc46b8d68661bacb1d253937d0ad9977fe824954d19dc4f456129a86ac9e","bytes":798,"evidence_observed_at":"2026-08-06T00:29:22Z"},
+        {"source_id":"cpython-nc-emscripten-readme-after","git_blob_sha":"ce230c4b74a2738aa158d63d29118025a877c533","sha256":"df438a01f31c84b5334225dcd3d01bdef3c3bf04dc76421e3643a8432498a1a8","bytes":9383,"evidence_observed_at":"2026-08-06T00:29:22Z"},
+        {"source_id":"cpython-nc-emscripten-driver-after","git_blob_sha":"84a1589b81f6a20f2ee6a2171a35a2b0d50415da","sha256":"e277425070d85f5581544682ace4a44e8079bfdbe251ad789ffa9ff8957b8fb2","bytes":27638,"evidence_observed_at":"2026-08-06T00:29:22Z"}
+      ],
+      "required_source_ids": ["cpython-nc-emscripten-config-before","cpython-nc-emscripten-config-after","cpython-nc-emscripten-readme-after"],
+      "producer_allocation": [["producer-cpython-nc-emscripten-before",["cpython-nc-emscripten-config-before"]],["producer-cpython-nc-emscripten-after",["cpython-nc-emscripten-config-after"]],["producer-cpython-nc-emscripten-readme",["cpython-nc-emscripten-readme-after"]],["producer-cpython-nc-emscripten-driver",["cpython-nc-emscripten-driver-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "cpython-nc-ensurepip-bundled-pip-version",
+      "canonical_target_subject": "ensurepip bundled pip version",
+      "selected_case_id": "plr-cpython-nc-03",
+      "question": "For CPython ensurepip at the 26.2.1 bundle update, give four values in order: current bundled pip version; immediately prior bundled pip version; CLI option that upgrades an older installed pip to the bundled version; and whether ensurepip accesses the internet.",
+      "canonical_answer": "26.2.1; 26.2; --upgrade; no",
+      "ordered_required_slots": [["26.2.1"], ["26.2"], ["--upgrade"], ["no", "false", "does not access the internet"]],
+      "acquisition_plan_sha256": "66bf69ed511728f7cd1eed94d120905dfab341d7c2053ad2357be38d56e5a1b0",
+      "source_integrity": [
+        {"source_id":"cpython-nc-ensurepip-code-before","git_blob_sha":"bd73ddb95cd07f70de43fea678ff5ba266a3261f","sha256":"17f5ea0b85218dca7ec4ab92835677d9ac79161b1f14f9ebf99e32ccac76a94c","bytes":8523,"evidence_observed_at":"2026-08-05T05:52:35Z"},
+        {"source_id":"cpython-nc-ensurepip-code-after","git_blob_sha":"bc2fb742cb9cfcad824a46161920f04c5d3da35f","sha256":"696d76c3f93495b2359bff2e63ac42fc72a2a8b749763544ad42c179f90ca0d9","bytes":8525,"evidence_observed_at":"2026-08-05T05:55:52Z"},
+        {"source_id":"cpython-nc-ensurepip-doc-after","git_blob_sha":"e0d77229b11802f8ba2c3711eece6eeaec6e64e5","sha256":"a8631027da287f80a4d0c64c80f7cd1c5a66de5e4907b1690c3cc8f04ef4812d","bytes":5205,"evidence_observed_at":"2026-08-05T05:55:52Z"},
+        {"source_id":"cpython-nc-ensurepip-news-after","git_blob_sha":"fdb03c907a581ca3a1d131ca4c87b80489e05108","sha256":"97f56d56844635ec92032496ad2d859bc7928fc24e841cfeebbd7b18cad03f40","bytes":63,"evidence_observed_at":"2026-08-05T05:55:52Z"}
+      ],
+      "required_source_ids": ["cpython-nc-ensurepip-code-before","cpython-nc-ensurepip-code-after","cpython-nc-ensurepip-doc-after"],
+      "producer_allocation": [["producer-cpython-nc-ensurepip-before",["cpython-nc-ensurepip-code-before"]],["producer-cpython-nc-ensurepip-after",["cpython-nc-ensurepip-code-after"]],["producer-cpython-nc-ensurepip-doc",["cpython-nc-ensurepip-doc-after"]],["producer-cpython-nc-ensurepip-news",["cpython-nc-ensurepip-news-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    },
+    {
+      "candidate_id": "cpython-nc-macos-free-threading-default",
+      "canonical_target_subject": "macOS free-threading default",
+      "selected_case_id": "plr-cpython-nc-04",
+      "question": "For CPython's python.org macOS installer around the July 2026 free-threading default change, give three values in order: current free-threading default state; immediately prior default state; and the default framework name documented for --with-framework-name.",
+      "canonical_answer": "installed by default; not installed by default; Python",
+      "ordered_required_slots": [["installed by default"], ["not installed by default"], ["Python"]],
+      "acquisition_plan_sha256": "e80f0374dd53ce4eba2e0c71d767967c203836c21ca2fdcced7598cd5b02a974",
+      "source_integrity": [
+        {"source_id":"cpython-nc-macos-doc-before","git_blob_sha":"6cf945de5b3f3b426f7726a806eee612ddda6f42","sha256":"85ec84be4ff03c2502908123aac79d43593e5c0c8bbc3c73e46ee4aae4b2144d","bytes":20755,"evidence_observed_at":"2026-07-22T12:09:20Z"},
+        {"source_id":"cpython-nc-macos-doc-after","git_blob_sha":"a01dabbf2475aa4931201a8a442c5e7cf82a09bd","sha256":"c6b7d3a4f89ddd67ea14040bdf5ec36f3db190a27ddeb781921c51ca871c6237","bytes":20898,"evidence_observed_at":"2026-07-22T12:09:55Z"},
+        {"source_id":"cpython-nc-macos-readme-after","git_blob_sha":"8a6e52725615aae7d80d72f8c5c9c65687f391d9","sha256":"f16699a9276beddfd329bbb16cfe3818c30e0fc41c38b9b01608132d237b5eed","bytes":19091,"evidence_observed_at":"2026-07-22T12:09:55Z"},
+        {"source_id":"cpython-nc-macos-build-installer-after","git_blob_sha":"16ad3fd111f65d6f333dbc6cc4af56e26cb39314","sha256":"0c34cc5fe4af9bc08c61288db755c8b38a6849667356f57c85d4ed0aee6bb988","bytes":65811,"evidence_observed_at":"2026-07-22T12:09:55Z"}
+      ],
+      "required_source_ids": ["cpython-nc-macos-doc-before","cpython-nc-macos-doc-after","cpython-nc-macos-readme-after"],
+      "producer_allocation": [["producer-cpython-nc-macos-before",["cpython-nc-macos-doc-before"]],["producer-cpython-nc-macos-after",["cpython-nc-macos-doc-after"]],["producer-cpython-nc-macos-readme",["cpython-nc-macos-readme-after"]],["producer-cpython-nc-macos-installer",["cpython-nc-macos-build-installer-after"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1
+    }
+  ],
+  "rejected_inspections": [
+    {
+      "candidate_id": "cpython-nc-argument-clinic-default-groups",
+      "rejection_code": "exact_collision_normalization_risk",
+      "rationale": "The old and corrected behavior is explicit, but the opposing assertions are distributed across generator implementation, generated test output, tests, and NEWS rather than a literal same-key before/after value representation. A stronger ensurepip candidate with the same literal _PIP_VERSION key before and after was available before selection.",
+      "acquisition_plan_sha256": "6a216f3b019eaaff18941d7b29448c8bb9050d43fe64b7e4d5fc7297d04c88a9",
+      "outcome_observed": false
+    },
+    {
+      "candidate_id": "cpython-nc-pydoc-inherited-members-default",
+      "rejection_code": "no_explicit_opposing_claim_value",
+      "rationale": "The pre-change source did not explicitly state the opposing expanded-by-default value, so the conflict would rely on absence-as-evidence.",
+      "outcome_observed": false
+    },
+    {
+      "candidate_id": "cpython-nc-socket-makefile-buffering-one",
+      "rejection_code": "reserve_not_selected_stronger_literal_conflicts_available",
+      "rationale": "The behavior-level block-buffered versus line-buffered change was retained as a reserve, but four stronger literal default/value conflicts were available.",
+      "outcome_observed": false
+    }
+  ]
+}

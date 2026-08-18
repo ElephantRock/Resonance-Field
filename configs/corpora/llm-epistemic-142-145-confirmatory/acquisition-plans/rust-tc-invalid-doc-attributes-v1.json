@@ -1,0 +1,15 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-tc-invalid-doc-attributes",
+  "acquired_at": "2026-08-13T07:46:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"rust-tc-invalid-doc-impl-warn","repository":"rust-lang/rust","commit_sha":"77e78e28870a3241deadc28e14ba82e9f8548802","path":"compiler/rustc_lint_defs/src/builtin.rs","git_blob_sha":"4a38ab2159fddcd76f68e494f8f07b2ce4c2a147","media_type":"text/x-rust","title":"Rust invalid_doc_attributes definition while warn-by-default","evidence_observed_at":"2023-01-29T19:03:37Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-invalid-doc-impl-deny","repository":"rust-lang/rust","commit_sha":"5ce15af6b1d0c16df722db929dc81b9a97c2bd1f","path":"compiler/rustc_lint_defs/src/builtin.rs","git_blob_sha":"94f8bbe2437f82f656130fe6d730759f4ed0d952","media_type":"text/x-rust","title":"Rust invalid_doc_attributes definition after deny-by-default transition","evidence_observed_at":"2024-02-29T13:34:58Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-invalid-doc-test-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"tests/ui/attributes/doc-attr.rs","git_blob_sha":"8c81bc18d6aec965184d2ca4920d018ff839abd9","media_type":"text/x-rust","title":"Current Rust invalid doc attribute UI test","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-invalid-doc-where-test-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"tests/ui/attributes/where-doc.rs","git_blob_sha":"761d83966f6597f19c3b4a8fa87fc95ec304ba26","media_type":"text/x-rust","title":"Current Rust where-clause doc attribute UI test","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

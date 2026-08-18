@@ -1,0 +1,79 @@
+{
+  "ledger_version": "1.0",
+  "project": "redis/redis",
+  "upstream_project_id": "redis/redis",
+  "upstream_organization_id": "redis",
+  "domain_id": "databases_and_data_systems",
+  "challenge_type": "distributed_synthesis",
+  "selection_status": "prospective_source_semantic_screen_frozen_before_acquisition_plan_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "upstream_commit_sha": "cbdad795d8d75746e501aae06f14a3398bd190a2",
+  "upstream_observed_at": "2026-08-13T10:52:16Z",
+  "selection_rule": "Select the four listed eligible candidates in case-slot order after source-integrity freeze. Each case must use exactly four unique human-authored Redis primary command-spec sources allocated one per producer, require all four sources, ask an ordered four-slot exact arity synthesis question, and avoid source-byte reuse with every previously selected confirmatory case. Selection is based only on frozen source semantics and design validity; treatment/evaluator outcomes are never observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "redis-ds-command-arities-01",
+      "planned_case_id": "dbd-redis-ds-01",
+      "question": "Across the pinned Redis command specs, give the exact arity values in order for GET, SET, DEL, and EXISTS.",
+      "canonical_answer": "2; -3; -2; -2",
+      "ordered_required_slots": [["2"],["-3"],["-2"],["-2"]],
+      "required_sources": [
+        {"source_id":"redis-ds-01-get","path":"src/commands/get.json","git_blob_sha":"693c1ac8231b44221357161d23c201911253b536"},
+        {"source_id":"redis-ds-01-set","path":"src/commands/set.json","git_blob_sha":"ba5bf9d6b995e244abdbffd2bfff6daeac053350"},
+        {"source_id":"redis-ds-01-del","path":"src/commands/del.json","git_blob_sha":"2727b536c22a60efdec2c03b42f5a6167428a7ba"},
+        {"source_id":"redis-ds-01-exists","path":"src/commands/exists.json","git_blob_sha":"8b108bca2aa41b14dcf20a649f3b907292df884f"}
+      ],
+      "producer_allocation": [["producer-redis-ds-01-1",["redis-ds-01-get"]],["producer-redis-ds-01-2",["redis-ds-01-set"]],["producer-redis-ds-01-3",["redis-ds-01-del"]],["producer-redis-ds-01-4",["redis-ds-01-exists"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "redis-ds-command-arities-02",
+      "planned_case_id": "dbd-redis-ds-02",
+      "question": "Across the pinned Redis command specs, give the exact arity values in order for INCR, DECR, APPEND, and STRLEN.",
+      "canonical_answer": "2; 2; 3; 2",
+      "ordered_required_slots": [["2"],["2"],["3"],["2"]],
+      "required_sources": [
+        {"source_id":"redis-ds-02-incr","path":"src/commands/incr.json","git_blob_sha":"f33ec02b4251351b41dfd0943a9c2805a493b97f"},
+        {"source_id":"redis-ds-02-decr","path":"src/commands/decr.json","git_blob_sha":"0841928a503dd9174419538034e83b3b44953134"},
+        {"source_id":"redis-ds-02-append","path":"src/commands/append.json","git_blob_sha":"a8ec6bf82e7e152457b68c42c1f2142c2aaa41a1"},
+        {"source_id":"redis-ds-02-strlen","path":"src/commands/strlen.json","git_blob_sha":"395a02dfa34963ab3683d28b58fe380413f2fdb3"}
+      ],
+      "producer_allocation": [["producer-redis-ds-02-1",["redis-ds-02-incr"]],["producer-redis-ds-02-2",["redis-ds-02-decr"]],["producer-redis-ds-02-3",["redis-ds-02-append"]],["producer-redis-ds-02-4",["redis-ds-02-strlen"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "redis-ds-command-arities-03",
+      "planned_case_id": "dbd-redis-ds-03",
+      "question": "Across the pinned Redis command specs, give the exact arity values in order for HGET, HSET, HDEL, and HLEN.",
+      "canonical_answer": "3; -4; -3; 2",
+      "ordered_required_slots": [["3"],["-4"],["-3"],["2"]],
+      "required_sources": [
+        {"source_id":"redis-ds-03-hget","path":"src/commands/hget.json","git_blob_sha":"a041143ec86372dd45fee299e3532679e80aede3"},
+        {"source_id":"redis-ds-03-hset","path":"src/commands/hset.json","git_blob_sha":"8180972277630eaa7b97f78f409741bb74a091e3"},
+        {"source_id":"redis-ds-03-hdel","path":"src/commands/hdel.json","git_blob_sha":"11da02d3bb4ad84de7832eb10352dddb937f167f"},
+        {"source_id":"redis-ds-03-hlen","path":"src/commands/hlen.json","git_blob_sha":"d4c13ac1166c2a82c65bb7eb0be2a249a0cf02e2"}
+      ],
+      "producer_allocation": [["producer-redis-ds-03-1",["redis-ds-03-hget"]],["producer-redis-ds-03-2",["redis-ds-03-hset"]],["producer-redis-ds-03-3",["redis-ds-03-hdel"]],["producer-redis-ds-03-4",["redis-ds-03-hlen"]]],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "redis-ds-command-arities-04",
+      "planned_case_id": "dbd-redis-ds-04",
+      "question": "Across the pinned Redis command specs, give the exact arity values in order for LPUSH, RPUSH, LPOP, and RPOP.",
+      "canonical_answer": "-3; -3; -2; -2",
+      "ordered_required_slots": [["-3"],["-3"],["-2"],["-2"]],
+      "required_sources": [
+        {"source_id":"redis-ds-04-lpush","path":"src/commands/lpush.json","git_blob_sha":"34cd8e246bba74aa0cc91d6cf08a27373bdcad2b"},
+        {"source_id":"redis-ds-04-rpush","path":"src/commands/rpush.json","git_blob_sha":"e5d6908c858ad04cd522285bd0de36e59bda9a51"},
+        {"source_id":"redis-ds-04-lpop","path":"src/commands/lpop.json","git_blob_sha":"b1d6cd1771f9e78926f7ee82c6a2de6f79217c21"},
+        {"source_id":"redis-ds-04-rpop","path":"src/commands/rpop.json","git_blob_sha":"79b5a925491abc09fad036a5bb77abb0bc38a706"}
+      ],
+      "producer_allocation": [["producer-redis-ds-04-1",["redis-ds-04-lpush"]],["producer-redis-ds-04-2",["redis-ds-04-rpush"]],["producer-redis-ds-04-3",["redis-ds-04-lpop"]],["producer-redis-ds-04-4",["redis-ds-04-rpop"]]],
+      "minimum_events_per_producer": 1
+    }
+  ],
+  "rejected_candidates": []
+}

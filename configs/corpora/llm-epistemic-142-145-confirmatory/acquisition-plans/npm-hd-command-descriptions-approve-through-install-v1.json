@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "npm-hd-command-descriptions-a",
+  "acquired_at": "2026-08-14T17:10:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"npm-hd-01-approve-scripts","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/approve-scripts.js","git_blob_sha":"929c692112f16c738aa2229802db98704e54f0a1","media_type":"text/javascript","title":"npm approve-scripts command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-cache","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/cache.js","git_blob_sha":"e1d1dcad88df6d58bbd440ee6e356810c851e51a","media_type":"text/javascript","title":"npm cache command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-ci","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/ci.js","git_blob_sha":"17307badede984cbef253df49edb37386084e1ab","media_type":"text/javascript","title":"npm ci command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-config","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/config.js","git_blob_sha":"0a8b84aba2666d6919eaa410c521362b2a378dbc","media_type":"text/javascript","title":"npm config command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-deny-scripts","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/deny-scripts.js","git_blob_sha":"53b0cdd3cc50a6bbc924eaec5db28b450a041702","media_type":"text/javascript","title":"npm deny-scripts command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-help","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/help.js","git_blob_sha":"d520dd1cceb4526a5ae1601f053185e8dc6014b2","media_type":"text/javascript","title":"npm help command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-help-search","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/help-search.js","git_blob_sha":"cb8075918dba10ae33c788fc50c18f9a91a672df","media_type":"text/javascript","title":"npm help-search command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-01-install","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/install.js","git_blob_sha":"2fd9bc8d5cd7a4913bbf34c969359c51680110d5","media_type":"text/javascript","title":"npm install command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"}
+  ]
+}

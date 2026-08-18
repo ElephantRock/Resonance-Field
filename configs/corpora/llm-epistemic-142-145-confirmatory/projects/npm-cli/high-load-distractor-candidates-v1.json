@@ -1,0 +1,93 @@
+{
+  "ledger_version": "1.0",
+  "project": "npm/cli",
+  "upstream_project_id": "npm/cli",
+  "upstream_organization_id": "npm",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "high_load_distractor_synthesis",
+  "selection_status": "discovery_screen_closed_four_eligible_ranked_for_freeze",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Eligible candidates are ordered by canonical_target_subject, then newest_required_source_path, newest_required_commit_timestamp, and newest_required_commit_sha; the first four fill bpd-npm-hd-01..04. Each case has exactly four required and four distractor sources, with one required and one distractor assigned to each of four producers.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "npm-hd-command-descriptions-a",
+      "canonical_target_subject": "npm command descriptions: approve-scripts, cache, ci, config",
+      "newest_required_source_path": "lib/commands/config.js",
+      "newest_required_commit_timestamp": "2026-08-12T21:15:55Z",
+      "newest_required_commit_sha": "51c2bf81fa2c31547d0fec44fff2aaac3d9a9862",
+      "planned_case_id": "bpd-npm-hd-01",
+      "question": "Among the eight pinned npm command modules in this case, give the exact static descriptions for approve-scripts, cache, ci, and config, in that order.",
+      "canonical_answer": "Approve install scripts for specific dependencies; Manipulates packages and npx cache; Clean install a project; Manage the npm configuration files",
+      "ordered_required_slots": [["Approve install scripts for specific dependencies"], ["Manipulates packages and npx cache"], ["Clean install a project"], ["Manage the npm configuration files"]],
+      "producer_allocation": [
+        ["producer-npm-hd-01-1", ["npm-hd-01-approve-scripts", "npm-hd-01-deny-scripts"]],
+        ["producer-npm-hd-01-2", ["npm-hd-01-cache", "npm-hd-01-help"]],
+        ["producer-npm-hd-01-3", ["npm-hd-01-ci", "npm-hd-01-help-search"]],
+        ["producer-npm-hd-01-4", ["npm-hd-01-config", "npm-hd-01-install"]]
+      ],
+      "required_source_ids": ["npm-hd-01-approve-scripts", "npm-hd-01-cache", "npm-hd-01-ci", "npm-hd-01-config"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "npm-hd-command-descriptions-b",
+      "canonical_target_subject": "npm command descriptions: ls, org, outdated, owner",
+      "newest_required_source_path": "lib/commands/owner.js",
+      "newest_required_commit_timestamp": "2026-08-12T21:15:55Z",
+      "newest_required_commit_sha": "51c2bf81fa2c31547d0fec44fff2aaac3d9a9862",
+      "planned_case_id": "bpd-npm-hd-02",
+      "question": "Among the eight pinned npm command modules in this case, give the exact static descriptions for ls, org, outdated, and owner, in that order.",
+      "canonical_answer": "List installed packages; Manage orgs; Check for outdated packages; Manage package owners",
+      "ordered_required_slots": [["List installed packages"], ["Manage orgs"], ["Check for outdated packages"], ["Manage package owners"]],
+      "producer_allocation": [
+        ["producer-npm-hd-02-1", ["npm-hd-02-ls", "npm-hd-02-pack"]],
+        ["producer-npm-hd-02-2", ["npm-hd-02-org", "npm-hd-02-ping"]],
+        ["producer-npm-hd-02-3", ["npm-hd-02-outdated", "npm-hd-02-pkg"]],
+        ["producer-npm-hd-02-4", ["npm-hd-02-owner", "npm-hd-02-prefix"]]
+      ],
+      "required_source_ids": ["npm-hd-02-ls", "npm-hd-02-org", "npm-hd-02-outdated", "npm-hd-02-owner"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "npm-hd-command-descriptions-c",
+      "canonical_target_subject": "npm command descriptions: profile, prune, query, rebuild",
+      "newest_required_source_path": "lib/commands/rebuild.js",
+      "newest_required_commit_timestamp": "2026-08-12T21:15:55Z",
+      "newest_required_commit_sha": "51c2bf81fa2c31547d0fec44fff2aaac3d9a9862",
+      "planned_case_id": "bpd-npm-hd-03",
+      "question": "Among the eight pinned npm command modules in this case, give the exact static descriptions for profile, prune, query, and rebuild, in that order.",
+      "canonical_answer": "Change settings on your registry profile; Remove extraneous packages; Retrieve a filtered list of packages; Rebuild a package",
+      "ordered_required_slots": [["Change settings on your registry profile"], ["Remove extraneous packages"], ["Retrieve a filtered list of packages"], ["Rebuild a package"]],
+      "producer_allocation": [
+        ["producer-npm-hd-03-1", ["npm-hd-03-profile", "npm-hd-03-repo"]],
+        ["producer-npm-hd-03-2", ["npm-hd-03-prune", "npm-hd-03-restart"]],
+        ["producer-npm-hd-03-3", ["npm-hd-03-query", "npm-hd-03-root"]],
+        ["producer-npm-hd-03-4", ["npm-hd-03-rebuild", "npm-hd-03-run"]]
+      ],
+      "required_source_ids": ["npm-hd-03-profile", "npm-hd-03-prune", "npm-hd-03-query", "npm-hd-03-rebuild"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "npm-hd-command-descriptions-d",
+      "canonical_target_subject": "npm command descriptions: search, start, stop, team",
+      "newest_required_source_path": "lib/commands/team.js",
+      "newest_required_commit_timestamp": "2026-08-12T21:15:55Z",
+      "newest_required_commit_sha": "51c2bf81fa2c31547d0fec44fff2aaac3d9a9862",
+      "planned_case_id": "bpd-npm-hd-04",
+      "question": "Among the eight pinned npm command modules in this case, give the exact static descriptions for search, start, stop, and team, in that order.",
+      "canonical_answer": "Search for packages; Start a package; Stop a package; Manage organization teams and team memberships",
+      "ordered_required_slots": [["Search for packages"], ["Start a package"], ["Stop a package"], ["Manage organization teams and team memberships"]],
+      "producer_allocation": [
+        ["producer-npm-hd-04-1", ["npm-hd-04-search", "npm-hd-04-token"]],
+        ["producer-npm-hd-04-2", ["npm-hd-04-start", "npm-hd-04-uninstall"]],
+        ["producer-npm-hd-04-3", ["npm-hd-04-stop", "npm-hd-04-unpublish"]],
+        ["producer-npm-hd-04-4", ["npm-hd-04-team", "npm-hd-04-update"]]
+      ],
+      "required_source_ids": ["npm-hd-04-search", "npm-hd-04-start", "npm-hd-04-stop", "npm-hd-04-team"],
+      "minimum_events_per_producer": 1
+    }
+  ],
+  "discarded_candidates": []
+}

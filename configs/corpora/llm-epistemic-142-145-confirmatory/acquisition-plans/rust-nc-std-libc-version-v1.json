@@ -1,0 +1,59 @@
+{
+  "acquired_at": "2026-08-13T07:20:00Z",
+  "candidate_id": "rust-nc-std-libc-version",
+  "cohort": "confirmatory",
+  "confirmatory_outcomes_observed": false,
+  "evaluator_execution": false,
+  "plan_version": "1.0",
+  "sources": [
+    {
+      "commit_sha": "c5f9a519633bf24fc63e2b0c2270b8249e413602",
+      "evidence_observed_at": "2026-07-22T22:29:25Z",
+      "git_blob_sha": "701e899a32acf05bad8a8c1685a6d7a289639c37",
+      "media_type": "text/plain",
+      "path": "library/std/Cargo.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-libc-toml-before",
+      "title": "Rust std Cargo.toml before libc update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "1d15e2b5cd4731f92f56c1194ef39489c551a98d",
+      "evidence_observed_at": "2026-07-22T22:29:26Z",
+      "git_blob_sha": "38340cd6aba7368699375e42607528fd83d582d7",
+      "media_type": "text/plain",
+      "path": "library/std/Cargo.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-libc-toml-after",
+      "title": "Rust std Cargo.toml after libc update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "c5f9a519633bf24fc63e2b0c2270b8249e413602",
+      "evidence_observed_at": "2026-07-22T22:29:25Z",
+      "git_blob_sha": "1b117ffe978a226f95d19b7bdce3c878961662c2",
+      "media_type": "text/plain",
+      "path": "library/Cargo.lock",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-libc-lock-before",
+      "title": "Rust library Cargo.lock before libc update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "1d15e2b5cd4731f92f56c1194ef39489c551a98d",
+      "evidence_observed_at": "2026-07-22T22:29:26Z",
+      "git_blob_sha": "b7cc8590ae71146b7eca577dc318aee02963381d",
+      "media_type": "text/plain",
+      "path": "library/Cargo.lock",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-libc-lock-after",
+      "title": "Rust library Cargo.lock after libc update",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    }
+  ],
+  "treatment_execution": false
+}

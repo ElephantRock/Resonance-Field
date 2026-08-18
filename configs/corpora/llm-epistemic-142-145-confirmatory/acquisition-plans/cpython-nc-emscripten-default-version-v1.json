@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-nc-emscripten-default-version",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-nc-emscripten-config-before",
+      "repository": "python/cpython",
+      "commit_sha": "e12ee02a164c87865b78f6d5a511f6009871383b",
+      "path": "Platforms/emscripten/config.toml",
+      "git_blob_sha": "9c6d01e8655207ebf6fbf30159262f709e13b126",
+      "media_type": "application/toml",
+      "title": "CPython Emscripten configuration immediately before 6.0.6 bump",
+      "evidence_observed_at": "2026-08-05T19:57:06Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-emscripten-config-after",
+      "repository": "python/cpython",
+      "commit_sha": "2dcb32b5f384d393970d6f5f1afd42901beb7de6",
+      "path": "Platforms/emscripten/config.toml",
+      "git_blob_sha": "285e17a997b1e7583d4d8ae692bdcbf6ebec2642",
+      "media_type": "application/toml",
+      "title": "CPython Emscripten configuration after 6.0.6 bump",
+      "evidence_observed_at": "2026-08-06T00:29:22Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-emscripten-readme-after",
+      "repository": "python/cpython",
+      "commit_sha": "2dcb32b5f384d393970d6f5f1afd42901beb7de6",
+      "path": "Platforms/emscripten/README.md",
+      "git_blob_sha": "ce230c4b74a2738aa158d63d29118025a877c533",
+      "media_type": "text/markdown",
+      "title": "CPython Emscripten platform README after version bump",
+      "evidence_observed_at": "2026-08-06T00:29:22Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-emscripten-driver-after",
+      "repository": "python/cpython",
+      "commit_sha": "2dcb32b5f384d393970d6f5f1afd42901beb7de6",
+      "path": "Platforms/emscripten/__main__.py",
+      "git_blob_sha": "84a1589b81f6a20f2ee6a2171a35a2b0d50415da",
+      "media_type": "text/x-python",
+      "title": "CPython Emscripten build driver after version bump",
+      "evidence_observed_at": "2026-08-06T00:29:22Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

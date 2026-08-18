@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "postgres-hd-extension-versions-c",
+  "acquired_at": "2026-08-15T03:22:17Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"postgres-hd-03-citext","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/citext/citext.control","git_blob_sha":"2b0f3fa84074bf9c08f425e07007967a8c4a1a54","media_type":"text/plain","title":"PostgreSQL citext extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-cube","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/cube/cube.control","git_blob_sha":"50427ec1170fd45bc20ff76205aff5b8aab99ebc","media_type":"text/plain","title":"PostgreSQL cube extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-fuzzystrmatch","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/fuzzystrmatch/fuzzystrmatch.control","git_blob_sha":"8b6e9fd9935542ac4f2912ddafb4fa49298a8eff","media_type":"text/plain","title":"PostgreSQL fuzzystrmatch extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-intarray","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/intarray/intarray.control","git_blob_sha":"c3ff753e2cfd99ab92dd25894db20256a6fbf183","media_type":"text/plain","title":"PostgreSQL intarray extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-dict-int","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/dict_int/dict_int.control","git_blob_sha":"ec04ccea91a3a72e06a00dbb86fc775d08e240ef","media_type":"text/plain","title":"PostgreSQL dict_int extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-dict-xsyn","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/dict_xsyn/dict_xsyn.control","git_blob_sha":"3fd465a95577471ae99b42b63a21ad31eac71ac9","media_type":"text/plain","title":"PostgreSQL dict_xsyn extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-isn","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/isn/isn.control","git_blob_sha":"e7daea52b8451d5da813f4cbe03dcd49593be68a","media_type":"text/plain","title":"PostgreSQL isn extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-hd-03-lo","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"contrib/lo/lo.control","git_blob_sha":"3acb3665a4e16f72bef84e5f6531a543963a5041","media_type":"text/plain","title":"PostgreSQL lo extension control","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}

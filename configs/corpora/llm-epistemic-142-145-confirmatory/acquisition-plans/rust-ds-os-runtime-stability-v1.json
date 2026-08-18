@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"rust-ds-os-runtime-stability",
+  "acquired_at":"2026-08-13T05:20:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"rust-ds-path-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/path.rs","git_blob_sha":"be216d87f324116320faa7f0111526dfdb285433","media_type":"text/x-rust","title":"Rust std path source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-fs-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/fs.rs","git_blob_sha":"58874a27f8ae530e168747d0df27e0ee7484b1bc","media_type":"text/x-rust","title":"Rust std fs source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-thread-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/thread/mod.rs","git_blob_sha":"955d1f61e75356ce2ae746a527c62c055f421c44","media_type":"text/x-rust","title":"Rust std thread source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-ds-process-current","repository":"rust-lang/rust","commit_sha":"52d08664805c8deb47b7e86999d7f8647b424a15","path":"library/std/src/process.rs","git_blob_sha":"a398363cf4bf9c9bac3347ae8b75063cfa2701cb","media_type":"text/x-rust","title":"Rust std process source","evidence_observed_at":"2026-08-12T23:18:26Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

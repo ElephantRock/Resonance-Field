@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-nc-rustc-stack-size",
+  "acquired_at": "2026-08-13T07:08:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "rust-nc-stack-util-before",
+      "repository": "rust-lang/rust",
+      "commit_sha": "969b803cbe1d4499f841ae0a49c637d8c70a0458",
+      "path": "compiler/rustc_interface/src/util.rs",
+      "git_blob_sha": "654a782262e22f6b342a1e29ac801996db0d25a3",
+      "media_type": "text/x-rust",
+      "title": "rustc interface stack configuration immediately before 16 MiB default",
+      "evidence_observed_at": "2026-08-09T16:51:31Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-stack-util-after",
+      "repository": "rust-lang/rust",
+      "commit_sha": "4badd0db1bc4c411d0c1d29e478f10f06ad29e13",
+      "path": "compiler/rustc_interface/src/util.rs",
+      "git_blob_sha": "f6ea8ca19ce694e00034827a246f271859a5d2fe",
+      "media_type": "text/x-rust",
+      "title": "rustc interface stack configuration after 16 MiB default",
+      "evidence_observed_at": "2026-08-09T19:56:58Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-stack-rustc-man-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "src/doc/man/rustc.1",
+      "git_blob_sha": "2a91774d671aca449e7be3d02ac1889a78eb22b5",
+      "media_type": "text/plain",
+      "title": "Current rustc manual environment-variable documentation",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-stack-invalid-env-test-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "tests/ui/rustc-env/min-stack-banana.rs",
+      "git_blob_sha": "dfde277714b9fe759f499cbee2ba56c69bdc4f4b",
+      "media_type": "text/x-rust",
+      "title": "Current rustc RUST_MIN_STACK invalid-value regression test",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-tc-dangerous-implicit-autorefs",
+  "acquired_at": "2026-08-13T07:46:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"rust-tc-autorefs-impl-warn","repository":"rust-lang/rust","commit_sha":"642e49bfed2481e54e252732be20d3c24cbec9e8","path":"compiler/rustc_lint/src/autorefs.rs","git_blob_sha":"5de2cbf9939db6d2afad6cfce98562f2fe8f3684","media_type":"text/x-rust","title":"Rust dangerous_implicit_autorefs implementation while warn-by-default","evidence_observed_at":"2025-05-27T12:30:52Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-autorefs-impl-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"compiler/rustc_lint/src/autorefs.rs","git_blob_sha":"d67fcf6336f622ff7a53131e35b1dbbb901a5774","media_type":"text/x-rust","title":"Current Rust dangerous_implicit_autorefs implementation","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-autorefs-test-warn","repository":"rust-lang/rust","commit_sha":"642e49bfed2481e54e252732be20d3c24cbec9e8","path":"tests/ui/lint/implicit_autorefs.rs","git_blob_sha":"507d653682839090d240fcdd0f9a49531b434d48","media_type":"text/x-rust","title":"Rust implicit-autoref UI test while warnings were expected","evidence_observed_at":"2025-05-27T12:30:52Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-autorefs-test-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"tests/ui/lint/implicit_autorefs.rs","git_blob_sha":"f33cb08e985968fce588b18dafb4a17b2963ed1c","media_type":"text/x-rust","title":"Current Rust implicit-autoref UI test","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

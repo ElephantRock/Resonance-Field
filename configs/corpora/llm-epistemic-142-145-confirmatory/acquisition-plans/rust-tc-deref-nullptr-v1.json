@@ -1,0 +1,15 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-tc-deref-nullptr",
+  "acquired_at": "2026-08-13T07:46:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"rust-tc-deref-impl-warn","repository":"rust-lang/rust","commit_sha":"93bf791e8b94d4b5fba606bc16ed0e95df57428f","path":"compiler/rustc_lint/src/builtin.rs","git_blob_sha":"5c5cd99345ef1c6e769c2bb361a7e19bcd802e13","media_type":"text/x-rust","title":"Rust deref_nullptr implementation while warn-by-default","evidence_observed_at":"2024-10-24T08:35:39Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-deref-impl-deny","repository":"rust-lang/rust","commit_sha":"c0097978aa2514056d75d2ab33db6efe6510cf70","path":"compiler/rustc_lint/src/builtin.rs","git_blob_sha":"37d0e2a51bacfa82ee1ad89aa55b4e4811637859","media_type":"text/x-rust","title":"Rust deref_nullptr implementation after deny-by-default transition","evidence_observed_at":"2025-11-25T02:45:28Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-deref-test-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"tests/ui/lint/lint-deref-nullptr.rs","git_blob_sha":"ed0cc7fa3ee95684f885e138d8bb588d0af1d60f","media_type":"text/x-rust","title":"Current Rust deref_nullptr UI test","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"},
+    {"source_id":"rust-tc-deref-forbid-test-current","repository":"rust-lang/rust","commit_sha":"79ef636a60b0f5ca061b09122bbbca3c7b4a3b70","path":"tests/ui/lint/lint-forbid-internal-unsafe.rs","git_blob_sha":"ab3769b06cbe385f065de46cc193d4d4a5f90d6d","media_type":"text/x-rust","title":"Current Rust forbid-unsafe test containing deref_nullptr diagnostic","evidence_observed_at":"2026-08-13T04:13:47Z","upstream_project_id":"rust-lang/rust","upstream_organization_id":"rust-lang"}
+  ]
+}

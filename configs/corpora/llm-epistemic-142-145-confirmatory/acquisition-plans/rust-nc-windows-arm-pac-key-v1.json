@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "rust-nc-windows-arm-pac-key",
+  "acquired_at": "2026-08-13T07:08:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "rust-nc-pac-context-before",
+      "repository": "rust-lang/rust",
+      "commit_sha": "83709eedfff36840b0749ca429ac43f5479b268f",
+      "path": "compiler/rustc_codegen_llvm/src/context.rs",
+      "git_blob_sha": "8f1910eaced13f7f456177b86accd763e6ec12af",
+      "media_type": "text/x-rust",
+      "title": "rustc LLVM branch-protection context immediately before Windows Arm key fix",
+      "evidence_observed_at": "2026-07-30T04:10:31Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-pac-context-after",
+      "repository": "rust-lang/rust",
+      "commit_sha": "a0e8bb5d073617bac430ff5d36cc2c801b3cd31a",
+      "path": "compiler/rustc_codegen_llvm/src/context.rs",
+      "git_blob_sha": "2d19b6b41602c811c9eebfa0175124e72e37276e",
+      "media_type": "text/x-rust",
+      "title": "rustc LLVM branch-protection context after Windows Arm key fix",
+      "evidence_observed_at": "2026-07-30T09:53:27Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-pac-unstable-book-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "src/doc/unstable-book/src/compiler-flags/branch-protection.md",
+      "git_blob_sha": "c15567dcac2ee4477e0a1a8e00fba24d9a646654",
+      "media_type": "text/markdown",
+      "title": "Current Rust unstable-book branch-protection documentation",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    },
+    {
+      "source_id": "rust-nc-pac-codegen-test-current",
+      "repository": "rust-lang/rust",
+      "commit_sha": "52d08664805c8deb47b7e86999d7f8647b424a15",
+      "path": "tests/codegen-llvm/branch-protection.rs",
+      "git_blob_sha": "11847c256d6ba2a937429b84d55ea31692dec85b",
+      "media_type": "text/x-rust",
+      "title": "Current Rust branch-protection LLVM codegen regression test",
+      "evidence_observed_at": "2026-08-12T23:18:26Z",
+      "upstream_project_id": "rust-lang/rust",
+      "upstream_organization_id": "rust-lang"
+    }
+  ]
+}

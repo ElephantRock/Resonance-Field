@@ -1,0 +1,80 @@
+{
+  "ledger_version": "1.0",
+  "project": "postgres/postgres",
+  "upstream_project_id": "postgres/postgres",
+  "upstream_organization_id": "postgres",
+  "domain_id": "databases_and_data_systems",
+  "challenge_type": "temporal_update_conflict",
+  "selection_status": "prospective_source_semantic_screen_frozen_before_acquisition_plan_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Select the four listed eligible candidates in case-slot order after source-integrity freeze. Each case must use exactly four unique human-authored PostgreSQL primary sources allocated one per producer, expose at least one normalized semantic conflict whose required old/current evidence timestamps are separated by at least 180 days, use an exact ordered 2-4 slot answer, and avoid source-byte reuse with every previously selected confirmatory case. Selection is based only on frozen source semantics and design validity; treatment/evaluator outcomes are never observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "postgres-tc-standard-conforming-strings",
+      "planned_case_id": "dbd-postgres-tc-01",
+      "change_commit": "45762084545ec14dbbe66ace1d69d7e89f8978ac",
+      "change_observed_at": "2026-01-21T20:08:38Z",
+      "question": "Across the historical and current PostgreSQL snapshots around the v19 standard-conforming-strings transition, give four values in order: whether standard_conforming_strings could be set OFF before the transition, whether it can be set OFF now, whether scan.l retained a standard_conforming_strings parser variable before, and whether it retains that parser variable now.",
+      "canonical_answer": "yes; no; yes; no",
+      "ordered_required_slots": [["yes","true"],["no","false"],["yes","true"],["no","false"]],
+      "required_source_ids": ["postgres-tc-01-guc-before","postgres-tc-01-guc-current","postgres-tc-01-scan-before","postgres-tc-01-scan-current"],
+      "producer_allocation": [["producer-postgres-tc-01-1",["postgres-tc-01-guc-before"]],["producer-postgres-tc-01-2",["postgres-tc-01-guc-current"]],["producer-postgres-tc-01-3",["postgres-tc-01-scan-before"]],["producer-postgres-tc-01-4",["postgres-tc-01-scan-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    },
+    {
+      "candidate_id": "postgres-tc-initdb-data-checksums",
+      "planned_case_id": "dbd-postgres-tc-02",
+      "change_commit": "04bec894a04cb0d32533f1522ab81b7016141ff1",
+      "change_observed_at": "2024-10-16T06:48:10Z",
+      "question": "Across the historical and current PostgreSQL initdb snapshots, give four values in order: the old data_checksums initialization default, the current initialization default, the old default control-file checksum version expected by the initdb test, and the current expected version.",
+      "canonical_answer": "false; true; 0; 1",
+      "ordered_required_slots": [["false"],["true"],["0"],["1"]],
+      "required_source_ids": ["postgres-tc-02-initdb-before","postgres-tc-02-initdb-current","postgres-tc-02-test-before","postgres-tc-02-test-current"],
+      "producer_allocation": [["producer-postgres-tc-02-1",["postgres-tc-02-initdb-before"]],["producer-postgres-tc-02-2",["postgres-tc-02-initdb-current"]],["producer-postgres-tc-02-3",["postgres-tc-02-test-before"]],["producer-postgres-tc-02-4",["postgres-tc-02-test-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    },
+    {
+      "candidate_id": "postgres-tc-password-encryption-default",
+      "planned_case_id": "dbd-postgres-tc-03",
+      "change_commit": "c7eab0e97e6cf1d0c136c22269c10ae11ba874c4",
+      "change_observed_at": "2020-06-10T14:42:55Z",
+      "question": "Across the historical and current PostgreSQL password-encryption snapshots, give four values in order: the old password_encryption default algorithm, the current default algorithm, whether SET password_encryption = true was accepted in the old regression behavior, and whether it is accepted now.",
+      "canonical_answer": "md5; scram-sha-256; yes; no",
+      "ordered_required_slots": [["md5"],["scram-sha-256"],["yes","accepted","true"],["no","rejected","false"]],
+      "required_source_ids": ["postgres-tc-03-user-before","postgres-tc-03-user-current","postgres-tc-03-password-test-before","postgres-tc-03-password-test-current"],
+      "producer_allocation": [["producer-postgres-tc-03-1",["postgres-tc-03-user-before"]],["producer-postgres-tc-03-2",["postgres-tc-03-user-current"]],["producer-postgres-tc-03-3",["postgres-tc-03-password-test-before"]],["producer-postgres-tc-03-4",["postgres-tc-03-password-test-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    },
+    {
+      "candidate_id": "postgres-tc-pgdump-statistics-default",
+      "planned_case_id": "dbd-postgres-tc-04",
+      "change_commit": "34eb2a80d5a3ea1392e4a9f16ebac54e96d0c6ed",
+      "change_observed_at": "2025-05-27T20:54:38Z",
+      "question": "Across the historical and current PostgreSQL pg_dump snapshots, give four values in order: the old InitDumpOptions dumpStatistics default, the current dumpStatistics default, which statistics option the old pg_dump documentation identified as the default, and which option the current documentation identifies as the default.",
+      "canonical_answer": "true; false; --with-statistics; --no-statistics",
+      "ordered_required_slots": [["true"],["false"],["--with-statistics"],["--no-statistics"]],
+      "required_source_ids": ["postgres-tc-04-archiver-before","postgres-tc-04-archiver-current","postgres-tc-04-doc-before","postgres-tc-04-doc-current"],
+      "producer_allocation": [["producer-postgres-tc-04-1",["postgres-tc-04-archiver-before"]],["producer-postgres-tc-04-2",["postgres-tc-04-archiver-current"]],["producer-postgres-tc-04-3",["postgres-tc-04-doc-before"]],["producer-postgres-tc-04-4",["postgres-tc-04-doc-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    }
+  ],
+  "rejected_candidates": [
+    {"candidate_id":"postgres-tc-btree-gist-default-opclass","reason":"source_reuse_risk","note":"Rejected prospectively because current btree_gist control material is already selected elsewhere in the PostgreSQL confirmatory corpus."},
+    {"candidate_id":"postgres-tc-protocol-grease","reason":"state_not_stable","note":"Rejected prospectively because the beta grease behavior was explicitly designed to be temporary and reverted before release."}
+  ]
+}

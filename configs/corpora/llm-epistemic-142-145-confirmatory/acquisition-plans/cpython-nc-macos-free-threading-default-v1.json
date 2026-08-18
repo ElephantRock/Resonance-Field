@@ -1,0 +1,59 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-nc-macos-free-threading-default",
+  "acquired_at": "2026-08-13T04:12:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-nc-macos-doc-before",
+      "repository": "python/cpython",
+      "commit_sha": "596cd5c5d7b6ada3e50c6499447eb90a065769ad",
+      "path": "Doc/using/mac.rst",
+      "git_blob_sha": "6cf945de5b3f3b426f7726a806eee612ddda6f42",
+      "media_type": "text/x-rst",
+      "title": "CPython macOS documentation immediately before free-threading default change",
+      "evidence_observed_at": "2026-07-22T12:09:20Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-macos-doc-after",
+      "repository": "python/cpython",
+      "commit_sha": "771abfe06f1f04abf1065d3525d2a1c84566058a",
+      "path": "Doc/using/mac.rst",
+      "git_blob_sha": "a01dabbf2475aa4931201a8a442c5e7cf82a09bd",
+      "media_type": "text/x-rst",
+      "title": "CPython macOS documentation after free-threading default change",
+      "evidence_observed_at": "2026-07-22T12:09:55Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-macos-readme-after",
+      "repository": "python/cpython",
+      "commit_sha": "771abfe06f1f04abf1065d3525d2a1c84566058a",
+      "path": "Mac/README.rst",
+      "git_blob_sha": "8a6e52725615aae7d80d72f8c5c9c65687f391d9",
+      "media_type": "text/x-rst",
+      "title": "CPython macOS platform README at free-threading default change",
+      "evidence_observed_at": "2026-07-22T12:09:55Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-nc-macos-build-installer-after",
+      "repository": "python/cpython",
+      "commit_sha": "771abfe06f1f04abf1065d3525d2a1c84566058a",
+      "path": "Mac/BuildScript/build-installer.py",
+      "git_blob_sha": "16ad3fd111f65d6f333dbc6cc4af56e26cb39314",
+      "media_type": "text/x-python",
+      "title": "CPython macOS installer build script at free-threading default change",
+      "evidence_observed_at": "2026-07-22T12:09:55Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

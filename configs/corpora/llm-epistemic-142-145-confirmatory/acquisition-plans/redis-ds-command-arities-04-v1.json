@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"redis-ds-command-arities-04",
+  "acquired_at":"2026-08-15T12:55:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"redis-ds-04-lpush","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/lpush.json","git_blob_sha":"34cd8e246bba74aa0cc91d6cf08a27373bdcad2b","media_type":"application/json","title":"Redis LPUSH command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-04-rpush","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/rpush.json","git_blob_sha":"e5d6908c858ad04cd522285bd0de36e59bda9a51","media_type":"application/json","title":"Redis RPUSH command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-04-lpop","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/lpop.json","git_blob_sha":"b1d6cd1771f9e78926f7ee82c6a2de6f79217c21","media_type":"application/json","title":"Redis LPOP command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"},
+    {"source_id":"redis-ds-04-rpop","repository":"redis/redis","commit_sha":"cbdad795d8d75746e501aae06f14a3398bd190a2","path":"src/commands/rpop.json","git_blob_sha":"79b5a925491abc09fad036a5bb77abb0bc38a706","media_type":"application/json","title":"Redis RPOP command specification","evidence_observed_at":"2026-08-13T10:52:16Z","upstream_project_id":"redis/redis","upstream_organization_id":"redis"}
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "acquired_at": "2026-08-13T07:20:00Z",
+  "candidate_id": "rust-nc-rustfmt-version",
+  "cohort": "confirmatory",
+  "confirmatory_outcomes_observed": false,
+  "evaluator_execution": false,
+  "plan_version": "1.0",
+  "sources": [
+    {
+      "commit_sha": "cde3f8aee5a30928872e2438e3f18238a3fa306c",
+      "evidence_observed_at": "2026-07-21T06:47:22Z",
+      "git_blob_sha": "6ac140f2e092164080e5b00d9351e5b9f716a9d4",
+      "media_type": "text/plain",
+      "path": "src/tools/rustfmt/Cargo.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-rustfmt-toml-before",
+      "title": "rustfmt Cargo.toml before package version bump",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "f271be3552e54bbf9d49b94fe53fe4f255998559",
+      "evidence_observed_at": "2026-07-21T13:17:31Z",
+      "git_blob_sha": "eedd83cad343aba11aa7347b8d02e3b5a422d581",
+      "media_type": "text/plain",
+      "path": "src/tools/rustfmt/Cargo.toml",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-rustfmt-toml-after",
+      "title": "rustfmt Cargo.toml after package version bump",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "cde3f8aee5a30928872e2438e3f18238a3fa306c",
+      "evidence_observed_at": "2026-07-21T06:47:22Z",
+      "git_blob_sha": "64b4aaef4d395175a53ad70d1cfa2ee0bf79cc5c",
+      "media_type": "text/plain",
+      "path": "src/tools/rustfmt/Cargo.lock",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-rustfmt-lock-before",
+      "title": "rustfmt Cargo.lock before package version bump",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    },
+    {
+      "commit_sha": "f271be3552e54bbf9d49b94fe53fe4f255998559",
+      "evidence_observed_at": "2026-07-21T13:17:31Z",
+      "git_blob_sha": "d95fbec8cb7fd67d114ee3bb9ab1e0e69d95c526",
+      "media_type": "text/plain",
+      "path": "src/tools/rustfmt/Cargo.lock",
+      "repository": "rust-lang/rust",
+      "source_id": "rust-nc-rustfmt-lock-after",
+      "title": "rustfmt Cargo.lock after package version bump",
+      "upstream_organization_id": "rust-lang",
+      "upstream_project_id": "rust-lang/rust"
+    }
+  ],
+  "treatment_execution": false
+}

@@ -1,0 +1,22 @@
+{
+  "ledger_version": "1.0",
+  "project": "postgres/postgres",
+  "upstream_project_id": "postgres/postgres",
+  "upstream_organization_id": "postgres",
+  "domain_id": "database_engines_and_query_systems",
+  "challenge_type": "distributed_synthesis",
+  "upstream_snapshot": "7e6e294e4e451c55c52caa1ff68df9858912d066",
+  "upstream_evidence_observed_at": "2026-08-14T20:27:16Z",
+  "selection_status": "source_design_screen_frozen_before_selected_bundle_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "The four listed candidates fill dbd-postgres-ds-01..04 in order. Each uses exactly four unique current PostgreSQL-authored control files allocated one per producer. Required answers are exact ordered metadata values declared in those files. Selection uses source/design facts only, with no treatment/evaluator outcome observation and no selected source-byte reuse.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {"candidate_id":"postgres-ds-extension-defaults-a","planned_case_id":"dbd-postgres-ds-01","question":"Give the exact default_version values in order for tcn, xml2, unaccent, and btree_gist.","canonical_answer":"1.0; 1.2; 1.1; 1.9","ordered_required_slots":[["1.0"],["1.2"],["1.1"],["1.9"]],"required_source_ids":["postgres-ds-01-tcn","postgres-ds-01-xml2","postgres-ds-01-unaccent","postgres-ds-01-btree-gist"],"producer_allocation":[["producer-postgres-ds-01-1",["postgres-ds-01-tcn"]],["producer-postgres-ds-01-2",["postgres-ds-01-xml2"]],["producer-postgres-ds-01-3",["postgres-ds-01-unaccent"]],["producer-postgres-ds-01-4",["postgres-ds-01-btree-gist"]]],"minimum_events_per_producer":1},
+    {"candidate_id":"postgres-ds-extension-defaults-b","planned_case_id":"dbd-postgres-ds-02","question":"Give the exact default_version values in order for pgrowlocks, pgstattuple, uuid-ossp, and autoinc.","canonical_answer":"1.2; 1.5; 1.1; 1.0","ordered_required_slots":[["1.2"],["1.5"],["1.1"],["1.0"]],"required_source_ids":["postgres-ds-02-pgrowlocks","postgres-ds-02-pgstattuple","postgres-ds-02-uuid-ossp","postgres-ds-02-autoinc"],"producer_allocation":[["producer-postgres-ds-02-1",["postgres-ds-02-pgrowlocks"]],["producer-postgres-ds-02-2",["postgres-ds-02-pgstattuple"]],["producer-postgres-ds-02-3",["postgres-ds-02-uuid-ossp"]],["producer-postgres-ds-02-4",["postgres-ds-02-autoinc"]]],"minimum_events_per_producer":1},
+    {"candidate_id":"postgres-ds-module-paths-a","planned_case_id":"dbd-postgres-ds-03","question":"Give the exact module_pathname values in order for insert_username, pg_stash_advice, tsm_system_rows, and tsm_system_time.","canonical_answer":"$libdir/insert_username; $libdir/pg_stash_advice; $libdir/tsm_system_rows; $libdir/tsm_system_time","ordered_required_slots":[["$libdir/insert_username"],["$libdir/pg_stash_advice"],["$libdir/tsm_system_rows"],["$libdir/tsm_system_time"]],"required_source_ids":["postgres-ds-03-insert-username","postgres-ds-03-pg-stash-advice","postgres-ds-03-tsm-system-rows","postgres-ds-03-tsm-system-time"],"producer_allocation":[["producer-postgres-ds-03-1",["postgres-ds-03-insert-username"]],["producer-postgres-ds-03-2",["postgres-ds-03-pg-stash-advice"]],["producer-postgres-ds-03-3",["postgres-ds-03-tsm-system-rows"]],["producer-postgres-ds-03-4",["postgres-ds-03-tsm-system-time"]]],"minimum_events_per_producer":1},
+    {"candidate_id":"postgres-ds-module-paths-b","planned_case_id":"dbd-postgres-ds-04","question":"Give the exact module_pathname values in order for pg_logicalinspect, bool_plperl, bool_plperlu, and plpython3u.","canonical_answer":"$libdir/pg_logicalinspect; $libdir/bool_plperl; $libdir/bool_plperl; $libdir/plpython3","ordered_required_slots":[["$libdir/pg_logicalinspect"],["$libdir/bool_plperl"],["$libdir/bool_plperl"],["$libdir/plpython3"]],"required_source_ids":["postgres-ds-04-pg-logicalinspect","postgres-ds-04-bool-plperl","postgres-ds-04-bool-plperlu","postgres-ds-04-plpython3u"],"producer_allocation":[["producer-postgres-ds-04-1",["postgres-ds-04-pg-logicalinspect"]],["producer-postgres-ds-04-2",["postgres-ds-04-bool-plperl"]],["producer-postgres-ds-04-3",["postgres-ds-04-bool-plperlu"]],["producer-postgres-ds-04-4",["postgres-ds-04-plpython3u"]]],"minimum_events_per_producer":1}
+  ]
+}

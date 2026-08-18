@@ -1,0 +1,107 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "cpython-hd-cli-text-defaults",
+  "acquired_at": "2026-08-13T05:20:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {
+      "source_id": "cpython-hd-argparse-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/argparse.rst",
+      "git_blob_sha": "b2318ddace8514ba77d21569659bc1ef16f123c4",
+      "media_type": "text/x-rst",
+      "title": "CPython current argparse documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-configparser-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/configparser.rst",
+      "git_blob_sha": "4d720176fcc334a5544b0c872a247ac37b9effe3",
+      "media_type": "text/x-rst",
+      "title": "CPython current configparser documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-shlex-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/shlex.rst",
+      "git_blob_sha": "2dfb0246d5d90c026d032116f23447f172048891",
+      "media_type": "text/x-rst",
+      "title": "CPython current shlex documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-textwrap-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/textwrap.rst",
+      "git_blob_sha": "d12968dee91f3c3fa8f2de01802715c55fc41b36",
+      "media_type": "text/x-rst",
+      "title": "CPython current textwrap documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-getopt-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/getopt.rst",
+      "git_blob_sha": "9995f114d063e82c3181204abca20ef240d5ee40",
+      "media_type": "text/x-rst",
+      "title": "CPython current getopt documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-cmd-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/cmd.rst",
+      "git_blob_sha": "c988fcebd68a0195b9de966a621694bcc537965f",
+      "media_type": "text/x-rst",
+      "title": "CPython current cmd documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-code-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/code.rst",
+      "git_blob_sha": "59c016d21501b03b85130d94f75d067b10ea4702",
+      "media_type": "text/x-rst",
+      "title": "CPython current code documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    },
+    {
+      "source_id": "cpython-hd-readline-docs-current",
+      "repository": "python/cpython",
+      "commit_sha": "ee4fe00a8f72ea84a421bb626d7c78335c5c9ea1",
+      "path": "Doc/library/readline.rst",
+      "git_blob_sha": "234af8d191e3e35afae8b55f515a3e1b43133bf7",
+      "media_type": "text/x-rst",
+      "title": "CPython current readline documentation",
+      "evidence_observed_at": "2026-08-12T20:16:47Z",
+      "upstream_project_id": "python/cpython",
+      "upstream_organization_id": "python"
+    }
+  ]
+}

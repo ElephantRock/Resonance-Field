@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-nc-archive-filename-checking",
+  "acquired_at":"2026-08-15T03:48:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-nc-04-compression-before","repository":"postgres/postgres","commit_sha":"36f7330b8b2238c2093d7eac521f996b33e66121","path":"src/common/compression.c","git_blob_sha":"ae2089d9406d61586819ac8ab58198d138f34c7f","media_type":"text/plain","title":"PostgreSQL tar-compression parser before filename-check restoration","evidence_observed_at":"2026-08-03T16:25:01Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-04-compression-after","repository":"postgres/postgres","commit_sha":"dd62a71013c8c4d988624d0424503ec40520760e","path":"src/common/compression.c","git_blob_sha":"e78913ad9dcb69250b6d742e2bab3248ea6c9af7","media_type":"text/plain","title":"PostgreSQL tar-compression parser after filename-check restoration","evidence_observed_at":"2026-08-03T16:25:01Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-04-basebackup-after","repository":"postgres/postgres","commit_sha":"dd62a71013c8c4d988624d0424503ec40520760e","path":"src/bin/pg_basebackup/pg_basebackup.c","git_blob_sha":"12fc752bff5d138096b0e24d9b234c9490d7c966","media_type":"text/plain","title":"PostgreSQL pg_basebackup archive-name check after restoration","evidence_observed_at":"2026-08-03T16:25:01Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-nc-04-verifybackup-after","repository":"postgres/postgres","commit_sha":"dd62a71013c8c4d988624d0424503ec40520760e","path":"src/bin/pg_verifybackup/pg_verifybackup.c","git_blob_sha":"81694144b465c90cbf5e8412e0ffd6fa6d96f3a6","media_type":"text/plain","title":"PostgreSQL pg_verifybackup archive-name check after restoration","evidence_observed_at":"2026-08-03T16:25:01Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}

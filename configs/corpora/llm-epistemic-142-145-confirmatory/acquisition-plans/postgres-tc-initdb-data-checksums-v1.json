@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-tc-initdb-data-checksums",
+  "acquired_at":"2026-08-15T12:25:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-tc-02-initdb-before","repository":"postgres/postgres","commit_sha":"67846550dc6d7d90db4d98cdd8a8440725ef5c65","path":"src/bin/initdb/initdb.c","git_blob_sha":"34db43f47b7fdff6d9acfbe05b3960a9863404dc","media_type":"text/plain","title":"PostgreSQL initdb before checksums became default","evidence_observed_at":"2024-10-16T06:28:12Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-02-initdb-current","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"src/bin/initdb/initdb.c","git_blob_sha":"b3d496372ad7507014a4271c3bc7d09899d278d4","media_type":"text/plain","title":"Current PostgreSQL initdb with checksums enabled by default","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-02-test-before","repository":"postgres/postgres","commit_sha":"67846550dc6d7d90db4d98cdd8a8440725ef5c65","path":"src/bin/initdb/t/001_initdb.pl","git_blob_sha":"8072adb97fefe07c6442c7a136f80417cc94d818","media_type":"text/plain","title":"PostgreSQL initdb regression before checksum-default change","evidence_observed_at":"2024-10-16T06:28:12Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-02-test-current","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"src/bin/initdb/t/001_initdb.pl","git_blob_sha":"081535a22e41ba2345f99289b66ad0e9db11034d","media_type":"text/plain","title":"Current PostgreSQL initdb regression with checksum-default expectation","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}

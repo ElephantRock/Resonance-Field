@@ -1,0 +1,20 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "pip-hd-installation-pipeline-identifiers-clean",
+  "selection_ledger": "projects/pypa-pip/high-load-distractor-candidates-v3.json",
+  "acquired_at": "2026-08-14T04:52:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"pip-hd-02-build-metadata","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/build/metadata.py","git_blob_sha":"a546809ecd5aaebe791fffef6f0bb114fcec49c6","media_type":"text/x-python","title":"pip PEP 517 metadata build module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-prepare","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/prepare.py","git_blob_sha":"34a07a18e327c090c37ec02852e7507a795dd48f","media_type":"text/x-python","title":"pip distribution preparation module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-wheel-builder","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/wheel_builder.py","git_blob_sha":"8a5526142f5a7695b15d6a504985db8389bccddc","media_type":"text/x-python","title":"pip wheel builder orchestrator","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-build-metadata-editable","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/build/metadata_editable.py","git_blob_sha":"27ecd7d3d80676330d197008a5055837cfbc4e24","media_type":"text/x-python","title":"pip PEP 660 metadata build module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-build-wheel","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/build/wheel.py","git_blob_sha":"8595e45c5487c0a274f3f447e6de254e19db9dd2","media_type":"text/x-python","title":"pip PEP 517 wheel build module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-build-wheel-editable","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/build/wheel_editable.py","git_blob_sha":"f00d9b27ecb40b1c70283aba3be527381eec3d35","media_type":"text/x-python","title":"pip PEP 660 editable wheel build module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-install-wheel","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/install/wheel.py","git_blob_sha":"99c70a356d669219a7982deb3e43ab30596ece5a","media_type":"text/x-python","title":"pip wheel installation module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"},
+    {"source_id":"pip-hd-02-build-tracker","repository":"pypa/pip","commit_sha":"f399c3718970b1b0e2478dac5296eb62679a9b86","path":"src/pip/_internal/operations/build/build_tracker.py","git_blob_sha":"cbb4e4f0928f3688402a3c5d2c4ba5da2bbfbbc2","media_type":"text/x-python","title":"pip build tracker module","evidence_observed_at":"2026-08-08T21:26:00Z","upstream_project_id":"pypa/pip","upstream_organization_id":"pypa"}
+  ]
+}

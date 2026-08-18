@@ -1,0 +1,82 @@
+{
+  "ledger_version": "2.0",
+  "project": "pypa/pip",
+  "upstream_project_id": "pypa/pip",
+  "upstream_organization_id": "pypa",
+  "domain_id": "build_package_and_dependency_tooling",
+  "challenge_type": "high_load_distractor_synthesis",
+  "selection_status": "corrective_prospective_four_eligible_ranked_before_replacement_freeze",
+  "amends": "projects/pypa-pip/high-load-distractor-candidates-v1.json",
+  "amendment_reason": "The first two v1 candidates were discovered during selected-corpus validation to reuse source bytes already allocated to earlier pypa/pip confirmatory cases. This v2 ledger preserves the v1 record, rejects those allocations under the frozen objective rejection code, and prospectively defines replacements before any replacement acquisition plan or selected descriptor is written.",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "eligible candidates ordered by canonical_target_subject Unicode order; each case uses exactly eight unique current pinned sources, exactly four producers, two sources per producer, exactly four required sources spanning all four producers, and four nonrequired distractors; first four eligible fill bpd-pip-hd-01..04",
+  "current_upstream_pin": "f399c3718970b1b0e2478dac5296eb62679a9b86",
+  "current_upstream_observed_at": "2026-08-08T21:26:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "pip-hd-command-classes-clean",
+      "canonical_target_subject": "command classes check through debug",
+      "planned_case_id": "bpd-pip-hd-01",
+      "question": "Across the pinned pip command modules, give the exact command class names in order for check, completion, configuration, and debug.",
+      "canonical_answer": "CheckCommand; CompletionCommand; ConfigurationCommand; DebugCommand",
+      "ordered_required_slots": [["CheckCommand"],["CompletionCommand"],["ConfigurationCommand"],["DebugCommand"]],
+      "source_ids": ["pip-hd-01-check-command","pip-hd-01-download-command","pip-hd-01-completion-command","pip-hd-01-index-command","pip-hd-01-configuration-command","pip-hd-01-lock-command","pip-hd-01-debug-command","pip-hd-01-wheel-command"],
+      "producer_allocation": [["producer-pip-hd-01-1",["pip-hd-01-check-command","pip-hd-01-download-command"]],["producer-pip-hd-01-2",["pip-hd-01-completion-command","pip-hd-01-index-command"]],["producer-pip-hd-01-3",["pip-hd-01-configuration-command","pip-hd-01-lock-command"]],["producer-pip-hd-01-4",["pip-hd-01-debug-command","pip-hd-01-wheel-command"]]],
+      "required_source_ids": ["pip-hd-01-check-command","pip-hd-01-completion-command","pip-hd-01-configuration-command","pip-hd-01-debug-command"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "pip-hd-installation-pipeline-identifiers",
+      "canonical_target_subject": "installation pipeline callable identifiers",
+      "planned_case_id": "bpd-pip-hd-02",
+      "question": "Across the pinned pip cache and wheel pipeline modules, give the exact identifiers in order for the combined wheel cache class, the top-level wheel-builder batch function, the PEP 517 wheel build function, and the wheel installation function.",
+      "canonical_answer": "WheelCache; build; build_wheel_pep517; install_wheel",
+      "ordered_required_slots": [["WheelCache"],["build"],["build_wheel_pep517"],["install_wheel"]],
+      "source_ids": ["pip-hd-02-wheel-cache","pip-hd-02-build-metadata","pip-hd-02-wheel-builder","pip-hd-02-build-metadata-editable","pip-hd-02-build-wheel","pip-hd-02-build-wheel-editable","pip-hd-02-install-wheel","pip-hd-02-build-tracker"],
+      "producer_allocation": [["producer-pip-hd-02-1",["pip-hd-02-wheel-cache","pip-hd-02-build-metadata"]],["producer-pip-hd-02-2",["pip-hd-02-wheel-builder","pip-hd-02-build-metadata-editable"]],["producer-pip-hd-02-3",["pip-hd-02-build-wheel","pip-hd-02-build-wheel-editable"]],["producer-pip-hd-02-4",["pip-hd-02-install-wheel","pip-hd-02-build-tracker"]]],
+      "required_source_ids": ["pip-hd-02-wheel-cache","pip-hd-02-wheel-builder","pip-hd-02-build-wheel","pip-hd-02-install-wheel"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "pip-hd-model-classes",
+      "canonical_target_subject": "model class identifiers",
+      "planned_case_id": "bpd-pip-hd-03",
+      "question": "Across the pinned pip model modules, give the exact class names in order for format control, installation report, search scope, and target Python.",
+      "canonical_answer": "FormatControl; InstallationReport; SearchScope; TargetPython",
+      "ordered_required_slots": [["FormatControl"],["InstallationReport"],["SearchScope"],["TargetPython"]],
+      "source_ids": ["pip-hd-03-format-control","pip-hd-03-link","pip-hd-03-installation-report","pip-hd-03-scheme","pip-hd-03-search-scope","pip-hd-03-selection-preferences","pip-hd-03-target-python","pip-hd-03-wheel-model"],
+      "producer_allocation": [["producer-pip-hd-03-1",["pip-hd-03-format-control","pip-hd-03-link"]],["producer-pip-hd-03-2",["pip-hd-03-installation-report","pip-hd-03-scheme"]],["producer-pip-hd-03-3",["pip-hd-03-search-scope","pip-hd-03-selection-preferences"]],["producer-pip-hd-03-4",["pip-hd-03-target-python","pip-hd-03-wheel-model"]]],
+      "required_source_ids": ["pip-hd-03-format-control","pip-hd-03-installation-report","pip-hd-03-search-scope","pip-hd-03-target-python"],
+      "minimum_events_per_producer": 1
+    },
+    {
+      "candidate_id": "pip-hd-resolvelib-classes",
+      "canonical_target_subject": "resolvelib concrete class identifiers",
+      "planned_case_id": "bpd-pip-hd-04",
+      "question": "Across the pinned pip resolvelib integration modules, give the exact class names in order for the link-backed candidate, factory, provider, and resolver.",
+      "canonical_answer": "LinkCandidate; Factory; PipProvider; Resolver",
+      "ordered_required_slots": [["LinkCandidate"],["Factory"],["PipProvider"],["Resolver"]],
+      "source_ids": ["pip-hd-04-link-candidate","pip-hd-04-base","pip-hd-04-factory","pip-hd-04-found-candidates","pip-hd-04-provider","pip-hd-04-reporter","pip-hd-04-resolver","pip-hd-04-requirements"],
+      "producer_allocation": [["producer-pip-hd-04-1",["pip-hd-04-link-candidate","pip-hd-04-base"]],["producer-pip-hd-04-2",["pip-hd-04-factory","pip-hd-04-found-candidates"]],["producer-pip-hd-04-3",["pip-hd-04-provider","pip-hd-04-reporter"]],["producer-pip-hd-04-4",["pip-hd-04-resolver","pip-hd-04-requirements"]]],
+      "required_source_ids": ["pip-hd-04-link-candidate","pip-hd-04-factory","pip-hd-04-provider","pip-hd-04-resolver"],
+      "minimum_events_per_producer": 1
+    }
+  ],
+  "rejected_inspections": [
+    {
+      "candidate_id": "pip-hd-command-classes-a",
+      "rejection_code": "source_bytes_already_allocated",
+      "objective_reason": "Selected-validation found exact byte reuse from earlier pypa/pip confirmatory cases, including a required source; the v1 allocation is invalid and is retained only as historical audit evidence.",
+      "colliding_sha256": ["60b66b2d636f0a1974a489819284991860f77dbd8c7dd606a58178274690b3ac","2e0f043a89319d166bc1d2d62602e9056c4d52defe1eb9169440b4e5efaf070c","18ef6944ddf05c2da441aa2f2b9ed368b60131cdc896d387f763ba404c3a604d"]
+    },
+    {
+      "candidate_id": "pip-hd-command-classes-b",
+      "rejection_code": "source_bytes_already_allocated",
+      "objective_reason": "Selected-validation found exact byte reuse from earlier pypa/pip confirmatory cases, including required sources; the v1 allocation is invalid and is retained only as historical audit evidence.",
+      "colliding_sha256": ["073dcb7233505e4cf80aefffa4be0267cea8e3e1cd2d98f535959d949863baed","5be172c574eb1c986a465e19a2a169ebcff9180c02f4662e63a7e115325d1f35","8a200cf89b8bfd9d7e40fdf8720025a193d2af9d0c73bc00bee1434731d0ad09","f75fd79638421d6c8235fa0505ae1775a71bba6420a0d6e191c1c793f81c5bd6"]
+    }
+  ]
+}

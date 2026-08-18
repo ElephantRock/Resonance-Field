@@ -1,0 +1,15 @@
+{
+  "plan_version":"1.0",
+  "cohort":"confirmatory",
+  "candidate_id":"postgres-tc-standard-conforming-strings",
+  "acquired_at":"2026-08-15T12:25:00Z",
+  "treatment_execution":false,
+  "evaluator_execution":false,
+  "confirmatory_outcomes_observed":false,
+  "sources":[
+    {"source_id":"postgres-tc-01-guc-before","repository":"postgres/postgres","commit_sha":"4d6a66f675815a5d40a650d4dcfb5ddb89c6ad2f","path":"src/backend/utils/misc/guc_parameters.dat","git_blob_sha":"7c60b12556464110e7b0657e832aa8c685004cfd","media_type":"text/plain","title":"PostgreSQL GUC parameter definition before standard-conforming-strings lock-on","evidence_observed_at":"2026-01-21T19:06:01Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-01-guc-current","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"src/backend/utils/misc/guc_parameters.dat","git_blob_sha":"3c5e16ad1e788504d911ca825e93229acf543dfa","media_type":"text/plain","title":"Current PostgreSQL GUC parameter definition with standard-conforming-strings locked on","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-01-scan-before","repository":"postgres/postgres","commit_sha":"4d6a66f675815a5d40a650d4dcfb5ddb89c6ad2f","path":"src/backend/parser/scan.l","git_blob_sha":"731d584106df9f7bda99fc25a759138ee6c2e212","media_type":"text/plain","title":"PostgreSQL scanner before standard-conforming-strings parser-state removal","evidence_observed_at":"2026-01-21T19:06:01Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"},
+    {"source_id":"postgres-tc-01-scan-current","repository":"postgres/postgres","commit_sha":"7e6e294e4e451c55c52caa1ff68df9858912d066","path":"src/backend/parser/scan.l","git_blob_sha":"ee6c34cc14b012004450f0cd230e7f8d863af01d","media_type":"text/plain","title":"Current PostgreSQL scanner after standard-conforming-strings parser-state removal","evidence_observed_at":"2026-08-14T20:27:16Z","upstream_project_id":"postgres/postgres","upstream_organization_id":"postgres"}
+  ]
+}

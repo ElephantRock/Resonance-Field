@@ -1,0 +1,80 @@
+{
+  "ledger_version": "1.0",
+  "project": "redis/redis",
+  "upstream_project_id": "redis/redis",
+  "upstream_organization_id": "redis",
+  "domain_id": "databases_and_data_systems",
+  "challenge_type": "temporal_update_conflict",
+  "selection_status": "prospective_source_semantic_screen_frozen_before_acquisition_plan_creation",
+  "scientific_code_base_sha": "c33d29a3ad359c040b63c644fb8e552bd28f1615",
+  "selection_rule": "Select the four listed eligible candidates in case-slot order after source-integrity freeze. Each case must use exactly four unique human-authored Redis primary sources allocated one per producer, expose at least one normalized semantic conflict whose required old/current evidence timestamps are separated by at least 180 days, use an exact ordered 2-4 slot answer, and avoid source-byte reuse with every previously selected confirmatory case. Selection is based only on frozen source semantics and design validity; treatment/evaluator outcomes are never observed or used.",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "eligible_candidates": [
+    {
+      "candidate_id": "redis-tc-always-show-logo-default",
+      "planned_case_id": "dbd-redis-tc-01",
+      "change_commit": "12f798dc18976839f3dfcb835433b6db63f8922f",
+      "change_observed_at": "2020-09-03T07:31:18Z",
+      "question": "Across the historical and current Redis always-show-logo snapshots, give four values in order: the old redis.conf value before the template correction, the current redis.conf value, the old internal configuration default, and the current internal configuration default.",
+      "canonical_answer": "yes; no; no; no",
+      "ordered_required_slots": [["yes"],["no"],["no","false","0"],["no","false","0"]],
+      "required_source_ids": ["redis-tc-01-config-before","redis-tc-01-config-current","redis-tc-01-internal-before","redis-tc-01-internal-current"],
+      "producer_allocation": [["producer-redis-tc-01-1",["redis-tc-01-config-before"]],["producer-redis-tc-01-2",["redis-tc-01-config-current"]],["producer-redis-tc-01-3",["redis-tc-01-internal-before"]],["producer-redis-tc-01-4",["redis-tc-01-internal-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    },
+    {
+      "candidate_id": "redis-tc-maxmemory-policy-default",
+      "planned_case_id": "dbd-redis-tc-02",
+      "change_commit": "5fa3248badcd042cecc5aed29b8fb6cc59cd009a",
+      "change_observed_at": "2014-03-21T07:03:34Z",
+      "question": "Across the historical and current Redis maxmemory-policy snapshots, give four values in order: the old redis.conf default policy, the current redis.conf default policy, the old internal default policy constant, and the current internal default policy constant.",
+      "canonical_answer": "volatile-lru; noeviction; REDIS_MAXMEMORY_VOLATILE_LRU; MAXMEMORY_NO_EVICTION",
+      "ordered_required_slots": [["volatile-lru"],["noeviction"],["REDIS_MAXMEMORY_VOLATILE_LRU"],["MAXMEMORY_NO_EVICTION"]],
+      "required_source_ids": ["redis-tc-02-config-before","redis-tc-02-config-current","redis-tc-02-internal-before","redis-tc-02-internal-current"],
+      "producer_allocation": [["producer-redis-tc-02-1",["redis-tc-02-config-before"]],["producer-redis-tc-02-2",["redis-tc-02-config-current"]],["producer-redis-tc-02-3",["redis-tc-02-internal-before"]],["producer-redis-tc-02-4",["redis-tc-02-internal-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    },
+    {
+      "candidate_id": "redis-tc-tcp-keepalive-default",
+      "planned_case_id": "dbd-redis-tc-03",
+      "change_commit": "b99ad1bd808fcfa5f57301a65c875d8c16d7cf71",
+      "change_observed_at": "2016-07-04T10:08:42Z",
+      "question": "Across the historical and current Redis tcp-keepalive snapshots, give four values in order: the old internal default in seconds, the current internal default in seconds, the old redis.conf template value, and the current redis.conf template value.",
+      "canonical_answer": "0; 300; 300; 300",
+      "ordered_required_slots": [["0"],["300"],["300"],["300"]],
+      "required_source_ids": ["redis-tc-03-internal-before","redis-tc-03-internal-current","redis-tc-03-config-before","redis-tc-03-config-current"],
+      "producer_allocation": [["producer-redis-tc-03-1",["redis-tc-03-internal-before"]],["producer-redis-tc-03-2",["redis-tc-03-internal-current"]],["producer-redis-tc-03-3",["redis-tc-03-config-before"]],["producer-redis-tc-03-4",["redis-tc-03-config-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    },
+    {
+      "candidate_id": "redis-tc-aof-rewrite-min-size-default",
+      "planned_case_id": "dbd-redis-tc-04",
+      "change_commit": "5189485625d9b3e6b3d38a465e9b4555a50e073e",
+      "change_observed_at": "2014-01-14T10:27:28Z",
+      "question": "Across the historical and current Redis auto-aof-rewrite-min-size snapshots, give four values in order: the old internal default, the current internal default, the old redis.conf template value, and the current redis.conf template value.",
+      "canonical_answer": "1mb; 64mb; 64mb; 64mb",
+      "ordered_required_slots": [["1mb","1 MB","1048576"],["64mb","64 MB","67108864"],["64mb","64 MB"],["64mb","64 MB"]],
+      "required_source_ids": ["redis-tc-04-internal-before","redis-tc-04-internal-current","redis-tc-04-config-before","redis-tc-04-config-current"],
+      "producer_allocation": [["producer-redis-tc-04-1",["redis-tc-04-internal-before"]],["producer-redis-tc-04-2",["redis-tc-04-internal-current"]],["producer-redis-tc-04-3",["redis-tc-04-config-before"]],["producer-redis-tc-04-4",["redis-tc-04-config-current"]]],
+      "minimum_events_per_producer": 1,
+      "minimum_conflict_keys": 1,
+      "minimum_temporal_conflict_keys": 1,
+      "minimum_conflicting_evidence_time_gap_days": 180
+    }
+  ],
+  "rejected_candidates": [
+    {"candidate_id":"redis-tc-repl-compression-default","reason":"source_reuse_risk","note":"Rejected prospectively because near-current redis.conf material for the replication-compression default correction is already selected in the Redis non-stale confirmatory cell."},
+    {"candidate_id":"redis-tc-tls-peer-name","reason":"source_reuse_risk","note":"Rejected prospectively because the near-current TLS/config/test material is already selected in the Redis non-stale confirmatory cell."}
+  ]
+}

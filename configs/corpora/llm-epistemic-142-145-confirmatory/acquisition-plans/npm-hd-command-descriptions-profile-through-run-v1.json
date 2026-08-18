@@ -1,0 +1,19 @@
+{
+  "plan_version": "1.0",
+  "cohort": "confirmatory",
+  "candidate_id": "npm-hd-command-descriptions-c",
+  "acquired_at": "2026-08-14T17:10:00Z",
+  "treatment_execution": false,
+  "evaluator_execution": false,
+  "confirmatory_outcomes_observed": false,
+  "sources": [
+    {"source_id":"npm-hd-03-profile","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/profile.js","git_blob_sha":"9417989cf318c3690ad91e1b5a800298e144eec5","media_type":"text/javascript","title":"npm profile command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-prune","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/prune.js","git_blob_sha":"e1790e40947261f290d4fbec0015f513c474a652","media_type":"text/javascript","title":"npm prune command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-query","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/query.js","git_blob_sha":"f4282653c556608f7d2624de1b4531440244c754","media_type":"text/javascript","title":"npm query command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-rebuild","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/rebuild.js","git_blob_sha":"0f98b41e8c168fd26f83620cc20823df9815f8ed","media_type":"text/javascript","title":"npm rebuild command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-repo","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/repo.js","git_blob_sha":"0bfb2cf962c9b04445229d1c5ba0139860e51ed3","media_type":"text/javascript","title":"npm repo command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-restart","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/restart.js","git_blob_sha":"52b9b20757e2906d4a8e906e238f996242b2be95","media_type":"text/javascript","title":"npm restart command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-root","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/root.js","git_blob_sha":"180f4c4ed0720a151b407c5f9d5308f953784404","media_type":"text/javascript","title":"npm root command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"},
+    {"source_id":"npm-hd-03-run","repository":"npm/cli","commit_sha":"51c2bf81fa2c31547d0fec44fff2aaac3d9a9862","path":"lib/commands/run.js","git_blob_sha":"ada203f2793af4224481559ef96567c2f4532683","media_type":"text/javascript","title":"npm run command definition","evidence_observed_at":"2026-08-12T21:15:55Z","upstream_project_id":"npm/cli","upstream_organization_id":"npm"}
+  ]
+}
